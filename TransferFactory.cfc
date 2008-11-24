@@ -94,6 +94,7 @@ Mark Mandel		27/06/2005		Created
 		setTransactionManager(factory.getTransactionManager());
 
 		setTransfer(createObject("component", "transfer.com.Transfer").init(factory));
+		setFactory(factory);
 
 		return this;
 	</cfscript>
@@ -111,8 +112,13 @@ Mark Mandel		27/06/2005		Created
 	<cfreturn getTransactionManager().getTransaction() />
 </cffunction>
 
+<cffunction name="getGenerationManager" hint="returns the code generation manager" access="public" returntype="transfer.com.codegen.GenerationManager" output="false">
+	<!--- do it this way so it is lazy loaded --->
+	<cfreturn getFactory().getGenerationManager() />
+</cffunction>
+
 <cffunction name="getVersion" access="public" hint="Returns the version number" returntype="string" output="false">
-	<cfreturn "1.1.a"/>
+	<cfreturn "1.1.b"/>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
@@ -158,5 +164,13 @@ Mark Mandel		27/06/2005		Created
 	<cfset instance.Datasource = arguments.Datasource />
 </cffunction>
 
+<cffunction name="getFactory" access="private" returntype="transfer.com.factory.Factory" output="false">
+	<cfreturn instance.Factory />
+</cffunction>
+
+<cffunction name="setFactory" access="private" returntype="void" output="false">
+	<cfargument name="Factory" type="transfer.com.factory.Factory" required="true">
+	<cfset instance.Factory = arguments.Factory />
+</cffunction>
 
 </cfcomponent>

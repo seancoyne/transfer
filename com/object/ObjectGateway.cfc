@@ -116,13 +116,31 @@ Mark Mandel		11/10/2005		Created
 	</cfscript>
 </cffunction>
 
+<cffunction name="listClasses" hint="returns an array of all the classes in this definition" access="public" returntype="array" output="false">
+	<cfscript>
+		var xClasses = getConfigReader().search("/transfer/objectDefinitions");
+
+		return getClassNameArray(xClasses);
+	</cfscript>
+</cffunction>
+
+<cffunction name="_dump">
+	<cfargument name="s">
+	<cfargument name="abort" default="true">
+	<cfset var g = "">
+		<cfdump var="#arguments.s#">
+		<cfif arguments.abort>
+		<cfabort>
+		</cfif>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
 <cffunction name="getClassNameArray" hint="returns xpath search as a classname query" access="private" returntype="array" output="false">
 	<cfargument name="objects" type="any" required="true">
-	<cfargument name="filter" hint="filter higher order function to test with" type="any" required="Yes">
+	<cfargument name="filter" hint="filter higher order function to test with" type="any" required="no" default="#variables.dummyFilter#">
 	<cfargument name="filterArgs" hint="arguments to pass the the filter" type="struct" required="No" default="#StructNew()#">
 	<cfargument name="packageName" type="string" required="false" default="">
 	<cfargument name="classSet" hint="the struct to put the data in" type="struct" required="no" default="#StructNew()#">
@@ -189,6 +207,10 @@ Mark Mandel		11/10/2005		Created
 </cffunction>
 
 <!--- HOF for getClassNameQuery --->
+
+<cffunction name="dummyFilter" hint="filter that always returns true" access="private" returntype="boolean" output="false">
+	<cfreturn true />
+</cffunction>
 
 <cffunction name="onetoManyFilter" hint="the one to many filter" access="private" returntype="boolean" output="false">
 	<cfargument name="xObject" hint="xml data for an object" type="any" required="Yes">

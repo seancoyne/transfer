@@ -280,6 +280,10 @@ Mark Mandel		13/07/2005		Created
 	</cfscript>
 </cffunction>
 
+<cffunction name="listClasses" hint="returns an array of all the classes in this definition" access="public" returntype="array" output="false">
+	<cfreturn getObjectGateway().listClasses() />
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->

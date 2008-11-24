@@ -83,6 +83,10 @@ Mark Mandel		12/09/2007		Created
 	<cfreturn getSingleton("transfer.com.sql.transaction.TransactionManager") />
 </cffunction>
 
+<cffunction name="getGenerationManager" hint="returns the Generation Manager" access="public" returntype="transfer.com.codegen.GenerationManager" output="false">
+	<cfreturn getSingleton("transfer.com.codegen.GenerationManager") />
+</cffunction>
+
 <!--- Child factories --->
 
 <cffunction name="getDatasourceFactory" hint="get the datasource factory" access="public" returntype="transfer.com.sql.DatasourceFactory" output="false">
