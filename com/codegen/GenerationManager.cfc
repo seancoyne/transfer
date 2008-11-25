@@ -26,9 +26,11 @@ Mark Mandel		24/11/2008		Created
 <cffunction name="init" hint="Constructor" access="public" returntype="GenerationManager" output="false">
 	<cfargument name="configReader" hint="The XML Reader for the config file" type="transfer.com.io.XMLFileReader" required="Yes" _autocreate="false">
 	<cfargument name="objectManager" hint="Need to object manager for making queries" type="transfer.com.object.ObjectManager" required="Yes" _autocreate="false">
+	<cfargument name="definitionPath" hint="Path to where the definitions are kept" type="string" required="Yes">
 	<cfscript>
 		setConfigReader(arguments.configReader);
 		setObjectManager(arguments.objectManager);
+		setDefinitionPath(arguments.definitionPath);
 
 		return this;
 	</cfscript>
@@ -41,12 +43,21 @@ Mark Mandel		24/11/2008		Created
 <cffunction name="create" hint="creates a code generator with the given class name, and passes in the configReader, and the objectManager"
 			access="public" returntype="transfer.com.codegen.generator.AbstractBaseGenerator" output="false">
 			<cfargument name="className" hint="the classname of the generator" type="string" required="Yes">
-	<cfreturn createObject("component", arguments.className).init(getConfigReader(), getObjectManager()) />
+	<cfreturn createObject("component", arguments.className).init(getConfigReader(), getObjectManager(), getDefinitionPath()) />
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
+
+<cffunction name="getDefinitionPath" access="private" returntype="string" output="false">
+	<cfreturn instance.DefinitionPath />
+</cffunction>
+
+<cffunction name="setDefinitionPath" access="private" returntype="void" output="false">
+	<cfargument name="DefinitionPath" type="string" required="true">
+	<cfset instance.DefinitionPath = arguments.DefinitionPath />
+</cffunction>
 
 <cffunction name="getObjectManager" access="private" returntype="transfer.com.object.ObjectManager" output="false">
 	<cfreturn instance.ObjectManager />

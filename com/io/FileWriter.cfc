@@ -52,6 +52,13 @@ Mark Mandel		05/04/2006		Created
 	<cffile action="delete" file="#getPath()#">
 </cffunction>
 
+<cffunction name="ensureDirectory" hint="if a directory doesn't exist, create it" access="public" returntype="void" output="false">
+	<cfset var directory = getDirectoryFromPath(getPath()) />
+	<cfif NOT directoryExists(directory)>
+		<cfdirectory action="create" directory="#directory#">
+	</cfif>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->

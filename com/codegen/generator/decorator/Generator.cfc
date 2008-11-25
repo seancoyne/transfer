@@ -24,6 +24,7 @@ Mark Mandel		24/11/2008		Created
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="run" hint="generates the decorators, according to the template" access="public" returntype="void" output="false">
+	<cfargument name="regexFilter" hint="optional regex filter against the className of what decorators you want to gen" type="string" required="No">
 	<cfscript>
 		var classes = getObjectManager().listClasses();
 		var len = ArrayLen(classes);
@@ -31,17 +32,25 @@ Mark Mandel		24/11/2008		Created
 		var counter = 1;
 		var args = StructNew();
 		var object = 0;
+		var check = 0;
 
 		for(; counter lte len; counter = counter + 1)
 		{
 			class = classes[counter];
 			object = getObjectManager().getObject(class);
 
-			//only write them if they have them
-			if(object.hasDecorator())
+			check = true;
+
+			if(StructKeyExists(arguments, "regexFilter"))
 			{
-				writeCFMLTemplate(
-					path=resolveCFCPath(object.getDecorator()),
+				check = reFind(arguments.regexFilter, class);
+			}
+
+			//only write them if they have them
+			if(check AND object.hasDecorator())
+			{
+				writeTemplate(
+					path=resolveDotPath(object.getDecorator()) & ".cfc",
 					object=object
 				);
 			}

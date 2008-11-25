@@ -26,7 +26,9 @@ Mark Mandel		24/11/2008		Created
 
 	instance.static.tagOpen = chr(2234);
 	instance.static.tagClose = chr(2235);
-	instance.static.hash = "$$";
+	instance.static.escapeHash = "$$";
+	instance.static.escapeTagOpen = "{{";
+	instance.static.escapeTagClose = "}}";
 </cfscript>
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
@@ -53,13 +55,6 @@ Mark Mandel		24/11/2008		Created
 	</cfscript>
 </cffunction>
 
-<cffunction name="println" hint="" access="private" returntype="void" output="false">
-	<cfargument name="str" hint="" type="string" required="Yes">
-	<cfscript>
-		createObject("Java", "java.lang.System").out.println(arguments.str);
-	</cfscript>
-</cffunction>
-
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
@@ -67,76 +62,147 @@ Mark Mandel		24/11/2008		Created
 <cffunction name="init" hint="Constructor" access="public" returntype="AbstractBaseGenerator" output="false">
 	<cfargument name="configReader" hint="The XML Reader for the config file" type="transfer.com.io.XMLFileReader" required="Yes" _autocreate="false">
 	<cfargument name="objectManager" hint="Need to object manager for making queries" type="transfer.com.object.ObjectManager" required="Yes" _autocreate="false">
+	<cfargument name="definitionPath" hint="Path to where the definitions are kept" type="string" required="Yes">
 	<cfscript>
 		setConfigReader(arguments.configReader);
 		setObjectManager(arguments.objectManager);
+		setDefinitionPath(arguments.definitionPath);
 
 		return this;
 	</cfscript>
 </cffunction>
 
-<cffunction name="writeCFMLTemplate" hint="writes out a CFML template, escaping cfml, and using the templating language" access="private" returntype="void" output="false">
-	<cfargument name="path" hint="the path to write the template to" type="string" required="Yes">
-	<cfscript>
-		var fileName = createUUID() & ".tmp";
-		var templateContents = 0;
-
-		var TemplateFilePath = 0;
-
-		var originalTemplate = getTemplate();
-
-		println(getTemplateFilePath());
-	</cfscript>
-
-	<cffile action="read" file="#getTemplateFilePath()#" variable="templateContents">
-
-	<cfscript>
-		//skip out tags
-		templateContents = replace(templateContents, "<", instance.static.tagOpen, "all");
-		templateContents = replace(templateContents, ">", instance.static.tagClose, "all");
-
-		//replace $$ with hashes
-		templateContents = replace(templateContents, instance.static.hash, "##", "all");
-	</cfscript>
-
-	<cffile action="write" file="#getDirectoryFromPath(getMetaData(this).path)##fileName#" output="#templateContents#">
-
-	<cfscript>
-		instance.template = originalTemplate;
-	</cfscript>
-</cffunction>
-
 <cffunction name="writeTemplate" hint="writes a regular template, in which you can use regular CFML" access="private" returntype="void" output="false">
 	<cfargument name="path" hint="the path to write the template to" type="string" required="Yes">
+	<cfargument name="escapeCFML" hint="whether or not escape CFML processing" type="boolean" required="No" default="true">
 
 	<cfscript>
 		var content = 0;
+		var fileName = createUUID() & ".template";
+
+		//state for the template
+		var state = StructCopy(arguments);
+		var templateReader = 0;
+		var templateWriter = 0;
+		var local = StructNew();
+
+		StructDelete(state, "path");
+		StructDelete(state, "escapeCFML");
+
+		templateReader = createObject("component", "transfer.com.io.FileReader").init(getTemplateFilePath());
+
+		content = templateReader.getContent();
+
+		if(arguments.escapeCFML)
+		{
+			//skip out tags and hashes
+			content = replace(content, "<", instance.static.tagOpen, "all");
+			content = replace(content, ">", instance.static.tagClose, "all");
+			content = replace(content, "##", "####", "all");
+			content = replace(content, instance.static.escapeTagOpen, "<", "all");
+			content = replace(content, instance.static.escapeTagClose, ">", "all");
+
+			//replace $$ with hashes
+			content = replace(content, instance.static.escapeHash, "##", "all");
+		}
+
+		content = '<cfimport prefix="gen" taglib="/transfer/com/codegen/generator/tags"><gen:template><cfoutput>' & content & '</cfoutput></gen:template>';
+
+		state.configReader = getConfigReader();
+		state.objectManager = getObjectManager();
+
+		templateWriter = createObject("component", "transfer.com.io.FileWriter").init(expandPath(getDefinitionPath()) & fileName);
+
+		templateWriter.write(content);
+	</cfscript>
+
+<cfsavecontent variable="content"><cfinclude template="#getDefinitionPath()##fileName#"></cfsavecontent>
+
+	<cfscript>
+		//delete the template after we are done
+		templateWriter.delete();
 
 		if(fileExists(arguments.path))
 		{
-			//right now, just escape it
-			return;
+			doBlockWrite(arguments.path, local.blocks, arguments.escapeCFML);
+		}
+		else
+		{
+			doTemplateWrite(arguments.path, content, arguments.escapeCFML);
+		}
+	</cfscript>
+</cffunction>
+
+<cffunction name="doTemplateWrite" hint="does a write of the template, assuming it doesn't exist" access="private" returntype="void" output="false">
+	<cfargument name="path" hint="the path to write the template to" type="string" required="Yes">
+	<cfargument name="content" hint="the string content for the template" type="string" required="Yes">
+	<cfargument name="escapeCFML" hint="whether or not escape CFML processing" type="boolean" required="Yes">
+	<cfscript>
+		var outputWriter = createObject("component", "transfer.com.io.FileWriter").init(arguments.path);
+
+		if(arguments.escapeCFML)
+		{
+			arguments.content = replace(arguments.content, instance.static.tagOpen, "<", "all");
+			arguments.content = replace(arguments.content, instance.static.tagClose, ">", "all");
 		}
 
-		arguments.configReader = getConfigReader();
-		arguments.objectManager = getObjectManager();
+		outputWriter.ensureDirectory();
+
+		outputWriter.write(arguments.content);
 	</cfscript>
-
-	<cfsavecontent variable="content">
-		<cfinclude template="#getTemplate()#">
-	</cfsavecontent>
-
-	<cffile action="write" file="#arguments.path#" output="#content#">
 </cffunction>
 
-<cffunction name="ensureDirectory" hint="if a directory doesn't exist, create it" access="private" returntype="void" output="false">
-	<cfargument name="path" hint="" type="string" required="Yes">
-	<cfif NOT directoryExists(arguments.path)>
-		<cfdirectory action="create" directory="#arguments.path#">
-	</cfif>
+<cffunction name="doBlockWrite" hint="does a write of the template, assuming it doesn't exist" access="private" returntype="void" output="false">
+	<cfargument name="path" hint="the path to write the template to" type="string" required="Yes">
+	<cfargument name="blocks" hint="the blocks content for the template" type="array" required="Yes">
+	<cfargument name="escapeCFML" hint="whether or not escape CFML processing" type="boolean" required="Yes">
+
+	<cfscript>
+		var reader = createObject("component", "transfer.com.io.FileReader").init(arguments.path);
+
+		var buffer = createObject("java", "java.lang.StringBuffer").init(reader.getContent());
+
+		var writer = createObject("component", "transfer.com.io.FileWriter").init(arguments.path);
+
+		var pattern = createObject("java", "java.util.regex.Pattern");
+		var matcher = 0;
+		var block = 0;
+
+		var len = ArrayLen(arguments.blocks);
+		var counter = 1;
+		for(; counter lte len; counter = counter + 1)
+		{
+			block = blocks[counter];
+
+			/*
+			<!--- :::cfproperty::: --->
+			*/
+
+			pattern = createObject("java", "java.util.regex.Pattern").compile("(<!" & "--- :::" & block.name & "::: --->)(.*?)(<!" & "--- :::/" & block.name & "::: --->)", pattern.DOTALL);
+
+			matcher = pattern.matcher(buffer);
+
+			if(matcher.find())
+			{
+				if(arguments.escapeCFML)
+				{
+					block.content = replace(block.content, instance.static.tagOpen, "<", "all");
+					block.content = replace(block.content, instance.static.tagClose, ">", "all");
+				}
+
+				//replace the content with the block
+				buffer.replace(matcher.start(2), matcher.end(2), block.content);
+			}
+		}
+
+		//do this very last, in case something goes wrong
+		reader.delete();
+
+		writer.write(buffer.toString());
+	</cfscript>
 </cffunction>
 
-<cffunction name="resolveCFCPath" hint="determines the directory for a cfc path" access="private" returntype="string" output="false">
+<cffunction name="resolveDotPath" hint="determines the directory for a dot path" access="private" returntype="string" output="false">
 	<cfargument name="cfcPath" hint="the . notation to a cfc" type="string" required="Yes">
 	<cfscript>
 		var root = ListGetAt(arguments.cfcPath, 1, ".");
@@ -180,6 +246,15 @@ Mark Mandel		24/11/2008		Created
 <cffunction name="setConfigReader" access="private" returntype="void" output="false">
 	<cfargument name="ConfigReader" type="transfer.com.io.XMLFileReader" required="true">
 	<cfset instance.ConfigReader = arguments.ConfigReader />
+</cffunction>
+
+<cffunction name="getDefinitionPath" access="private" returntype="string" output="false">
+	<cfreturn instance.DefinitionPath />
+</cffunction>
+
+<cffunction name="setDefinitionPath" access="private" returntype="void" output="false">
+	<cfargument name="DefinitionPath" type="string" required="true">
+	<cfset instance.DefinitionPath = arguments.DefinitionPath />
 </cffunction>
 
 </cfcomponent>

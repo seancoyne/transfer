@@ -118,7 +118,7 @@ Mark Mandel		27/06/2005		Created
 </cffunction>
 
 <cffunction name="getVersion" access="public" hint="Returns the version number" returntype="string" output="false">
-	<cfreturn "1.1.b"/>
+	<cfreturn "1.1.c"/>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->

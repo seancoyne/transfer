@@ -9,7 +9,7 @@ Website:    http://www.compoundtheory.com
 
 Purpose:    File Reader
 
-Usage:      
+Usage:
 
 Modification Log:
 
@@ -32,9 +32,9 @@ Mark Mandel		17/05/2005		Created
 		setPath(arguments.path);
 	</cfscript>
 	<cffile action="read" file="#getPath()#" variable="content">
-	<cfscript>		
+	<cfscript>
 		setContent(content);
-		return this;		
+		return this;
 	</cfscript>
 </cffunction>
 
@@ -45,6 +45,11 @@ Mark Mandel		17/05/2005		Created
 <cffunction name="getContent" access="public" returntype="string" output="false">
 	<cfreturn instance.Content />
 </cffunction>
+
+<cffunction name="delete" hint="delete the file after you are done" access="public" returntype="void" output="false">
+	<cffile action="delete" file="#getPath()#">
+</cffunction>
+
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
