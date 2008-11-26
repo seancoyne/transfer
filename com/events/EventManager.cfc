@@ -284,7 +284,7 @@ Mark Mandel		26/08/2005		Created
 	</cfscript>
 </cffunction>
 
-<cffunction name="isTransferObject" hint="Is this a transferObject?" access="public" returntype="boolean" output="false">
+<cffunction name="isTransferObject" hint="Is this a transferObject?" access="private" returntype="boolean" output="false">
 	<cfargument name="object" hint="The object that is being passed in" type="any" required="Yes">
 	<cfscript>
 		var metadata = getMetaData(arguments.object);

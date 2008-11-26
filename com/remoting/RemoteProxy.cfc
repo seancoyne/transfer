@@ -34,9 +34,8 @@ Mark Mandel		21/11/2008		Created
 <cffunction name="save" hint="remote proxy for Transfer.save()" access="remote" returntype="transfer.com.TransferObject" output="false">
 	<cfargument name="transfer" hint="The transfer to save" type="transfer.com.TransferObject" required="Yes">
 
-	<!--- <cfdump var="#arguments.transfer#" output="console" format="text"> --->
-
 	<cfset arguments.transfer = getVOConverter().convert(arguments.transfer) />
+
 	<cfset getTransfer().save(arguments.transfer) />
 
 	<cfreturn arguments.transfer />
