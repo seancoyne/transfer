@@ -31,6 +31,17 @@ Mark Mandel		21/11/2008		Created
 	</cfscript>
 </cffunction>
 
+<cffunction name="save" hint="remote proxy for Transfer.save()" access="remote" returntype="transfer.com.TransferObject" output="false">
+	<cfargument name="transfer" hint="The transfer to save" type="transfer.com.TransferObject" required="Yes">
+
+	<!--- <cfdump var="#arguments.transfer#" output="console" format="text"> --->
+
+	<cfset arguments.transfer = getVOConverter().convert(arguments.transfer) />
+	<cfset getTransfer().save(arguments.transfer) />
+
+	<cfreturn arguments.transfer />
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
@@ -39,11 +50,11 @@ Mark Mandel		21/11/2008		Created
 	<cfargument name="transferFactory" hint="the TransferFactory" type="transfer.TransferFactory" required="Yes">
 	<cfscript>
 		setTransfer(arguments.transferFactory.getTransfer());
+		setVoConverter(createObject("component", "VOConverter").init(getTransfer()));
 
 		return this;
 	</cfscript>
 </cffunction>
-
 
 <cffunction name="getTransfer" access="private" returntype="transfer.com.Transfer" output="false">
 	<cfreturn instance.transfer />
@@ -54,5 +65,13 @@ Mark Mandel		21/11/2008		Created
 	<cfset instance.transfer = arguments.transfer />
 </cffunction>
 
+<cffunction name="getVOConverter" access="private" returntype="VOConverter" output="false">
+	<cfreturn instance.voConverter />
+</cffunction>
+
+<cffunction name="setVOConverter" access="private" returntype="void" output="false">
+	<cfargument name="voConverter" type="voConverter" required="true">
+	<cfset instance.voConverter = arguments.voConverter />
+</cffunction>
 
 </cfcomponent>

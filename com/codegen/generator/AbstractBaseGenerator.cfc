@@ -55,6 +55,16 @@ Mark Mandel		24/11/2008		Created
 	</cfscript>
 </cffunction>
 
+<cffunction name="_dump">
+	<cfargument name="s">
+	<cfargument name="abort" default="true">
+	<cfset var g = "">
+		<cfdump var="#arguments.s#">
+		<cfif arguments.abort>
+		<cfabort>
+		</cfif>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
@@ -67,6 +77,9 @@ Mark Mandel		24/11/2008		Created
 		setConfigReader(arguments.configReader);
 		setObjectManager(arguments.objectManager);
 		setDefinitionPath(arguments.definitionPath);
+
+		setCommentStart("<!" & "---");
+		setCommentEnd("--->");
 
 		return this;
 	</cfscript>
@@ -178,7 +191,7 @@ Mark Mandel		24/11/2008		Created
 			<!--- :::cfproperty::: --->
 			*/
 
-			pattern = createObject("java", "java.util.regex.Pattern").compile("(<!" & "--- :::" & block.name & "::: --->)(.*?)(<!" & "--- :::/" & block.name & "::: --->)", pattern.DOTALL);
+			pattern = createObject("java", "java.util.regex.Pattern").compile("(" & getCommentStart() & " :::" & block.name & "::: " & getCommentEnd() & ")(.*?)("& getCommentStart() &" :::/" & block.name & "::: "& getCommentEnd() &")", pattern.DOTALL);
 
 			matcher = pattern.matcher(buffer);
 
@@ -255,6 +268,24 @@ Mark Mandel		24/11/2008		Created
 <cffunction name="setDefinitionPath" access="private" returntype="void" output="false">
 	<cfargument name="DefinitionPath" type="string" required="true">
 	<cfset instance.DefinitionPath = arguments.DefinitionPath />
+</cffunction>
+
+<cffunction name="getCommentStart" access="private" returntype="string" output="false">
+	<cfreturn instance.commentStart />
+</cffunction>
+
+<cffunction name="setCommentStart" access="private" returntype="void" output="false">
+	<cfargument name="commentStart" type="string" required="true">
+	<cfset instance.commentStart = arguments.commentStart />
+</cffunction>
+
+<cffunction name="getCommentEnd" access="private" returntype="string" output="false">
+	<cfreturn instance.commentEnd />
+</cffunction>
+
+<cffunction name="setCommentEnd" access="private" returntype="void" output="false">
+	<cfargument name="commentEnd" type="string" required="true">
+	<cfset instance.commentEnd = arguments.commentEnd />
 </cffunction>
 
 </cfcomponent>

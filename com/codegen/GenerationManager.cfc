@@ -36,11 +36,11 @@ Mark Mandel		24/11/2008		Created
 	</cfscript>
 </cffunction>
 
-<cffunction name="createDecoratorGenerator" hint="shorthand to get a Decorator Generator" access="public" returntype="transfer.com.codegen.generator.decorator.Generator" output="false">
+<cffunction name="createDecoratorGenerator" hint="shorthand to create('transfer.com.codegen.generator.decorator.Generator')" access="public" returntype="transfer.com.codegen.generator.decorator.Generator" output="false">
 	<cfreturn create("transfer.com.codegen.generator.decorator.Generator") />
 </cffunction>
 
-<cffunction name="create" hint="creates a code generator with the given class name, and passes in the configReader, and the objectManager"
+<cffunction name="create" hint="creates a code generator with the given class name, and passes in the configReader, the objectManager, and the definitionPath"
 			access="public" returntype="transfer.com.codegen.generator.AbstractBaseGenerator" output="false">
 			<cfargument name="className" hint="the classname of the generator" type="string" required="Yes">
 	<cfreturn createObject("component", arguments.className).init(getConfigReader(), getObjectManager(), getDefinitionPath()) />

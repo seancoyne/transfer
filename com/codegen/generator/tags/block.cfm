@@ -27,9 +27,10 @@ Mark Mandel		25/11/2008		Created
 </cfif>
 
 <cfif thisTag.ExecutionMode eq "start">
-	<cfset block = "<!" & "--- :::" & attributes.name & "::: ---" & ">"/>
+	<!--- have to go directly to the variable, as calling the method does weird things --->
+	<cfset block = caller.instance.commentStart & " :::" & attributes.name & "::: " & caller.instance.commentEnd/>
 <cfelse>
-	<cfset block = "<!" & "--- :::/" & attributes.name & "::: ---" & ">"/>
+	<cfset block = caller.instance.commentStart & " :::/" & attributes.name & "::: " & caller.instance.commentEnd/>
 	<cfset parentData = getBaseTagData("cf_template") />
 
 	<cfset data = StructCopy(attributes) />
