@@ -3,13 +3,28 @@
 
 {{gen:block name="cfproperty"}}
 {{gen:compact}}
-{{cfset primaryKey = state.object.getPrimaryKey()}}
-	<cfproperty name="$$primaryKey.getName()$$" type="$$primaryKey.getType()$$">
-{{cfset iterator = state.object.getPropertyIterator() /}}
-{{cfloop condition="$$iterator.hasNext()$$"}}
-	{{cfset property = iterator.next() /}}
-	<cfproperty name="$$property.getName()$$" type="$$property.getType()$$">
+{{cfset local.primaryKey = state.object.getPrimaryKey()}}
+	<!--- primary key --->
+	<cfproperty name="$$local.primaryKey.getName()$$" type="$$local.primaryKey.getType()$$">
+	<!--- properties --->
+{{cfset local.iterator = state.object.getPropertyIterator() /}}
+{{cfloop condition="$$local.iterator.hasNext()$$"}}
+	{{cfset local.property = local.iterator.next() /}}
+	<cfproperty name="$$local.property.getName()$$" type="$$local.property.getType()$$">
 {{/cfloop}}
+
+{{cfif state.object.hasManyToOne()}}
+	<!--- manytooone --->
+	{{cfset local.iterator = state.object.getManyToOneIterator() /}}
+
+	{{cfloop condition="$$local.iterator.hasNext()$$"}}
+		{{cfset local.manytoone = local.iterator.next() /}}
+		{{cfset local.composite = local.manytoone.getLink().getToObject() /}}
+		{{cfif local.composite.hasDecorator()}}
+	<cfproperty name="$$local.manytoone.getName()$$" type="$$local.composite.getDecorator()$$">
+		{{/cfif}}
+	{{/cfloop}}
+{{/cfif}}
 
 {{/gen:compact}}
 {{/gen:block}}

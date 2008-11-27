@@ -41,6 +41,36 @@ Mark Mandel		21/11/2008		Created
 	<cfreturn arguments.transfer />
 </cffunction>
 
+<cffunction name="create" hint="remote proxy for Transfer.create()" access="remote" returntype="transfer.com.TransferObject" output="false">
+	<cfargument name="transfer" hint="The transfer to create" type="transfer.com.TransferObject" required="Yes">
+
+	<cfset arguments.transfer = getVOConverter().convert(arguments.transfer) />
+
+	<cfset getTransfer().create(arguments.transfer) />
+
+	<cfreturn arguments.transfer />
+</cffunction>
+
+<cffunction name="update" hint="remote proxy for Transfer.update()" access="remote" returntype="transfer.com.TransferObject" output="false">
+	<cfargument name="transfer" hint="The transfer to update" type="transfer.com.TransferObject" required="Yes">
+
+	<cfset arguments.transfer = getVOConverter().convert(arguments.transfer) />
+
+	<cfset getTransfer().update(arguments.transfer) />
+
+	<cfreturn arguments.transfer />
+</cffunction>
+
+<cffunction name="delete" hint="remote proxy for Transfer.delete()" access="remote" returntype="transfer.com.TransferObject" output="false">
+	<cfargument name="transfer" hint="The transfer to delete" type="transfer.com.TransferObject" required="Yes">
+
+	<cfset arguments.transfer = getVOConverter().convert(arguments.transfer) />
+
+	<cfset getTransfer().delete(arguments.transfer) />
+
+	<cfreturn arguments.transfer />
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
