@@ -254,8 +254,8 @@ Mark Mandel		05/04/2006		Created
 			arguments.buffer.writeLine("composite = arguments.memento[counter];");
 
 			//set the parent on the way through. Only used for onetomany, but could be useful for other things (?)
-			//arguments.buffer.writeLine("composite.parent"& arguments.object.getObjectName() &"_transferObject = getThisObject();");
-			arguments.buffer.writeLine('StructInsert(composite, "parent'& arguments.object.getObjectName() &'_transferObject", getThisObject());');
+			//set it to overwrite = true, as a child could be used in more than 1 parent.
+			arguments.buffer.writeLine('StructInsert(composite, "parent'& arguments.object.getObjectName() &'_transferObject", getThisObject(), true);');
 			arguments.buffer.writeLine("item = getComposite("& q() & arguments.linkObject.getClassName()& q() &", composite, "& q() & arguments.linkObject.getPrimaryKey().getName() & q() &");");
 
 			//add to the collection, depending on if its a struct of a array
