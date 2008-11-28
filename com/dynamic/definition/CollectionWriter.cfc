@@ -47,7 +47,8 @@ Mark Mandel		05/04/2006		Created
 			manyToOne = iterator.next();
 
 			//get
-			arguments.buffer.writeCFFunctionOpen("get" & manyToOne.getName(), "public", "transfer.com.TransferObject", "Accessor for #manytoone.getName()#, #manytoone.getLink().getToObject().getClassName()#");
+			//return must be ANY for flex remoting
+			arguments.buffer.writeCFFunctionOpen("get" & manyToOne.getName(), "public", "any", "Accessor for #manytoone.getName()#, #manytoone.getLink().getToObject().getClassName()#");
 			arguments.buffer.cfscript(true);
 
 			//lazy loading
@@ -55,6 +56,12 @@ Mark Mandel		05/04/2006		Created
 
 			arguments.buffer.writeLine("if(NOT structKeyExists(instance, " & q() & manyToOne.getName() & q() & "))");
 			arguments.buffer.writeLine("{");
+				//if we're doing a remoting request, just return null
+				arguments.buffer.writeLine('if(CGI.CONTENT_TYPE eq "application/x-amf")');
+				arguments.buffer.writeLine("{");
+					arguments.buffer.writeLine('return;');
+				arguments.buffer.writeLine("}");
+
 			arguments.buffer.writeLine(	"throw("& q() &"ManyToOneNotSetException"& q() &","&
 										q() & "A ManyToOne TransferObject has not been initialised."& q() &","&
 										q() & "In TransferObject '"& arguments.object.getClassName() &"' manytoone '"& manytoone.getLink().getTo() &"' does not exist, when calling get"& manytoone.getName() &"()"& q() &");");

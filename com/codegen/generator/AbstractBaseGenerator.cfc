@@ -211,7 +211,7 @@ Mark Mandel		24/11/2008		Created
 		//do this very last, in case something goes wrong
 		reader.delete();
 
-		writer.write(buffer.toString());
+		writer.write(Trim(buffer.toString()));
 	</cfscript>
 </cffunction>
 

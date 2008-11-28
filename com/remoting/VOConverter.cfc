@@ -38,7 +38,7 @@ Mark Mandel		26/11/2008		Created
 	<cfargument name="convertEntireGraph" hint="if true, will convert all cfproperty values for the entire object graph. Otherwise, just converts this object."
 				type="boolean" required="false" default="false">
 	<cfscript>
-		var className = "";
+		var className = resolveVOTransferClassName(arguments.vo);
 		var meta = getMetaData(vo);
 		var object = 0;
 		var len = 0;
@@ -46,24 +46,20 @@ Mark Mandel		26/11/2008		Created
 		var property = 0;
 		var value = 0;
 		var args = 0;
-
-		if(StructKeyExists(meta, "transferAlias"))
-		{
-			className = meta.transferAlias;
-		}
-		else if(StructKeyExists(arguments.vo, "transferAlias"))
-		{
-			className = arguments.vo.transferAlias;
-		}
-
-		if(NOT Len(className))
-		{
-			createObject("component", "CannotDetermineTransferClassException").init(arguments.vo);
-		}
+		var composite = 0;
+		var compositeClass = 0;
 
 		object = getTransfer().getTransferMetaData(className);
 
-		transferObject = getTransfer().get(className, getVOPrimaryKey(arguments.vo, object));
+		if(voHasPrimaryKey(arguments.vo, object))
+		{
+			transferObject = getTransfer().get(className, getVOPrimaryKey(arguments.vo, object));
+			transferObject = transferObject.clone(); //take a clone to avoid multithread issues
+		}
+		else
+		{
+			transferObject = getTransfer().new(className);
+		}
 
 		if(StructKeyExists(meta, "properties"))
 		{
@@ -77,14 +73,31 @@ Mark Mandel		26/11/2008		Created
 					value = arguments.vo[property.name];
 					if(isSimpleValue(value))
 					{
-						args = StructNew();
-						args[property.name] = value;
-
-						getMethodInvoker().invokeMethod(transferObject, "set" & property.name, args);
+						invokeSetProperty(transferObject, property.name, value);
 					}
 					else
 					{
-						//TODO: do composition
+						if(isObject(value))
+						{
+							if(arguments.convertEntireGraph)
+							{
+								composite = convert(value, arguments.convertEntireGraph);
+							}
+							else
+							{
+								compositeClass = resolveVOTransferClassName(value);
+								composite = getTransfer().get(compositeClass, getVOPrimaryKey(value, getTransfer().getTransferMetaData(compositeClass)));
+								composite = composite.clone();
+							}
+
+							invokeSetProperty(transferObject, property.name, composite);
+						}
+						else if(isArray(value))
+						{
+						}
+						else if(isStruct(value))
+						{
+						}
 					}
 				}
 				else
@@ -98,7 +111,7 @@ Mark Mandel		26/11/2008		Created
 							getMethodInvoker().invokeMethod(transferObject, "clear" & property.name);
 						}
 					}
-					else if(Find(".", property.type))
+					else if(Find(".", property.type) OR NOT FindOneOf("string,boolean,guid,uuid,date,binary", property.type))
 					{
 						if(StructKeyExists(transferObject, "remove" & property.name))
 						{
@@ -126,6 +139,35 @@ Mark Mandel		26/11/2008		Created
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
+<cffunction name="invokeSetProperty" hint="inokes setting a property on a TO" access="private" returntype="void" output="false">
+	<cfargument name="transferObject" hint="the transfer object" type="transfer.com.TransferObject" required="Yes">
+	<cfargument name="property" hint="the name of the property" type="string" required="Yes">
+	<cfargument name="value" hint="the value to set" type="any" required="Yes">
+	<cfscript>
+		var meta = getMetaData(arguments.transferObject["set" & arguments.property]);
+	</cfscript>
+	<cfinvoke component="#arguments.transferObject#" method="set#arguments.property#">
+		<cfinvokeargument name="#meta.parameters[1].name#" value="#arguments.value#">
+	</cfinvoke>
+</cffunction>
+
+<cffunction name="voHasPrimaryKey" hint="checks to see if the VO has a primary key value" access="private" returntype="boolean" output="false">
+	<cfargument name="vo" hint="the vo object" type="any" required="Yes">
+	<cfargument name="object" hint="the object meta data" type="transfer.com.object.Object" required="Yes">
+	<cfscript>
+		var primaryKey = arguments.object.getPrimaryKey();
+
+		if(primaryKey.getIsComposite())
+		{
+			//TODO: do composite key support
+		}
+		else
+		{
+			return StructKeyExists(arguments.vo, primaryKey.getName());
+		}
+	</cfscript>
+</cffunction>
+
 <cffunction name="getVOPrimaryKey" hint="gets the primary key from a VO" access="private" returntype="any" output="false">
 	<cfargument name="vo" hint="the vo object" type="any" required="Yes">
 	<cfargument name="object" hint="the object meta data" type="transfer.com.object.Object" required="Yes">
@@ -141,6 +183,30 @@ Mark Mandel		26/11/2008		Created
 		{
 			return arguments.vo[primaryKey.getName()];
 		}
+	</cfscript>
+</cffunction>
+
+<cffunction name="resolveVOTransferClassName" hint="resolves the Transfer classname for VO" access="private" returntype="string" output="false">
+	<cfargument name="vo" hint="the vo object" type="any" required="Yes">
+	<cfscript>
+		var meta = getMetaData(arguments.vo);
+		var className = 0;
+
+		if(StructKeyExists(meta, "transferAlias"))
+		{
+			className = meta.transferAlias;
+		}
+		else if(StructKeyExists(arguments.vo, "transferAlias"))
+		{
+			className = arguments.vo.transferAlias;
+		}
+
+		if(NOT Len(className))
+		{
+			createObject("component", "CannotDetermineTransferClassException").init(arguments.vo);
+		}
+
+		return className;
 	</cfscript>
 </cffunction>
 

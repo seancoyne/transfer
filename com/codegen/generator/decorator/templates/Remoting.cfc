@@ -3,9 +3,13 @@
 
 {{gen:block name="cfproperty"}}
 {{gen:compact}}
+
 {{cfset local.primaryKey = state.object.getPrimaryKey()}}
+{{cfif NOT local.primaryKey.getIsComposite()}}
 	<!--- primary key --->
 	<cfproperty name="$$local.primaryKey.getName()$$" type="$$local.primaryKey.getType()$$">
+{{/cfif}}
+
 	<!--- properties --->
 {{cfset local.iterator = state.object.getPropertyIterator() /}}
 {{cfloop condition="$$local.iterator.hasNext()$$"}}
