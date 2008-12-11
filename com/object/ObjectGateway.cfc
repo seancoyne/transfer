@@ -124,16 +124,6 @@ Mark Mandel		11/10/2005		Created
 	</cfscript>
 </cffunction>
 
-<cffunction name="_dump">
-	<cfargument name="s">
-	<cfargument name="abort" default="true">
-	<cfset var g = "">
-		<cfdump var="#arguments.s#">
-		<cfif arguments.abort>
-		<cfabort>
-		</cfif>
-</cffunction>
-
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
@@ -216,9 +206,12 @@ Mark Mandel		11/10/2005		Created
 	<cfargument name="xObject" hint="xml data for an object" type="any" required="Yes">
 	<cfargument name="className" hint="the classname for the onetomany to have to point to" type="string" required="Yes">
 	<cfscript>
+		var aOneToMany = 0;
+
 		if(StructKeyExists(arguments.xObject, "onetomany") AND Compare(arguments.xObject.onetomany.link.xmlAttributes.to, arguments.className) eq 0)
 		{
-			return true;
+			aOneToMany = xmlSearch(xmlParse(toString(arguments.xObject)),"//onetomany[link[@to='#arguments.className#']]");
+			return ArrayLen(aOneToMany);
 		}
 
 		return false;
@@ -227,16 +220,13 @@ Mark Mandel		11/10/2005		Created
 
 <cffunction name="manytoManyFilter" hint="the many to many filter" access="private" returntype="boolean" output="false">
 	<cfargument name="xObject" hint="xml data for an object" type="any" required="Yes">
-	<cfargument name="className" hint="the classname for the onetomany to have to point to" type="string" required="Yes">
+	<cfargument name="className" hint="the classname for the manytomany to have to point to" type="string" required="Yes">
 	<cfscript>
+		var aManyToMany = 0;
 		if(StructKeyExists(arguments.xObject, "manytomany"))
 		{
-			if(Compare(arguments.xObject.manytomany.link[1].xmlAttributes.to, arguments.className) eq 0
-			 	OR
-			 	Compare(arguments.xObject.manytomany.link[2].xmlAttributes.to, arguments.className) eq 0)
-			 {
-			 	return true;
-			 }
+			aManyToMany = xmlSearch(xmlParse(toString(arguments.xObject)),"//manytomany[link[@to='#arguments.className#']]");
+			return ArrayLen(aManyToMany);
 		}
 
 		return false;
