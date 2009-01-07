@@ -55,16 +55,6 @@ Mark Mandel		24/11/2008		Created
 	</cfscript>
 </cffunction>
 
-<cffunction name="_dump">
-	<cfargument name="s">
-	<cfargument name="abort" default="true">
-	<cfset var g = "">
-		<cfdump var="#arguments.s#">
-		<cfif arguments.abort>
-		<cfabort>
-		</cfif>
-</cffunction>
-
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->

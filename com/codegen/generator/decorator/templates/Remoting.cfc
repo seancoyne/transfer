@@ -30,6 +30,38 @@
 	{{/cfloop}}
 {{/cfif}}
 
+{{cfif state.object.hasParentOneToMany()}}
+	{{cfset local.iterator = state.object.getParentOneToManyIterator() /}}
+	<!--- parent one to many --->
+	{{cfloop condition="$$local.iterator.hasNext()$$"}}
+		{{cfset local.parent = local.iterator.next()}}
+		{{cfset local.composite = local.parent.getLink().getToObject()}}
+
+		{{cfif local.composite.hasDecorator()}}
+	<cfproperty name="parent$$local.composite.getObjectName()$$" type="$$local.composite.getDecorator()$$">
+		{{/cfif}}
+	{{/cfloop}}
+
+{{/cfif}}
+
+{{cfif state.object.hasOneToMany()}}
+	{{cfset local.iterator = state.object.getOneToManyIterator() /}}
+	<!--- one to many --->
+	{{cfloop condition="$$local.iterator.hasNext()$$"}}
+		{{cfset local.onetomany = local.iterator.next()}}
+		{{cfset local.composite = local.onetomany.getLink().getToObject()}}
+
+		{{cfif local.composite.hasDecorator()}}
+			{{cfif 	local.onetomany.getCollection().getType() eq "array"}}
+	<cfproperty name="$$local.onetomany.getName()$$Array" type="$$local.composite.getDecorator()$$[]">
+			{{cfelse}}
+	<cfproperty name="$$local.onetomany.getName()$$Struct" type="struct">
+			{{/cfif}}
+		{{/cfif}}
+	{{/cfloop}}
+
+{{/cfif}}
+
 {{/gen:compact}}
 {{/gen:block}}
 

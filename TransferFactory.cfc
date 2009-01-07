@@ -65,7 +65,6 @@ Mark Mandel		27/06/2005		Created
 			dsDAOArgs.configuration = arguments.configuration;
 		}
 
-
 		datasourceDAO = createObject("component", "transfer.com.sql.DatasourceDAO").init(argumentCollection=dsDAOArgs);
 
 		setDatasource(dataSourceDAO.getDataSource());
@@ -118,7 +117,7 @@ Mark Mandel		27/06/2005		Created
 </cffunction>
 
 <cffunction name="getVersion" access="public" hint="Returns the version number" returntype="string" output="false">
-	<cfreturn "1.1.c"/>
+	<cfreturn "1.1.d"/>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->

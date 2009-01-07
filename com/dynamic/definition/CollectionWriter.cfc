@@ -170,11 +170,18 @@ Mark Mandel		05/04/2006		Created
 			parentObject = getObjectManager().getObject(parentOneToMany.getLink().getTo());
 			primaryKey = parentObject.getPrimaryKey();
 
-			arguments.buffer.writeCFFunctionOpen("getParent" & parentObject.getObjectName(), "public", "transfer.com.TransferObject", "Access for parent #arguments.object.getClassName()#");
+			arguments.buffer.writeCFFunctionOpen("getParent" & parentObject.getObjectName(), "public", "any", "Access for parent #arguments.object.getClassName()#");
 			arguments.buffer.cfscript(true);
 			arguments.buffer.writeLazyLoad("Parent" & parentObject.getObjectName());
 			arguments.buffer.writeLine("if(NOT structKeyExists(instance, " & q() & parentObject.getObjectName() & q() & "))");
 			arguments.buffer.writeLine("{");
+
+				//if we're doing a remoting request, just return null
+				arguments.buffer.writeLine('if(CGI.CONTENT_TYPE eq "application/x-amf")');
+				arguments.buffer.writeLine("{");
+					arguments.buffer.writeLine('return;');
+				arguments.buffer.writeLine("}");
+
 			arguments.buffer.writeLine(	"throw("& q() &"OneToManyParentNotSetException"& q() &","&
 										q() & "A OneToMany Parent TransferObject has not been initialised."& q() &","&
 										q() & "In TransferObject '"& arguments.object.getClassName() &"' onetomany parent '"& parentObject.getClassName() &"' does not exist, when calling getParent"& parentObject.getObjectName() &"()"& q() &");");

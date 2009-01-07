@@ -208,7 +208,7 @@ Mark Mandel		11/10/2005		Created
 	<cfscript>
 		var aOneToMany = 0;
 
-		if(StructKeyExists(arguments.xObject, "onetomany") AND Compare(arguments.xObject.onetomany.link.xmlAttributes.to, arguments.className) eq 0)
+		if(StructKeyExists(arguments.xObject, "onetomany"))
 		{
 			aOneToMany = xmlSearch(xmlParse(toString(arguments.xObject)),"//onetomany[link[@to='#arguments.className#']]");
 			return ArrayLen(aOneToMany);
