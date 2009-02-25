@@ -24,8 +24,8 @@ Mark Mandel		24/11/2008		Created
 <cfscript>
 	instance = StructNew();
 
-	instance.static.tagOpen = chr(2234);
-	instance.static.tagClose = chr(2235);
+	instance.static.tagOpen = createUUID();
+	instance.static.tagClose = createUUID();
 	instance.static.escapeHash = "$$";
 	instance.static.escapeTagOpen = "{{";
 	instance.static.escapeTagClose = "}}";

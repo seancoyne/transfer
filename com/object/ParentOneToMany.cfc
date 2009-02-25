@@ -44,7 +44,7 @@ Mark Mandel		01/09/2006		Created
 	</cfscript>
 </cffunction>
 
-<cffunction name="getLink" access="public" returntype="link" output="false">
+<cffunction name="getLink" access="public" returntype="Link" output="false">
 	<cfreturn instance.Link />
 </cffunction>
 
@@ -57,7 +57,7 @@ Mark Mandel		01/09/2006		Created
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
 <cffunction name="setLink" access="private" returntype="void" output="false">
-	<cfargument name="Link" type="link" required="true">
+	<cfargument name="link" type="Link" required="true">
 	<cfset instance.Link = arguments.Link />
 </cffunction>
 

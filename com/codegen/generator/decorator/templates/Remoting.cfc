@@ -14,9 +14,10 @@
 {{cfset local.iterator = state.object.getPropertyIterator() /}}
 {{cfloop condition="$$local.iterator.hasNext()$$"}}
 	{{cfset local.property = local.iterator.next() /}}
-	<cfproperty name="$$local.property.getName()$$" type="$$local.property.getType()$$">
+	<cfproperty name="$$local.property.getName()$$" type="$$local.property.getType()$$"{{cfif local.property.getIsNullable()}} nullvalue="$$local.property.getNullValue()$$"{{/cfif}}>
 {{/cfloop}}
 
+{{!---
 {{cfif state.object.hasManyToOne()}}
 	<!--- manytooone --->
 	{{cfset local.iterator = state.object.getManyToOneIterator() /}}
@@ -60,7 +61,7 @@
 		{{/cfif}}
 	{{/cfloop}}
 
-{{/cfif}}
+{{/cfif}} ---}}
 
 {{/gen:compact}}
 {{/gen:block}}
