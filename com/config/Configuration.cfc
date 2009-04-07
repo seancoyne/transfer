@@ -26,6 +26,8 @@ Mark Mandel		14/09/2006		Created
 	<cfargument name="datasourcePath" hint="The path to datasource xml file. Should be a relative path, i.e. /myapp/configs/datasource.xml" type="string" required="no" default="">
 	<cfargument name="configPath" hint="The path to the config xml file, Should be a relative path, i.e. /myapp/configs/transfer.xml" type="string" required="no" default="">
 	<cfargument name="definitionPath" hint="directory to write the defition files. Should be from root, i.e. /myapp/definitions/, as it is used for cfinclude" default="/transfer/resources/definitions/" type="string" required="No">
+	<cfargument name="enableRemotingSupport" hint="enables remoting support by storing this object in the application scope" type="boolean" required="No" default="false">
+	<cfargument name="remotingName" hint="the name for this remoting TransferFactory, only required if you are using 2 Factories in an application" type="string" required="No">
 	<cfscript>
 		variables.instance = StructNew();
 
@@ -36,6 +38,12 @@ Mark Mandel		14/09/2006		Created
 		setDefinitionPath(arguments.definitionPath);
 		setDatasourceUserName("");
 		setDatasourcePassword("");
+		setEnableRemotingSupport(arguments.enableRemotingSupport);
+
+		if(StructKeyExists(arguments, "remotingName"))
+		{
+			setRemotingName(arguments.remotingName);
+		}
 
 		return this;
 	</cfscript>
@@ -101,9 +109,10 @@ Mark Mandel		14/09/2006		Created
 	<cfreturn instance.datasourceName />
 </cffunction>
 
-<cffunction name="setDataSourceName" access="public" returntype="void" output="false">
+<cffunction name="setDataSourceName" access="public" returntype="Configuration" output="false">
 	<cfargument name="datasourceName" type="string" required="true">
 	<cfset instance.datasourceName = arguments.datasourceName />
+	<cfreturn this />
 </cffunction>
 
 <cffunction name="hasDataSourceName" hint="whether this config object has a datasource name" access="public" returntype="boolean" output="false">
@@ -114,20 +123,45 @@ Mark Mandel		14/09/2006		Created
 	<cfreturn instance.datasourceUserName />
 </cffunction>
 
-<cffunction name="setDatasourceUserName" access="public" returntype="void" output="false">
+<cffunction name="setDatasourceUserName" access="public" returntype="Configuration" output="false">
 	<cfargument name="datasourceUserName" type="string" required="true">
 	<cfset instance.datasourceUserName = arguments.datasourceUserName />
+	<cfreturn this />
 </cffunction>
 
 <cffunction name="getDatasourcePassword" access="public" returntype="string" output="false">
 	<cfreturn instance.datasourcePassword />
 </cffunction>
 
-<cffunction name="setDatasourcePassword" access="public" returntype="void" output="false">
+<cffunction name="setDatasourcePassword" access="public" returntype="Configuration" output="false">
 	<cfargument name="datasourcePassword" type="string" required="true">
 	<cfset instance.datasourcePassword = arguments.datasourcePassword />
+	<cfreturn this />
 </cffunction>
 
+<cffunction name="getEnableRemotingSupport" access="public" returntype="boolean" output="false">
+	<cfreturn instance.enableRemotingSupport />
+</cffunction>
+
+<cffunction name="setEnableRemotingSupport" access="public" returntype="Configuration" output="false">
+	<cfargument name="enableRemotingSupport" type="boolean" required="true">
+	<cfset instance.enableRemotingSupport = arguments.enableRemotingSupport />
+	<cfreturn this />
+</cffunction>
+
+<cffunction name="getRemotingName" access="public" returntype="string" output="false">
+	<cfreturn instance.remotingName />
+</cffunction>
+
+<cffunction name="setRemotingName" access="public" returntype="Configuration" output="false">
+	<cfargument name="remotingName" type="string" required="true">
+	<cfset instance.remotingName = arguments.remotingName />
+	<cfreturn this />
+</cffunction>
+
+<cffunction name="hasRemotingName" hint="if a remoting name has been configured" access="public" returntype="boolean" output="false">
+	<cfreturn StructKeyExists(instance, "remotingName") />
+</cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
 

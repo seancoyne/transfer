@@ -30,6 +30,8 @@ Mark Mandel		27/06/2005		Created
 	<cfargument name="datasourcePath" hint="The path to datasource xml file. Should be a relative path, i.e. /myapp/configs/datasource.xml" type="string" required="No">
 	<cfargument name="configPath" hint="The path to the config xml file, Should be a relative path, i.e. /myapp/configs/transfer.xml" type="string" required="No">
 	<cfargument name="definitionPath" hint="directory to write the defition files. Should be from root, i.e. /myapp/definitions/, as it is used for cfinclude" default="/transfer/resources/definitions/" type="string" required="No">
+	<cfargument name="enableRemotingSupport" hint="enables remoting support by storing this object in the application scope" type="boolean" required="No" default="false">
+	<cfargument name="remotingName" hint="the name for this remoting TransferFactory, only required if you are using 2 Factories in an application" type="string" required="No">
 	<cfargument name="configuration" hint="A configuration bean.  If you supply one, you don't need to provide any other arguments" type="transfer.com.config.Configuration" required="No">
 
 	<cfscript>
@@ -53,6 +55,12 @@ Mark Mandel		27/06/2005		Created
 			arguments.datasourcePath = arguments.configuration.getDataSourcePath();
 			arguments.configPath = arguments.configuration.getConfigPath();
 			arguments.definitionPath = arguments.configuration.getDefinitionPath();
+			arguments.enableRemotingSupport = arguments.configuration.getEnableRemotingSupport();
+
+			if(arguments.configuration.hasRemotingName())
+			{
+				arguments.remotingName = arguments.configuration.getRemotingName();
+			}
 		}
 
 		//Datasource first
@@ -95,6 +103,9 @@ Mark Mandel		27/06/2005		Created
 		setTransfer(createObject("component", "transfer.com.Transfer").init(factory));
 		setFactory(factory);
 
+		//do enabling of remoting if need be
+		enableRemoting(argumentCollection=arguments);
+
 		return this;
 	</cfscript>
 </cffunction>
@@ -117,7 +128,7 @@ Mark Mandel		27/06/2005		Created
 </cffunction>
 
 <cffunction name="getVersion" access="public" hint="Returns the version number" returntype="string" output="false">
-	<cfreturn "1.1.d"/>
+	<cfreturn "1.1.e"/>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
@@ -141,6 +152,16 @@ Mark Mandel		27/06/2005		Created
 				arguments.configReader.addXML(expandPath(configState.configPath), configState.overwrite);
 			}
 		}
+	</cfscript>
+</cffunction>
+
+<cffunction name="enableRemoting" hint="Whether or not to enable remoting" access="private" returntype="any" output="false">
+	<cfargument name="enableRemotingSupport" hint="enables remoting support by storing this object in the application scope" type="boolean" required="Yes">
+	<cfargument name="remotingName" hint="the name for this remoting TransferFactory, only required if you are using 2 Factories in an application" type="string" required="No">
+	<cfscript>
+		var remoteFactory = createObject("component", "transfer.com.remoting.RemoteFactory").init(argumentCollection=arguments);
+
+		remoteFactory.storeTransferFactory(this);
 	</cfscript>
 </cffunction>
 

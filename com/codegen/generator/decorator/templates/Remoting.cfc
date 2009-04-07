@@ -1,5 +1,6 @@
-<cfcomponent output="false" hint="Decorator for $$state.object.getClassName()$$" alias="$$state.object.getDecorator()$$"
-			 transferAlias="$$state.object.getClassName()$$" extends="transfer.com.TransferDecorator">
+<cfcomponent output="false" hint="Decorator for $$state.object.getClassName()$$"
+			 alias="transfer:$$state.object.getClassName()$$"
+			 extends="transfer.com.TransferDecorator">
 
 {{gen:block name="cfproperty"}}
 {{gen:compact}}

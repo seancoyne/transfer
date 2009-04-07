@@ -392,7 +392,7 @@ Mark Mandel		11/07/2005		Created
 	</cfscript>
 </cffunction>
 
-<cffunction name="visitObjectGraph" hint="visit each of the objects in the graph, calling 'visit({transfer:transferObject, visitArgs1...})' on the visitor for each TransferObject in the graph" access="public" returntype="void" output="false">
+<cffunction name="visitObjectGraph" hint="visit each of the objects in the graph, calling '##visitingMethod##({transfer:transferObject, visitArgs1...})' on the visitor for each TransferObject in the graph" access="public" returntype="void" output="false">
 	<cfargument name="transfer" hint="the starting object to visit" type="transfer.com.TransferObject" required="Yes">
 	<cfargument name="visitor" hint="the visitor object" type="any" required="Yes">
 	<cfargument name="visitingMethod" hint="the name of the method that is being visited" type="string" required="Yes">

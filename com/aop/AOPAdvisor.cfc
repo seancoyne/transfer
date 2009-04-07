@@ -95,7 +95,8 @@ Mark Mandel		20/02/2008		Created
 	<cfscript>
 		var buffer = createObject("component", "transfer.com.dynamic.definition.DefinitionBuffer").init();
 		var meta = getMetaData(arguments.pointcut);
-		var fileName = getMetaData(arguments.component).name & "." & meta.name & ".aop.transfer";
+		//put in the createUUID call, so as to ensure that clusters sharing the same dir don't crash into each other
+		var fileName = getMetaData(arguments.component).name & "." & meta.name & "." & createUUID() & ".aop.transfer";
 		var fileWriter = createObject("component", "transfer.com.io.FileWriter").init(expandPath(getDefinitionPath()) & fileName);
 
 		buffer.writeCopyOpenFunction(arguments.pointcut, "Advice for AOP intercepted method");
