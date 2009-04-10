@@ -118,7 +118,6 @@ Mark Mandel		27/06/2005		Created
 			break;
 
 			default:
-				connection.close();
 				throw("UnsupportedDatabaseException", "An unsupported database has been attempted to be used", "The database of type '#db#' is currently not supported by Transfer");
 			break;
 		}
