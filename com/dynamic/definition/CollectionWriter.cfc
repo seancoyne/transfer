@@ -208,7 +208,10 @@ Mark Mandel		05/04/2006		Created
 
 					arguments.buffer.writeLine("instance." & parentObject.getObjectName() & " = arguments.transfer;");
 					arguments.buffer.writeSetIsLoaded("Parent" & parentObject.getObjectName(), true);
-					arguments.buffer.writeSetIsDirty(true);
+					arguments.buffer.writeLine("if(NOT arguments.loadingFromMemento)");
+					arguments.buffer.writeLine("{");
+						arguments.buffer.writeSetIsDirty(true);
+					arguments.buffer.writeLine("}");
 				arguments.buffer.writeLine("}");
 				arguments.buffer.writeLine("else if(NOT getParent" & parentObject.getObjectName() & "().sameTransfer(arguments.transfer))");
 				arguments.buffer.writeLine("{");

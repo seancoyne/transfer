@@ -490,7 +490,6 @@ Mark Mandel		05/04/2006		Created
 					arguments.buffer.writeLine("composite = composite.clone();");
 				arguments.buffer.writeLine("}");
 
-				arguments.buffer.writeSetIsLoaded("Parent" & arguments.parentObject.getObjectName(), true);
 				arguments.buffer.writeLine("if(composite.getIsPersisted())");
 				arguments.buffer.writeLine("{");
 				arguments.buffer.writeLine("setParent" & arguments.parentObject.getObjectName() & "(composite, false, true);");
@@ -507,6 +506,8 @@ Mark Mandel		05/04/2006		Created
 			arguments.buffer.writeLine("}");
 
 		arguments.buffer.writeLine("}");
+
+		//arguments.buffer.writeSetIsLoaded("Parent" & arguments.parentObject.getObjectName(), true);
 
 		arguments.buffer.cfscript(false);
 		arguments.buffer.writeCFFunctionClose();
