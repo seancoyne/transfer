@@ -8,7 +8,7 @@
 {{cfset local.primaryKey = state.object.getPrimaryKey()}}
 {{cfif NOT local.primaryKey.getIsComposite()}}
 	<!--- primary key --->
-	<cfproperty name="$$local.primaryKey.getName()$$" type="$$local.primaryKey.getType()$$">
+	<cfproperty name="$$local.primaryKey.getName()$$" type="$$local.primaryKey.getType()$$" remoteset="false">
 {{/cfif}}
 
 	<!--- properties --->
