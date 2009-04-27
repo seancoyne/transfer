@@ -18,7 +18,6 @@
 	<cfproperty name="$$local.property.getName()$$" type="$$local.property.getType()$$"{{cfif local.property.getIsNullable()}} nullvalue="$$local.property.getNullValue()$$"{{/cfif}}>
 {{/cfloop}}
 
-{{!---
 {{cfif state.object.hasManyToOne()}}
 	<!--- manytooone --->
 	{{cfset local.iterator = state.object.getManyToOneIterator() /}}
@@ -27,11 +26,14 @@
 		{{cfset local.manytoone = local.iterator.next() /}}
 		{{cfset local.composite = local.manytoone.getLink().getToObject() /}}
 		{{cfif local.composite.hasDecorator()}}
-	<cfproperty name="$$local.manytoone.getName()$$" type="$$local.composite.getDecorator()$$">
+	<cfproperty name="$$local.manytoone.getName()$$" type="$$local.composite.getDecorator()$$"
+				nullmethod="remove$$local.manytoone.getName()$$"
+				lazy="$$local.manytoone.getIsLazy()$$">
 		{{/cfif}}
 	{{/cfloop}}
 {{/cfif}}
 
+{{!---
 {{cfif state.object.hasParentOneToMany()}}
 	{{cfset local.iterator = state.object.getParentOneToManyIterator() /}}
 	<!--- parent one to many --->
