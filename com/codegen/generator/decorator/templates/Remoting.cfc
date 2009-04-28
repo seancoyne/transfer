@@ -33,7 +33,6 @@
 	{{/cfloop}}
 {{/cfif}}
 
-{{!---
 {{cfif state.object.hasParentOneToMany()}}
 	{{cfset local.iterator = state.object.getParentOneToManyIterator() /}}
 	<!--- parent one to many --->
@@ -42,7 +41,10 @@
 		{{cfset local.composite = local.parent.getLink().getToObject()}}
 
 		{{cfif local.composite.hasDecorator()}}
-	<cfproperty name="parent$$local.composite.getObjectName()$$" type="$$local.composite.getDecorator()$$">
+	<cfproperty name="parent$$local.composite.getObjectName()$$" type="$$local.composite.getDecorator()$$"
+				nullmethod="removeParent$$local.composite.getObjectName()$$"
+				lazy="true"
+				>
 		{{/cfif}}
 	{{/cfloop}}
 
@@ -57,14 +59,16 @@
 
 		{{cfif local.composite.hasDecorator()}}
 			{{cfif 	local.onetomany.getCollection().getType() eq "array"}}
-	<cfproperty name="$$local.onetomany.getName()$$Array" type="$$local.composite.getDecorator()$$[]">
+	<cfproperty name="$$local.onetomany.getName()$$Array" type="$$local.composite.getDecorator()$$[]"
+				lazy="$$local.onetomany.getIsLazy()$$">
 			{{cfelse}}
-	<cfproperty name="$$local.onetomany.getName()$$Struct" type="struct">
+	<cfproperty name="$$local.onetomany.getName()$$Struct" type="struct"
+				lazy="$$local.onetomany.getIsLazy()$$">
 			{{/cfif}}
 		{{/cfif}}
 	{{/cfloop}}
 
-{{/cfif}} ---}}
+{{/cfif}}
 
 {{/gen:compact}}
 {{/gen:block}}
