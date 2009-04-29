@@ -60,10 +60,14 @@
 		{{cfif local.composite.hasDecorator()}}
 			{{cfif 	local.onetomany.getCollection().getType() eq "array"}}
 	<cfproperty name="$$local.onetomany.getName()$$Array" type="$$local.composite.getDecorator()$$[]"
-				lazy="$$local.onetomany.getIsLazy()$$">
+				lazy="$$local.onetomany.getIsLazy()$$"
+				remoteset="false"
+				>
 			{{cfelse}}
 	<cfproperty name="$$local.onetomany.getName()$$Struct" type="struct"
-				lazy="$$local.onetomany.getIsLazy()$$">
+				lazy="$$local.onetomany.getIsLazy()$$"
+				remoteset="false"
+				>
 			{{/cfif}}
 		{{/cfif}}
 	{{/cfloop}}
