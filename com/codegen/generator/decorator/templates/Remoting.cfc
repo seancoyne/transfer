@@ -74,6 +74,28 @@
 
 {{/cfif}}
 
+{{cfif state.object.hasManyToMany()}}
+	{{cfset local.iterator = state.object.getManytoManyIterator() /}}
+	<!--- many to many --->
+	{{cfloop condition="$$local.iterator.hasNext()$$"}}
+		{{cfset local.manytomany = local.iterator.next()}}
+		{{cfset local.composite = local.manytomany.getLinkTo().getToObject()}}
+
+		{{cfif local.composite.hasDecorator()}}
+			{{cfif 	local.manytomany.getCollection().getType() eq "array"}}
+	<cfproperty name="$$local.manytomany.getName()$$Array" type="$$local.composite.getDecorator()$$[]"
+				lazy="$$local.manytomany.getIsLazy()$$"
+				>
+			{{cfelse}}
+	<cfproperty name="$$local.manytomany.getName()$$Struct" type="struct"
+				lazy="$$local.manytomany.getIsLazy()$$"
+				>
+			{{/cfif}}
+		{{/cfif}}
+
+	{{/cfloop}}
+{{/cfif}}
+
 {{/gen:compact}}
 {{/gen:block}}
 

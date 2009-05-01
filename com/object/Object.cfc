@@ -445,8 +445,27 @@ Mark Mandel		11/07/2005		Created
 	</cfscript>
 </cffunction>
 
+<cffunction name="containsManyToMany" hint="Whether or not this object has a given manytomany of a given name" access="public" returntype="boolean" output="false">
+	<cfargument name="name" hint="The name of the manytomany" type="string" required="Yes">
+	<cfscript>
+		var iterator = getManyToManyIterator();
+		var manytomany = 0;
+
+		while(iterator.hasNext())
+		{
+			manytomany = iterator.next();
+			if(manytomany.getName() eq arguments.name)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	</cfscript>
+</cffunction>
+
 <cffunction name="getManyToManyByName" hint="Gets a ManyToMany by name. Throws ManyToManyNotFoundException if the ManyToMany doesn't exist" access="public" returntype="ManyToMany" output="false">
-	<cfargument name="name" hint="The name of the property" type="string" required="Yes">
+	<cfargument name="name" hint="The name of the manytomany" type="string" required="Yes">
 	<cfscript>
 		var iterator = getManyToManyIterator();
 		var manytomany = 0;
