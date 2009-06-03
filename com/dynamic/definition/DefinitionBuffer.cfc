@@ -248,7 +248,7 @@ Mark Mandel		05/04/2006		Created
 	<cfscript>
 		writeLine("if("& arguments.transferScript & ".getClassName() neq " &q() & arguments.className & q()& ")");
 		writeLine("{");
-		writeLine("throw("& q()& "InvalidTransferClassException"& q()& ","& q()& "The supplied Transfer class was not the one specified in the configuration file "& q()& ","& q()& "The Transfer class of '##"& arguments.transferScript &".getClassName()##' does not match the expected class of '" & arguments.className &"'" & q()& ");");
+		writeLine('createObject("component", "transfer.com.exception.InvalidTransferClassException").init('& arguments.transferScript &', "#arguments.className#");');
 		writeLine("}");
 	</cfscript>
 </cffunction>

@@ -94,13 +94,6 @@
 	</cfscript>
 </cffunction>
 
-<cffunction name="throw" access="private" hint="Throws an Exception" output="false">
-	<cfargument name="type" hint="The type of exception" type="string" required="Yes">
-	<cfargument name="message" hint="The message to accompany the exception" type="string" required="Yes">
-	<cfargument name="detail" type="string" hint="The detail message for the exception" required="No" default="">
-	<cfthrow type="#arguments.type#" message="#arguments.message#" detail="#arguments.detail#">
-</cffunction>
-
 <cffunction name="resolveErrorNear" hint="returns the word the error is near" access="private" returntype="string" output="false">
 	<cfargument name="tql" hint="the errornous tql" type="string" required="Yes">
 	<cfargument name="line" hint="the line number" type="numeric" required="Yes">

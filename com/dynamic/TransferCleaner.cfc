@@ -92,8 +92,7 @@ Mark Mandel		18/10/2005		Created
 		ArrayAppend(coreMethods, variables.setClassName);
 		ArrayAppend(coreMethods, variables.getTransfer);
 		ArrayAppend(coreMethods, variables.setTransfer);
-		ArrayAppend(coreMethods, variables.getComposite);
-		ArrayAppend(coreMethods, variables.throw);
+		ArrayAppend(coreMethods, variables.getComposite);		
 		ArrayAppend(coreMethods, variables.getUtility);
 		ArrayAppend(coreMethods, variables.setUtility);
 		ArrayAppend(coreMethods, this.getIsPersisted);

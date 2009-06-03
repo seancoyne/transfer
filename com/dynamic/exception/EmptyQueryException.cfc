@@ -1,13 +1,13 @@
 <!--- Document Information -----------------------------------------------------
 
-Title:      Exception.cfc
+Title:      EmptyQueryException.cfc
 
 Author:     Mark Mandel
 Email:      mark@compoundtheory.com
 
 Website:    http://www.compoundtheory.com
 
-Purpose:    throws a given exception
+Purpose:    Exception when the query provided to populate this Transfer object is empty
 
 Usage:      
 
@@ -19,15 +19,17 @@ Mark Mandel		03/06/2009		Created
 
 ------------------------------------------------------------------------------->
 
-<cfcomponent hint="Throws a given exception" output="false">
+<cfcomponent hint="Exception when the query provided to populate this Transfer object is empty" extends="transfer.com.exception.Exception">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="init" hint="Constructor" access="public" returntype="void" output="false">
-	<cfargument name="message" hint="the message to throw" type="string" required="Yes">
-	<cfargument name="detail" hint="the detail in which to throw" type="string" required="Yes">
 
-	<cfthrow type="#getMetaData(this).name#" message="#arguments.message#" detail="#detail#">
+	<cfscript>
+		super.init("The query provided to populate this transfer is empty.",
+					"It is likely the ID that has been selected for this query no longer exists"
+					);
+	</cfscript>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->

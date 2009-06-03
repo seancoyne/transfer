@@ -90,25 +90,6 @@ Mark Mandel		29/06/2005		Created
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
-<!--- <cffunction name="checkValidUDF" hint="Checks to see if the this is a valid UDF, otherwise throws a coldfusion.runtime.UDFMethod$InvalidArgumentTypeException" access="private" returntype="void" output="false">
-	<cfargument name="UDF" hint="UDF to be checked" type="any" required="Yes">
-
-	<cfscript>
-		//if(arguments.UDF.getClass().getSuperclass().getName() neq "coldfusion.runtime.UDFMethod")
-		if(NOT isCustomFunction(arguments.UDF))
-		{
-			throw("coldfusion.runtime.UDFMethod$InvalidArgumentTypeException", "The argument UDF passed to this function is not of type coldfusion.runtime.UDF.");
-		}
-	</cfscript>
-</cffunction> --->
-
-<cffunction name="throw" access="private" hint="Throws an Exception" output="false">
-	<cfargument name="type" hint="The type of exception" type="string" required="Yes">
-	<cfargument name="message" hint="The message to accompany the exception" type="string" required="Yes">
-	<cfargument name="detail" type="string" hint="The detail message for the exception" required="No" default="">
-		<cfthrow type="#arguments.type#" message="#arguments.message#" detail="#arguments.detail#">
-</cffunction>
-
 <!--- mixin --->
 <cffunction name="injectMethodMixin" hint="[mixin, removed at init] - injects a method into the CFC scope" access="public" returntype="void" output="false">
 	<cfargument name="UDF" hint="UDF to be checked" type="any" required="Yes">

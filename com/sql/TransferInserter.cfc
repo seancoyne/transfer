@@ -328,9 +328,7 @@ Mark Mandel		12/08/2005		Created
 
 				if(not composite.getIsPersisted())
 				{
-					throw("transfer.ManyToOneNotCreatedException",
-						  "The ManyToOne TransferObject is not persisted.",
-						  "In TransferObject '"& object.getClassName() &"' manytoone '"& composite.getClassName() &"' has not been persisted in the database.");
+					createObject("component", "transfer.com.sql.exception.ManyToOneNotCreatedException").init(object, composite);
 				}
 
 				args.value = invokeGetPrimaryKey(composite);
@@ -358,9 +356,7 @@ Mark Mandel		12/08/2005		Created
 				//make sure it's in the DB
 				if(not composite.getIsPersisted())
 				{
-					throw("transfer.ParentOneToManyNotCreatedException",
-						  "The Parent OneToMany TransferObject is not persisted.",
-						  "In TransferObject '"& object.getClassName() &"' onetomany parent '"& composite.getClassName() &"' has not been persisted in the database.");
+					createObject("component", "transfer.com.sql.exception.ParentOneToManyNotCreatedException").init(object, composite);
 				}
 
 				args.value = invokeGetPrimaryKey(composite);

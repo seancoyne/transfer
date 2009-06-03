@@ -353,11 +353,4 @@ Mark Mandel		04/04/2006		Created
 	<cfset instance.selectSQLCache = arguments.selectSQLCache />
 </cffunction>
 
-<cffunction name="throw" access="private" hint="Throws an Exception" output="false">
-	<cfargument name="type" hint="The type of exception" type="string" required="Yes">
-	<cfargument name="message" hint="The message to accompany the exception" type="string" required="Yes">
-	<cfargument name="detail" type="string" hint="The detail message for the exception" required="No" default="">
-		<cfthrow type="#arguments.type#" message="#arguments.message#" detail="#arguments.detail#">
-</cffunction>
-
 </cfcomponent>

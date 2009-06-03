@@ -1,13 +1,13 @@
 <!--- Document Information -----------------------------------------------------
 
-Title:      Exception.cfc
+Title:      ObjectAlreadyCreatedException.cfc
 
 Author:     Mark Mandel
 Email:      mark@compoundtheory.com
 
 Website:    http://www.compoundtheory.com
 
-Purpose:    throws a given exception
+Purpose:    Exception is thrown when attempting to save an already created object
 
 Usage:      
 
@@ -18,16 +18,19 @@ Name			Date			Description
 Mark Mandel		03/06/2009		Created
 
 ------------------------------------------------------------------------------->
-
-<cfcomponent hint="Throws a given exception" output="false">
+<cfcomponent hint="Exception is thrown when attempting to save an already created object" extends="Exception">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cffunction name="init" hint="Constructor" access="public" returntype="void" output="false">
-	<cfargument name="message" hint="the message to throw" type="string" required="Yes">
-	<cfargument name="detail" hint="the detail in which to throw" type="string" required="Yes">
-
-	<cfthrow type="#getMetaData(this).name#" message="#arguments.message#" detail="#detail#">
+<cffunction name="init" hint="Constructor" access="public" returntype="ObjectAlreadyCreatedException" output="false">
+	<cfargument name="transfer" hint="the transfer object in question" type="transfer.com.TransferObject" required="Yes">
+	<cfscript>
+		super.init("Transfer Object has already been created",
+					"The Transfer Object of type '"& arguments.transfer.getClassName() &"' has already been created in the database."			
+					);
+	
+		return this;			
+	</cfscript>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
