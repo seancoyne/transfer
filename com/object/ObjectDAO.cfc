@@ -239,11 +239,9 @@ Mark Mandel		11/07/2005		Created
 			}
 			else
 			{
-				throw("transfer.InvalidManyToManyConfiguration",
-					"In '#arguments.class#', neither links in the manytomany declaration point to the source object",
-					"link[1] refers to class '#xManyToMany.link[1].xmlAttributes.to#', and link[2] refers to #xManyToMany.link[2].xmlAttributes.to#,
-						one of which should refer to '#arguments.class#'"
-					);
+				createObject("component", "transfer.com.object.exception.InvalidManyToManyConfigurationException").init(arguments.class, 
+																												xManyToMany.link[1].xmlAttributes.to, 
+																												xManyToMany.link[2].xmlAttributes.to);
 			}
 
 			buildCollectionMemento(manytomany, xManyToMany);

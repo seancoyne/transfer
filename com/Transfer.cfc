@@ -846,8 +846,7 @@ Mark Mandel		11/07/2005		Created
 
 		if(arguments.query.recordcount gt 1)
 		{
-			throw("transfer.MultipleRecordsFoundException",					"The parameters provided resulted in more than one record",
-					"The query for '#arguments.className#' resulted in #arguments.query.recordCount# records in the Query");
+			createObject("component", "transfer.com.exception.MultipleRecordsFoundException").init(argumentCollection=arguments);
 		}
 
 		if(arguments.query.recordcount)

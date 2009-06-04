@@ -481,9 +481,7 @@ Mark Mandel		10/08/2005		Created
 
 			if(NOT compositeObject.getIsPersisted())
 			{
-				throw("transfer.ManyToManyNotCreatedException",
-						  "A ManyToMany TransferObject child is not persisted.",
-						  "In TransferObject '"& object.getClassName() &"' manytomany '"& compositeObject.getClassName() &"' has not been persisted in the database.");
+				createObject("component", "transfer.com.sql.exception.ManyToManyNotCreatedException").init(object, compositeObject);
 			}
 
 			if(arguments.manytomany.getLinkFrom().getTo() eq arguments.transfer.getClassName())
