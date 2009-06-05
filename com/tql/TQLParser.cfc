@@ -87,10 +87,10 @@
 	<cfscript>
 		var line = arguments.recognitionException.line;
 		var charPositionInLine = arguments.recognitionException.charPositionInLine;
-		throw("transfer.TQLSyntaxException",
-			"TQL syntax error at line #line#, character #charPositionInLine#, near '"
-				& resolveErrorNear(arguments.tql, line, charPositionInLine) & "'",
-				arguments.errorMessage & " for TQL: " & chr(10) & chr(13) & arguments.tql);
+		
+		createObject("component", "transfer.com.tql.exception.TQLSyntaxException").init("TQL syntax error at line #line#, character #charPositionInLine#, near '"
+						& resolveErrorNear(arguments.tql, line, charPositionInLine) & "'",
+						arguments.errorMessage & " for TQL: " & chr(10) & chr(13) & arguments.tql);
 	</cfscript>
 </cffunction>
 

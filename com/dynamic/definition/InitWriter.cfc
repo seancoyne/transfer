@@ -108,10 +108,6 @@ Mark Mandel		05/04/2006		Created
 				case "binary":
 					arguments.buffer.append("getUtility().getEmptyByteArray()");
 				break;
-
-				default:
-					throw("InvalidPropertyTypeException", "A Property can only be on the types 'string', 'numeric', 'date', 'UUID', 'GUID'", "The current value of '#property.getType()#' is invalid.");
-				break;
 			}
 			arguments.buffer.writeLine(");");
 		}
@@ -162,10 +158,6 @@ Mark Mandel		05/04/2006		Created
 
 			case "struct":
 				arguments.buffer.writeLine("set" & arguments.name & "Collection(StructNew());");
-			break;
-
-			default:
-				throw("InvalidCollectionTypeException", "Invalid Collection Type set.", "Valid collection types are only 'struct' or 'array'.");
 			break;
 		}
 	</cfscript>

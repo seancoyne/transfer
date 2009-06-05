@@ -21,7 +21,7 @@
 	<cfscript>
 		if(NOT (StructKeyExists(arguments, "value") OR arguments.isNull))
 		{
-			throw("InvalidParamMappingException", "A mapped parameter value must be set if null is false", "Arguments 'value' must be set if 'null' is false");
+			createObject("component", "transfer.com.tql.exception.InvalidParamMappingException").init();
 		}
 
 		addMappedParameter(arguments.name, arguments);

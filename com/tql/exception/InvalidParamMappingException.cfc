@@ -1,13 +1,13 @@
 <!--- Document Information -----------------------------------------------------
 
-Title:      ObjectAlreadyCreatedException.cfc
+Title:      InvalidParamMappingException.cfc
 
 Author:     Mark Mandel
 Email:      mark@compoundtheory.com
 
 Website:    http://www.compoundtheory.com
 
-Purpose:    Exception is thrown when attempting to save an already created object
+Purpose:    Exception that is thrown when setting an invalid parameter for a TQL Query
 
 Usage:      
 
@@ -15,20 +15,17 @@ Modification Log:
 
 Name			Date			Description
 ================================================================================
-Mark Mandel		03/06/2009		Created
+Mark Mandel		05/06/2009		Created
 
 ------------------------------------------------------------------------------->
-<cfcomponent hint="Exception is thrown when attempting to save an already created object" extends="Exception">
+<cfcomponent hint="Exception that is thrown when setting an invalid parameter for a TQL Query" extends="transfer.com.exception.Exception" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="init" hint="Constructor" access="public" returntype="void" output="false">
-	<cfargument name="transfer" hint="the transfer object in question" type="transfer.com.TransferObject" required="Yes">
 	<cfscript>
-		super.init("Transfer Object has already been created",
-					"The Transfer Object of type '"& arguments.transfer.getClassName() &"' has already been created in the database."			
-					);
-	
+		super.init("A mapped parameter value must be set if null is false", 
+			"Arguments 'value' must be set if 'null' is false");			
 	</cfscript>
 </cffunction>
 

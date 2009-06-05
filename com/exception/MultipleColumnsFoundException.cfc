@@ -1,13 +1,13 @@
 <!--- Document Information -----------------------------------------------------
 
-Title:      ObjectAlreadyCreatedException.cfc
+Title:      MultipleRecordsFoundException.cfc
 
 Author:     Mark Mandel
 Email:      mark@compoundtheory.com
 
 Website:    http://www.compoundtheory.com
 
-Purpose:    Exception is thrown when attempting to save an already created object
+Purpose:    Exception for when multiple records are found in a read statement
 
 Usage:      
 
@@ -15,20 +15,20 @@ Modification Log:
 
 Name			Date			Description
 ================================================================================
-Mark Mandel		03/06/2009		Created
+Mark Mandel		04/06/2009		Created
 
 ------------------------------------------------------------------------------->
-<cfcomponent hint="Exception is thrown when attempting to save an already created object" extends="Exception">
+<cfcomponent hint="Exception for when multiple records are found in a read statement" extends="Exception" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="init" hint="Constructor" access="public" returntype="void" output="false">
-	<cfargument name="transfer" hint="the transfer object in question" type="transfer.com.TransferObject" required="Yes">
+	<cfargument name="className" hint="the class name of the object" type="string" required="Yes">
+	<cfargument name="query" hint="the query in question" type="query" required="Yes">
 	<cfscript>
-		super.init("Transfer Object has already been created",
-					"The Transfer Object of type '"& arguments.transfer.getClassName() &"' has already been created in the database."			
+		super.init("The parameters provided resulted in more than one record",
+					"The query for '#arguments.className#' resulted in #arguments.query.recordCount# records in the Query"
 					);
-	
 	</cfscript>
 </cffunction>
 

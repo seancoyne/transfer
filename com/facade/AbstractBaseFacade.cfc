@@ -303,7 +303,7 @@ Mark Mandel		16/05/2006		Created
 </cffunction>
 
 <cffunction name="getScope" hint="Overwrite to return the scope this facade refers to" access="private" returntype="struct" output="false">
-	<cfset throw("VirtualMethodException", "This method must be overwritten to be used", "This method is virtual and should be overwritten")>
+	<cfset createObject("component", "transfer.com.exception.VirtualMethodException").init("getScope", this) />
 </cffunction>
 
 <cffunction name="getScopeIdentityHashCode" hint="gets the identity hash code of the scope" access="private" returntype="string" output="false">

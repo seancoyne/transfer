@@ -1,13 +1,13 @@
 <!--- Document Information -----------------------------------------------------
 
-Title:      ObjectAlreadyCreatedException.cfc
+Title:      EmptyQueryException.cfc
 
 Author:     Mark Mandel
 Email:      mark@compoundtheory.com
 
 Website:    http://www.compoundtheory.com
 
-Purpose:    Exception is thrown when attempting to save an already created object
+Purpose:    Exception when the query provided to populate this Transfer object is empty
 
 Usage:      
 
@@ -18,17 +18,18 @@ Name			Date			Description
 Mark Mandel		03/06/2009		Created
 
 ------------------------------------------------------------------------------->
-<cfcomponent hint="Exception is thrown when attempting to save an already created object" extends="Exception">
+
+<cfcomponent hint="Exception for when the key provided for retrieving an object is not valid" extends="transfer.com.exception.Exception">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="init" hint="Constructor" access="public" returntype="void" output="false">
-	<cfargument name="transfer" hint="the transfer object in question" type="transfer.com.TransferObject" required="Yes">
+	<cfargument name="type" hint="simple, or struct" type="string" required="Yes">
+	<cfargument name="className" hint="the class name" type="string" required="Yes">
 	<cfscript>
-		super.init("Transfer Object has already been created",
-					"The Transfer Object of type '"& arguments.transfer.getClassName() &"' has already been created in the database."			
+		super.init("The key for this class should be a #arguments.type# value", 
+					"The key for class '#arguments.className#' should be of #arguments.type# value"
 					);
-	
 	</cfscript>
 </cffunction>
 

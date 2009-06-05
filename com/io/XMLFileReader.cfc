@@ -103,8 +103,8 @@ Mark Mandel		04/11/2005		Created
 			{
 				detail = detail & validate.errors[counter] & chr(10) & chr(13);
 			}
-
-			throw("transfer.InValidXMLException", "The XML Provided in '" & arguments.xmlPath & "' is not valid against its XML Schema", detail);
+			
+			createObject("component", "transfer.com.exception.InValidXMLException").init(arguments.xmlPath, detail);
 		}
 	</cfscript>
 </cffunction>

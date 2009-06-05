@@ -58,9 +58,7 @@ Mark Mandel		17/08/2005		Created
 		//validate relationship state
 		if(getLink().getToObject().getPrimaryKey().getIsComposite())
 		{
-			throw("transfer.InvalidRelationshipExeception",
-				"A Many To One Relationship must link to an object with an 'id' element",
-				"The Many to One Relationship '#getName()#' in class '#getObject().getClassName()#' cannot link to class #getLink().getToObject().getClassName()# as it utilises a composite key");
+			createObject("component", "transfer.com.object.exception.InvalidRelationshipExeception").init("Many To One", getName(), getObject(), getLink().getToObject());
 		}
 
 	</cfscript>

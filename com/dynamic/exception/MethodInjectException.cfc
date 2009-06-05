@@ -1,13 +1,13 @@
 <!--- Document Information -----------------------------------------------------
 
-Title:      ObjectAlreadyCreatedException.cfc
+Title:      MethodInjectException.cfc
 
 Author:     Mark Mandel
 Email:      mark@compoundtheory.com
 
 Website:    http://www.compoundtheory.com
 
-Purpose:    Exception is thrown when attempting to save an already created object
+Purpose:    Exception for when something goes wrong injecting a method
 
 Usage:      
 
@@ -15,20 +15,18 @@ Modification Log:
 
 Name			Date			Description
 ================================================================================
-Mark Mandel		03/06/2009		Created
+Mark Mandel		05/06/2009		Created
 
 ------------------------------------------------------------------------------->
-<cfcomponent hint="Exception is thrown when attempting to save an already created object" extends="Exception">
+<cfcomponent hint="Exception for when something goes wrong injecting a method" extends="transfer.com.exception.Exception" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="init" hint="Constructor" access="public" returntype="void" output="false">
-	<cfargument name="transfer" hint="the transfer object in question" type="transfer.com.TransferObject" required="Yes">
+	<cfargument name="udf" hint="the udf in question" type="any" required="Yes">
+	<cfargument name="message" hint="the error message" type="string" required="Yes">
 	<cfscript>
-		super.init("Transfer Object has already been created",
-					"The Transfer Object of type '"& arguments.transfer.getClassName() &"' has already been created in the database."			
-					);
-	
+		super.init("Error inserting method #toString(arguments.UDF)#", arguments.message);
 	</cfscript>
 </cffunction>
 

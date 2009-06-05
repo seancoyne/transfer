@@ -53,7 +53,7 @@ Mark Mandel		12/09/2007		Created
 </cffunction>
 
 <cffunction name="getTransferInserter" hint="returns the transfer inserted" access="public" returntype="transfer.com.sql.TransferInserter" output="false">
-	<cfthrow type="transfer.VirtualMethodException" message="This method is virtual and must be overwritten">
+	<cfset createObject("component", "transfer.com.exception.VirtualMethodException").init("getTransferInserter", this) />
 </cffunction>
 
 <cffunction name="getTransferUpdater" hint="returns the transfer updater" access="public" returntype="transfer.com.sql.TransferUpdater" output="false">
@@ -69,7 +69,7 @@ Mark Mandel		12/09/2007		Created
 </cffunction>
 
 <cffunction name="getTransferSelecter" hint="returns the transfer inserted" access="public" returntype="transfer.com.sql.TransferSelecter" output="false">
-	<cfthrow type="transfer.VirtualMethodException" message="This method is virtual and must be overwritten">
+	<cfset createObject("component", "transfer.com.exception.VirtualMethodException").init("getTransferSelecter", this) />
 </cffunction>
 
 <cffunction name="getTransferRefresher" hint="returns the transfer refresher" access="public" returntype="transfer.com.sql.TransferRefresher" output="false">

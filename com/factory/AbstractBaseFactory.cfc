@@ -139,7 +139,7 @@ Mark Mandel		12/09/2007		Created
 		}
 		catch(any exc)
 		{
-			throw("transfer.factory.AutoWireException", "Error while attempting to autowire object of type #getMetaData(arguments.object).name#", "<br/>[Line: #exc.tagContext[1].line# :: #exc.tagContext[1].template# :: #exc.message# :: #exc.detail#]");
+			createObject("component", "transfer.com.factory.exception.AutoWireException").init(arguments.object, exc);
 		}
 	</cfscript>
 </cffunction>

@@ -109,7 +109,7 @@ Mark Mandel		27/06/2008		Created
 	</cfscript>
 </cffunction>
 
-<cffunction	name="onMissingMethod" access="public" returntype="any" output="false" hint="wires the invocation to the tranfserObject proxy">
+<cffunction	name="onMissingMethod" access="public" returntype="any" output="false" hint="wires the invocation to the transferObject proxy">
 	<cfargument	name="missingMethodName" type="string"	required="true"	hint=""	/>
 	<cfargument	name="missingMethodArguments" type="struct" required="true"	hint=""/>
 	<cfscript>

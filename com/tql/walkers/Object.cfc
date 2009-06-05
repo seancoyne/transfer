@@ -34,9 +34,8 @@ Mark Mandel		26/02/2007		Created
 
 		if(listLen eq 1)
 		{
-			throw("transfer.TQLSyntaxException",
-				"Error with class value '"& arguments.text &"' in clause",
-				"Class values must resolve to the Class name or the alias. e.g. 'email.Email.emailName'");
+			createObject("component", "transfer.com.tql.exception.TQLSyntaxException").init("Error with class value '"& arguments.text &"' in clause",
+							"Class values must resolve to the Class name or the alias. e.g. 'email.Email.emailName'");
 		}
 
 		propertyName = ListGetAt(arguments.text, listLen, ".");
@@ -66,9 +65,8 @@ Mark Mandel		26/02/2007		Created
 
 		if(listLen eq 1)
 		{
-			throw("transfer.TQLSyntaxException",
-				"Error with class value '"& arguments.text &"' in clause",
-				"Class values must resolve to the Class name or the alias. e.g. 'email.Email.emailName'");
+			createObject("component", "transfer.com.tql.exception.TQLSyntaxException").init("Error with class value '"& arguments.text &"' in clause",
+							"Class values must resolve to the Class name or the alias. e.g. 'email.Email.emailName'");
 		}
 
 		propertyName = ListGetAt(arguments.text, listLen, ".");

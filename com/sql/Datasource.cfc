@@ -118,7 +118,7 @@ Mark Mandel		27/06/2005		Created
 			break;
 
 			default:
-				throw("UnsupportedDatabaseException", "An unsupported database has been attempted to be used", "The database of type '#db#' is currently not supported by Transfer");
+				createObject("component", "transfer.com.sql.exception.UnsupportedDatabaseException").init(db);				
 			break;
 		}
 

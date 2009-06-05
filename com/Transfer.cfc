@@ -237,7 +237,7 @@ Mark Mandel		11/07/2005		Created
 		//check to make sure it's not been created before
 		if(NOT arguments.transfer.getIsPersisted())
 		{
-			throw("ObjectNotCreatedException", "Transfer Object has already not been created", "The Transfer Object of type '"& arguments.transfer.getClassName() &"' has not been created in the database.");
+			createObject("component", "transfer.com.exception.ObjectNotCreatedException").init(arguments.transfer);			
 		}
 
 		if(arguments.transfer.getIsDirty())
@@ -859,9 +859,7 @@ Mark Mandel		11/07/2005		Created
 			{
 				if(ListLen(arguments.query.columnList) gt 1)
 				{
-					throw("transfer.MultipleColumnsFoundException",
-							"Read operations for non composite id objects can only have one column in the results",
-							"The query for '#arguments.className#' resulted in the following columns being present: #arguments.query.columnList#");
+					createObject("component", "transfer.com.exception.MultipleColumnsFoundException").init(argumentCollection=arguments);
 				}
 
 				return get(arguments.classname, arguments.query[arguments.query.columnList][1]);

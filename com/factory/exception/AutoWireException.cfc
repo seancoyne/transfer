@@ -1,13 +1,13 @@
 <!--- Document Information -----------------------------------------------------
 
-Title:      ObjectAlreadyCreatedException.cfc
+Title:      AutoWireException.cfc
 
 Author:     Mark Mandel
 Email:      mark@compoundtheory.com
 
 Website:    http://www.compoundtheory.com
 
-Purpose:    Exception is thrown when attempting to save an already created object
+Purpose:    Exception thrown when internal autowiring fails
 
 Usage:      
 
@@ -15,20 +15,20 @@ Modification Log:
 
 Name			Date			Description
 ================================================================================
-Mark Mandel		03/06/2009		Created
+Mark Mandel		05/06/2009		Created
 
 ------------------------------------------------------------------------------->
-<cfcomponent hint="Exception is thrown when attempting to save an already created object" extends="Exception">
+
+<cfcomponent hint="Exception thrown when internal autowiring fails" extends="transfer.com.exception.Exception" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="init" hint="Constructor" access="public" returntype="void" output="false">
-	<cfargument name="transfer" hint="the transfer object in question" type="transfer.com.TransferObject" required="Yes">
+	<cfargument name="target" hint="the autowiring target" type="any" required="Yes">
+	<cfargument name="exception" hint="the exception" type="struct" required="Yes">
 	<cfscript>
-		super.init("Transfer Object has already been created",
-					"The Transfer Object of type '"& arguments.transfer.getClassName() &"' has already been created in the database."			
-					);
-	
+		super.init("Error while attempting to autowire object of type #getMetaData(arguments.target).name#", 
+			"<br/>[Line: #arguments.exception.tagContext[1].line# :: #arguments.exception.tagContext[1].template# :: #arguments.exception.message# :: #arguments.exception.detail#]");
 	</cfscript>
 </cffunction>
 

@@ -229,8 +229,8 @@ Mark Mandel		11/07/2005		Created
 		{
 			return getPrimaryKey();
 		}
-
-		throw("PropertyNotFoundException", "The property that was searched for could not be found", "The property '#arguments.name#' could not be found in the object '#getClassName()#'");
+		
+		createObject("component", "transfer.com.object.exception.PropertyNotFoundException").init(getClassName(), arguments.name);
 	</cfscript>
 </cffunction>
 
@@ -266,8 +266,8 @@ Mark Mandel		11/07/2005		Created
 				return manytoone;
 			}
 		}
-
-		throw("ManyToOneNotFoundException", "The ManyToOne that was searched for could not be found", "The ManyToOne '#arguments.name#' could not be found in the object '#getClassName()#'");
+		
+		createObject("component", "transfer.com.object.exception.ManyToOneNotFoundException").init(getClassName(), arguments.name);
 	</cfscript>
 </cffunction>
 
@@ -354,7 +354,7 @@ Mark Mandel		11/07/2005		Created
 			}
 		}
 
-		throw("OneToManyNotFoundException", "The OneToMany that was searched for could not be found", "The OneToMany '#arguments.name#' could not be found in the object '#getClassName()#'");
+		createObject("component", "transfer.com.object.exception.OneToManyNotFoundException").init(getClassName(), arguments.name);
 	</cfscript>
 </cffunction>
 
@@ -402,8 +402,8 @@ Mark Mandel		11/07/2005		Created
 				return parentonetomany;
 			}
 		}
-
-		throw("ParentOneToManyNotFoundException", "The ParentOneToMany that was searched for could not be found", "The ParentOneToMany '#arguments.name#' could not be found in the object '#getClassName()#'");
+		
+		createObject("component", "transfer.com.object.exception.ParentOneToManyNotFoundException").init(getClassName(), arguments.name);
 	</cfscript>
 </cffunction>
 
@@ -421,8 +421,8 @@ Mark Mandel		11/07/2005		Created
 				return parentonetomany;
 			}
 		}
-
-		throw("ParentOneToManyNotFoundException", "The ParentOneToMany that was searched for could not be found", "The ParentOneToMany '#arguments.className#' could not be found in the object '#getClassName()#'");
+		
+		createObject("component", "transfer.com.object.exception.ParentOneToManyNotFoundException").init(className=getClassName(), parentClassName=arguments.className);
 	</cfscript>
 </cffunction>
 
@@ -478,8 +478,8 @@ Mark Mandel		11/07/2005		Created
 				return manytomany;
 			}
 		}
-
-		throw("ManyToManyNotFoundException", "The ManyToMany that was searched for could not be found", "The ManyToMany '#arguments.name#' could not be found in the object '#getClassName()#'");
+		
+		createObject("component", "transfer.com.object.exception.ManyToManyNotFoundException").init(getClassName(), arguments.name);
 	</cfscript>
 </cffunction>
 
@@ -550,11 +550,8 @@ Mark Mandel		11/07/2005		Created
 				return manytoone.getLink().getTo();
 			}
 		}
-
-		throw("CompositionNotFoundException", "A composition of that name cannot be found",
-				"The composition element '#arguments.compositeName#' cannot be found",
-				"The composition element '#arguments.compositeName#' cannot be found on an Object of type '#getClassName()#'"
-				);
+		
+		createObject("component", "transfer.com.object.exception.CompositionNotFoundException").init(getClassName(), arguments.compositeName);
 	</cfscript>
 </cffunction>
 

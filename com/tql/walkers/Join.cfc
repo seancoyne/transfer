@@ -263,9 +263,8 @@ Mark Mandel		13/03/2007		Created
 
 			if(listLen eq 1)
 			{
-				throw("transfer.TQLSyntaxExceptionException",
-					"Error with class value '"& localTree.getText() &"' in clause",
-					"Class values must resolve to the Class name or the alias. e.g. 'email.Email.emailName'");
+				createObject("component", "transfer.com.tql.exception.TQLSyntaxException").init("Error with class value '"& localTree.getText() &"' in clause",
+								"Class values must resolve to the Class name or the alias. e.g. 'email.Email.emailName'");
 			}
 
 			objectFrom = getObject().evaluateObjectIdentifier(localTree.getText(), arguments.aliasMap);
@@ -345,9 +344,8 @@ Mark Mandel		13/03/2007		Created
 
 			if(listLen eq 1)
 			{
-					throw("transfer.TQLSyntaxExceptionException",
-					"Error with class value '"& localTree.getText() &"' in clause",
-					"Class values must resolve to the Class name or the alias. e.g. 'email.Email.emailName'");
+					createObject("component", "transfer.com.tql.exception.TQLSyntaxException").init("Error with class value '"& localTree.getText() &"' in clause",
+									"Class values must resolve to the Class name or the alias. e.g. 'email.Email.emailName'");
 			}
 
 			objectFrom = getObject().evaluateObjectIdentifier(localTree.getText(), arguments.aliasMap);
@@ -765,9 +763,8 @@ Mark Mandel		13/03/2007		Created
 				return;
 			}
 
-			throw("TQLException",
-				"Could not resolve join condition",
-				"The composition of '#arguments.objectFromCompositeName#' could not be found on Object '#arguments.objectFrom.getClassName()#'");
+			createObject("component", "transfer.com.tql.exception.TQLSyntaxException").init("Could not resolve join condition",
+							"The composition of '#arguments.objectFromCompositeName#' could not be found on Object '#arguments.objectFrom.getClassName()#'");
 		}
 		else
 		{
@@ -814,9 +811,8 @@ Mark Mandel		13/03/2007		Created
 				return;
 			}
 
-			throw("TQLException",
-				"Could not resolve join condition",
-				"The composition of #arguments.objectToCompositeName# could not be found on Object #arguments.objectTo.getClassName()#");
+			createObject("component", "transfer.com.tql.exception.TQLSyntaxException").init("Could not resolve join condition",
+							"The composition of #arguments.objectToCompositeName# could not be found on Object #arguments.objectTo.getClassName()#");
 		}
 	</cfscript>
 </cffunction>
@@ -1065,9 +1061,8 @@ Mark Mandel		13/03/2007		Created
 			}
 		}
 
-		throw("TQLException",
-			"Could not resolve class in previously declared From statement",
-			"A declaration of class #arguments.className# could not be found in the TQL previous to where it is required.");
+		createObject("component", "transfer.com.tql.exception.TQLSyntaxException").init("Could not resolve class in previously declared From statement",
+						"A declaration of class #arguments.className# could not be found in the TQL previous to where it is required.");
 	</cfscript>
 </cffunction>
 

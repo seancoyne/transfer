@@ -260,7 +260,6 @@ Mark Mandel		19/07/2005		Created
 		//throw exception if empty
 		if(NOT arguments.qObject.recordCount)
 		{
-			//throw("transfer.EmptyQueryException", "The query provided to populate this transfer is empty", "It is likely the ID that has been selected for this query no longer exists");
 			createObject("component", "transfer.com.dynamic.exception.EmptyQueryException").init();
 		}
 	</cfscript>

@@ -39,7 +39,7 @@ Mark Mandel		20/02/2008		Created
 	<cfargument name="component" hint="the component to apply the advice to" type="any" required="Yes">
 	<cfargument name="pointcut" hint="either a function, or a regex for functions to advise" type="any" required="Yes">
 	<cfargument name="buffer" hint="the definition buffer to write to" type="transfer.com.dynamic.definition.DefinitionBuffer" required="Yes">
-	<cfthrow type="transfer.VirtualMethodException" message="This method is virtual and must be overwritten">
+	<cfset createObject("component", "transfer.com.exception.VirtualMethodException").init("buildAvice", this) />
 </cffunction>
 
 <cffunction name="getAdviceName" hint="gives an adive name for debugging purposes" access="public" returntype="string" output="false">

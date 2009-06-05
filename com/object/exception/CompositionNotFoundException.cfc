@@ -1,13 +1,13 @@
 <!--- Document Information -----------------------------------------------------
 
-Title:      ObjectAlreadyCreatedException.cfc
+Title:      CompositionNotFoundException.cfc
 
 Author:     Mark Mandel
 Email:      mark@compoundtheory.com
 
 Website:    http://www.compoundtheory.com
 
-Purpose:    Exception is thrown when attempting to save an already created object
+Purpose:    Exception thrown when a ManytoOne could not be found
 
 Usage:      
 
@@ -15,20 +15,19 @@ Modification Log:
 
 Name			Date			Description
 ================================================================================
-Mark Mandel		03/06/2009		Created
+Mark Mandel		05/06/2009		Created
 
 ------------------------------------------------------------------------------->
-<cfcomponent hint="Exception is thrown when attempting to save an already created object" extends="Exception">
+<cfcomponent hint="Exception thrown when a Composition could not be found" extends="transfer.com.exception.Exception" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="init" hint="Constructor" access="public" returntype="void" output="false">
-	<cfargument name="transfer" hint="the transfer object in question" type="transfer.com.TransferObject" required="Yes">
+	<cfargument name="className" hint="the name of the class this represents" type="string" required="Yes">
+	<cfargument name="compositeName" hint="the name of the composition" type="string" required="Yes">
 	<cfscript>
-		super.init("Transfer Object has already been created",
-					"The Transfer Object of type '"& arguments.transfer.getClassName() &"' has already been created in the database."			
-					);
-	
+		super.init("The composition element '#arguments.compositeName#' cannot be found",
+				"The composition element '#arguments.compositeName#' cannot be found on an Object of type '#arguments.className#'");
 	</cfscript>
 </cffunction>
 

@@ -96,7 +96,7 @@ Mark Mandel		22/02/2008		Created
 <cffunction name="fireActionMethod" hint="virtual: fires the action method" access="private" returntype="void" output="false">
 	<cfargument name="object" hint="the object to fire against" type="any" required="Yes">
 	<cfargument name="event" hint="The event object to fire" type="any" required="Yes">
-	<cfthrow type="transfer.VirtualMethodException" message="This method is virtual and must be overwritten">
+	<cfset createObject("component", "transfer.com.exception.VirtualMethodException").init("fireActionMethod", this) />
 </cffunction>
 
 <cffunction name="getCollection" access="private" returntype="any" output="false">

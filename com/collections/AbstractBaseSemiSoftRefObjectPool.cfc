@@ -161,7 +161,7 @@
 </cffunction>
 
 <cffunction name="getNewObject" hint="virtual method: returns the new CFC to repopulate the pool" access="private" returntype="any" output="false">
-	<cfthrow type="transfer.VirtualMethodException" message="This method is virtual and must be overwritten">
+	<cfset createObject("component", "transfer.com.exception.VirtualMethodException").init("getNewObject", this) />
 </cffunction>
 
 <cffunction name="getHardReferenceAmount" access="private" returntype="numeric" output="false">
