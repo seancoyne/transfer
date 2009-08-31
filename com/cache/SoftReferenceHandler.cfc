@@ -93,6 +93,7 @@ Mark Mandel		20/02/2007		Created
 			invokeFacadeSoftReferenceRegister(factory.getSessionFacade(), arguments.function, arguments.args);
 		}
 		catch(coldfusion.runtime.UndefinedElementException exc) { /*do nothing*/ }
+		catch(coldfusion.runtime.NoOperScope$ScopeDisabledException exc) { /* do nothing */ }
 
 		//really not required, but to keep clean
 		invokeFacadeSoftReferenceRegister(factory.getNoneFacade(), arguments.function, arguments.args);
