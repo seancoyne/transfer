@@ -136,10 +136,7 @@ Mark Mandel		09/07/2007		Created
 
 			if(NOT onetomany.getIsLazy())
 			{
-				throw("transfer.InvalidCompositeIDException",
-						"All of the parent oneToMany declared in a 'compositeid' declaration' must be lazy='true'",
-						"The operation you have tried to execute would have caused corrupt data, or an infinite loop. In object '#getObject().getClassName()#' the
-						oneToMany '#parentOneToMany.getName()#' on object '#parentOneToMany.getLink().getToObject().getClassName()#' are lazy='false', when it must be lazy='true'");
+				createObject("component", "transfer.com.object.exception.InvalidCompositeIDException").init(getObject(), parentonetomany);
 			}
 		}
 

@@ -35,51 +35,51 @@ Mark Mandel		20/02/2007		Created
 </cffunction>
 
 <cffunction name="getAdapted" hint="returns the object that is adapted" access="public" returntype="any" output="false">
-	<cfthrow type="transfer.VirtualMethodException" message="This method is virtual and must be overwritten">
+	<cfset createObject("component", "transfer.com.exception.VirtualMethodException").init("getAdapted", this) />
 </cffunction>
 
 <cffunction name="getKey" hint="returns a unique identifier key for the object contained for this adapter. Used for observer storage" access="public" returntype="any" output="false">
-	<cfthrow type="transfer.VirtualMethodException" message="This method is virtual and must be overwritten">
+	<cfset createObject("component", "transfer.com.exception.VirtualMethodException").init("getKey", this) />
 </cffunction>
 
 <cffunction name="actionBeforeCreateTransferEvent" hint="virtual: Actions a event before a create happens" access="public" returntype="boolean" output="false">
 	<cfargument name="event" hint="The event object" type="transfer.com.events.TransferEvent" required="Yes">
-	<cfthrow type="transfer.VirtualMethodException" message="This method is virtual and must be overwritten">
+	<cfset createObject("component", "transfer.com.exception.VirtualMethodException").init("actionBeforeCreateTransferEvent", this) />
 </cffunction>
 
 <cffunction name="actionAfterCreateTransferEvent" hint="virtual: Actions a event After a create happens" access="public" returntype="boolean" output="false">
 	<cfargument name="event" hint="The event object" type="transfer.com.events.TransferEvent" required="Yes">
-	<cfthrow type="transfer.VirtualMethodException" message="This method is virtual and must be overwritten">
+	<cfset createObject("component", "transfer.com.exception.VirtualMethodException").init("actionAfterCreateTransferEvent", this) />
 </cffunction>
 
 <cffunction name="actionBeforeUpdateTransferEvent" hint="virtual: Actions a event Before a create happens" access="public" returntype="boolean" output="false">
 	<cfargument name="event" hint="The event object" type="transfer.com.events.TransferEvent" required="Yes">
-	<cfthrow type="transfer.VirtualMethodException" message="This method is virtual and must be overwritten">
+	<cfset createObject("component", "transfer.com.exception.VirtualMethodException").init("actionBeforeUpdateTransferEvent", this) />
 </cffunction>
 
 <cffunction name="actionAfterUpdateTransferEvent" hint="virtual: Actions a event After a create happens" access="public" returntype="boolean" output="false">
 	<cfargument name="event" hint="The event object" type="transfer.com.events.TransferEvent" required="Yes">
-	<cfthrow type="transfer.VirtualMethodException" message="This method is virtual and must be overwritten">
+	<cfset createObject("component", "transfer.com.exception.VirtualMethodException").init("actionAfterUpdateTransferEvent", this) />
 </cffunction>
 
 <cffunction name="actionBeforeDeleteTransferEvent" hint="virtual: Actions a event Before a create happens" access="public" returntype="boolean" output="false">
 	<cfargument name="event" hint="The event object" type="transfer.com.events.TransferEvent" required="Yes">
-	<cfthrow type="transfer.VirtualMethodException" message="This method is virtual and must be overwritten">
+	<cfset createObject("component", "transfer.com.exception.VirtualMethodException").init("actionBeforeDeleteTransferEvent", this) />
 </cffunction>
 
 <cffunction name="actionAfterDeleteTransferEvent" hint="virtual: Actions a event After a create happens" access="public" returntype="boolean" output="false">
 	<cfargument name="event" hint="The event object" type="transfer.com.events.TransferEvent" required="Yes">
-	<cfthrow type="transfer.VirtualMethodException" message="This method is virtual and must be overwritten">
+	<cfset createObject("component", "transfer.com.exception.VirtualMethodException").init("actionAfterDeleteTransferEvent", this) />
 </cffunction>
 
 <cffunction name="actionAfterDiscardTransferEvent" hint="virtual: Actions a event After a create happens" access="public" returntype="boolean" output="false">
 	<cfargument name="event" hint="The event object" type="transfer.com.events.TransferEvent" required="Yes">
-	<cfthrow type="transfer.VirtualMethodException" message="This method is virtual and must be overwritten">
+	<cfset createObject("component", "transfer.com.exception.VirtualMethodException").init("actionAfterDiscardTransferEvent", this) />
 </cffunction>
 
 <cffunction name="actionAfterNewTransferEvent" hint="virtual: Actions a event after a New() happens" access="public" returntype="boolean" output="false">
 	<cfargument name="event" hint="The event object" type="transfer.com.events.TransferEvent" required="Yes">
-	<cfthrow type="transfer.VirtualMethodException" message="This method is virtual and must be overwritten">
+	<cfset createObject("component", "transfer.com.exception.VirtualMethodException").init("actionAfterNewTransferEvent", this) />
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->

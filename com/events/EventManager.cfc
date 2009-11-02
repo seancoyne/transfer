@@ -28,12 +28,10 @@ Mark Mandel		26/08/2005		Created
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="init" hint="Constructor" access="public" returntype="EventManager" output="false">
-	<cfargument name="cacheConfigManager" hint="The cache manager" type="transfer.com.cache.CacheConfigManager" required="Yes" _autocreate="false">
 	<cfargument name="facadeFactory" hint="The facade factory to access caches" type="transfer.com.facade.FacadeFactory" required="Yes" _autocreate="false">
 	<cfargument name="javaLoader" hint="The java loader for the apache commons" type="transfer.com.util.JavaLoader" required="Yes" _autocreate="false">
 	<cfscript>
 		setTransferEventPool(createObject("component", "transfer.com.events.collections.TransferEventPool").init(arguments.javaLoader));
-		setCacheConfigManager(arguments.CacheConfigManager);
 		setFacadeFactory(arguments.facadeFactory);
 
 		return this;
@@ -310,15 +308,6 @@ Mark Mandel		26/08/2005		Created
 <cffunction name="setTransferEventPool" access="private" returntype="void" output="false">
 	<cfargument name="TransferEventPool" type="transfer.com.events.collections.TransferEventPool" required="true">
 	<cfset variables.TransferEventPool = arguments.TransferEventPool />
-</cffunction>
-
-<cffunction name="getCacheConfigManager" access="private" returntype="transfer.com.cache.CacheConfigManager" output="false">
-	<cfreturn instance.CacheConfigManager />
-</cffunction>
-
-<cffunction name="setCacheConfigManager" access="private" returntype="void" output="false">
-	<cfargument name="cacheConfigManager" type="transfer.com.cache.CacheConfigManager" required="true">
-	<cfset instance.CacheConfigManager = arguments.CacheConfigManager />
 </cffunction>
 
 <cffunction name="getFacadeFactory" access="private" returntype="transfer.com.facade.FacadeFactory" output="false">

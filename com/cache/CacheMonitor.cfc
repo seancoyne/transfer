@@ -25,10 +25,8 @@ Mark Mandel		14/07/2008		Created
 
 <cffunction name="init" hint="Constructor" access="public" returntype="CacheMonitor" output="false">
 	<cfargument name="facadeFactory" hint="The facade factory to access caches" type="transfer.com.facade.FacadeFactory" required="Yes" _autocreate="false">
-	<cfargument name="cacheConfigManager" hint="The cache config manager" type="transfer.com.cache.CacheConfigManager" required="Yes" _autocreate="false">
 	<cfscript>
 		setFacadeFactory(arguments.facadeFactory);
-		setCacheConfigManager(arguments.cacheConfigManager);
 
 		resetHitsAndMisses();
 		resetEvictions();
@@ -369,15 +367,6 @@ Mark Mandel		14/07/2008		Created
 <cffunction name="setFacadeFactory" access="private" returntype="void" output="false">
 	<cfargument name="FacadeFactory" type="transfer.com.facade.FacadeFactory" required="true">
 	<cfset instance.FacadeFactory = arguments.FacadeFactory />
-</cffunction>
-
-<cffunction name="getCacheConfigManager" access="private" returntype="transfer.com.cache.CacheConfigManager" output="false">
-	<cfreturn instance.CacheConfigManager />
-</cffunction>
-
-<cffunction name="setCacheConfigManager" access="private" returntype="void" output="false">
-	<cfargument name="CacheConfigManager" type="transfer.com.cache.CacheConfigManager" required="true">
-	<cfset instance.CacheConfigManager = arguments.CacheConfigManager />
 </cffunction>
 
 <cffunction name="getHitMap" access="private" returntype="struct" output="false">

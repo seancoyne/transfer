@@ -21,7 +21,7 @@
 	<cfscript>
 		if(NOT (StructKeyExists(arguments, "value") OR arguments.isNull))
 		{
-			throw("InvalidParamMappingException", "A mapped parameter value must be set if null is false", "Arguments 'value' must be set if 'null' is false");
+			createObject("component", "transfer.com.tql.exception.InvalidParamMappingException").init();
 		}
 
 		addMappedParameter(arguments.name, arguments);
@@ -74,6 +74,10 @@
 	<cfreturn hash(getTQL() & getDistinctMode() & getAliasColumns()) />
 </cffunction>
 
+<cffunction name="getParameters" hint="returns the struct of parameters this query is using" access="public" returntype="struct" output="false">
+	<cfreturn StructCopy(getMappedParameters()) />
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
@@ -89,13 +93,13 @@
 	</cfscript>
 </cffunction>
 
-<cffunction name="getMappedParameters" access="private" returntype="struct" output="false">
-	<cfreturn instance.MappedParameters />
-</cffunction>
-
 <cffunction name="setMappedParameters" access="private" returntype="void" output="false">
 	<cfargument name="MappedParameters" type="struct" required="true">
 	<cfset instance.MappedParameters = arguments.MappedParameters />
+</cffunction>
+
+<cffunction name="getMappedParameters" access="public" returntype="struct" output="false">
+	<cfreturn instance.MappedParameters />
 </cffunction>
 
 <cffunction name="addMappedParameter" hint="Adds a mapped param to the collection" access="private" returntype="void" output="false">

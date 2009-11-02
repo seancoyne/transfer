@@ -68,8 +68,7 @@ Mark Mandel		11/07/2005		Created
 		xObject = getConfigReader().search(xpath);
 		if(NOT ArrayLen(xObject))
 		{
-			throw("TransferObjectNotFoundException", "The requested object could not be found in the config file",
-							"Could not find '"& arguments.class &"' in '" & getConfigReader().getPathList() & "'.");
+			createObject("component", "transfer.com.object.exception.TransferObjectNotFoundException").init(arguments.class, getConfigReader());	
 		}
 
 		xObject = xObject[1]; //convenience

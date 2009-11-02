@@ -51,28 +51,28 @@ Mark Mandel		25/05/2006		Created
 	<cfargument name="type" hint="The type to write the 'NULL' for" type="string" required="Yes">
 
 	<cfscript>
-		var null = "Cast(NULL as ";
+		var nullValue = "Cast(NULL as ";
 
 		switch(arguments.type)
 		{
 			case "numeric":
-				null = null & "numeric";
+				nullValue = nullValue & "numeric";
 			break;
 
 			case "date":
-				null = null & "timestamp";
+				nullValue = nullValue & "timestamp";
 			break;
 
 			case "boolean":
-				null = null & "boolean";
+				nullValue = nullValue & "boolean";
 			break;
 
 			default:
-				null = null & "text";
+				nullValue = nullValue & "text";
 			break;
 		}
 
-		return null & (")");
+		return nullValue & (")");
 	</cfscript>
 
 </cffunction>

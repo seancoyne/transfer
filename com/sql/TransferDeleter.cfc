@@ -158,12 +158,6 @@ Mark Mandel		17/08/2005		Created
 							//query.appendSQL(columnTo);
 							mapPrimaryKey(query, object, columnTo);
 						}
-						else
-						{
-							throw("transfer.ManyToManyMisconfiguredException",
-									  "There is a error in the ManyToMany configuration.",
-									  "In TransferObject '"& object.getClassName() &"' manytomany '"& name &"' does not link back to the containing object defintion.");
-						}
 
 						query.stop();
 					</cfscript>

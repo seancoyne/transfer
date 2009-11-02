@@ -61,10 +61,9 @@ Mark Mandel		05/04/2006		Created
 				arguments.buffer.writeLine("{");
 					arguments.buffer.writeLine('return;');
 				arguments.buffer.writeLine("}");
+			
+			arguments.buffer.writeLine('createObject("component", "transfer.com.exception.MethodNotFoundException").init("#arguments.object.getClassName()#", "#manytoone.getLink().getTo()#", "#manytoone.getName()#");');
 
-			arguments.buffer.writeLine(	"throw("& q() &"ManyToOneNotSetException"& q() &","&
-										q() & "A ManyToOne TransferObject has not been initialised."& q() &","&
-										q() & "In TransferObject '"& arguments.object.getClassName() &"' manytoone '"& manytoone.getLink().getTo() &"' does not exist, when calling get"& manytoone.getName() &"()"& q() &");");
 			arguments.buffer.writeLine("}");
 			arguments.buffer.writeLine("return instance." & manyToOne.getName() & ";");
 			arguments.buffer.cfscript(false);
@@ -182,9 +181,8 @@ Mark Mandel		05/04/2006		Created
 					arguments.buffer.writeLine('return;');
 				arguments.buffer.writeLine("}");
 
-			arguments.buffer.writeLine(	"throw("& q() &"OneToManyParentNotSetException"& q() &","&
-										q() & "A OneToMany Parent TransferObject has not been initialised."& q() &","&
-										q() & "In TransferObject '"& arguments.object.getClassName() &"' onetomany parent '"& parentObject.getClassName() &"' does not exist, when calling getParent"& parentObject.getObjectName() &"()"& q() &");");
+			arguments.buffer.writeLine('createObject("component", "transfer.com.exception.OneToManyParentNotSetException").init("#arguments.object.getClassName()#", "#parentObject.getClassName()#", "#parentObject.getObjectName()#");');
+
 			arguments.buffer.writeLine("}");
 			arguments.buffer.writeLine("return instance." & parentObject.getObjectName() & ";");
 			arguments.buffer.cfscript(false);

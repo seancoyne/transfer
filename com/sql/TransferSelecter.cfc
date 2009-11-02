@@ -133,10 +133,7 @@ Mark Mandel		09/08/2007		Created
 				show that lazy loading should be used,
 				so as tables don't refer back to themselves
 			*/
-			throw("transfer.RecursiveCompositionException",
-				"The structure of your configuration file causes an infinite loop",
-				"The object '#arguments.object.getClassName()#' has a recursive link back to itself through composition '#arguments.compositionName#'.
-				You will need to set one of the elements in this chain to lazy='true' for it to work.");
+			createObject("component", "transfer.com.sql.exception.RecursiveCompositionException").init(arguments.object, arguments.compositionName);
 		}
 
 		//add in this object as visited

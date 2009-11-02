@@ -27,18 +27,13 @@ Mark Mandel		16/05/2006		Created
 <!------------------------------------------- PUBLIC ------------------------------------------->
 <cffunction name="init" hint="Constructor" access="public" returntype="AbstractBaseFacade" output="false">
 	<cfargument name="javaLoader" hint="The JavaLoader for loading the caching objects" type="transfer.com.util.JavaLoader" required="Yes" _autocreate="false">
-	<cfargument name="cacheConfig" hint="The cache config" type="any" required="Yes"
-				_factory="transfer.com.cache.CacheConfigManager" _factorymethod="getCacheConfig" _autocreate="false">
-	<cfargument name="threadPool" hint="the Java thread pool implementation" required="yes" type="any" _factoryMethod="getThreadPool" _autocreate="false">
 	<cfargument name="eventManager" type="transfer.com.events.EventManager" required="true" _autocreate="false">
 	<cfargument name="cacheMonitor" hint="The cache monitor" type="transfer.com.cache.CacheMonitor" required="Yes"
 				_factory="transfer.com.cache.CacheManager" _factorymethod="getCacheMonitor" _autocreate="false">
 	<cfscript>
 		var functionMap = StructNew();
 
-		setCacheConfig(arguments.cacheConfig);
 		setJavaLoader(arguments.javaLoader);
-		setThreadPool(arguments.threadPool);
 		setEventManager(arguments.eventManager);
 		setCacheMonitor(arguments.cacheMonitor);
 
@@ -57,52 +52,6 @@ Mark Mandel		16/05/2006		Created
 		return this;
 	</cfscript>
 </cffunction>
-
-<cffunction name="configure" hint="configuration, due to di loops" access="public" returntype="void" output="false">
-	<cfargument name="key" hint="The key to store values under" type="string" required="Yes">
-	<cfscript>
-		setKey(arguments.key);
-	</cfscript>
-</cffunction>
-
-<!--- CacheManager --->
-
-<cffunction name="getCacheManager" access="public" returntype="any" hint="return com.compoundtheory.objectcache.CacheManager" output="false">
-	<!--- double lock, so that only one object --->
-	<cfif NOT hasCacheManager()>
-		<cflock name="transfer.facade.getCacheManager.#getScopeIdentityHashCode()#" timeout="60" throwontimeout="true">
-			<cfscript>
-				if(NOT hasCacheManager())
-				{
-					setCacheManager(getJavaLoader().create("com.compoundtheory.objectcache.CacheManager").init(getCacheConfig(), getThreadPool()));
-				}
-			</cfscript>
-		</cflock>
-	</cfif>
-	<cfreturn getScopePlace().CacheManager />
-</cffunction>
-
-<cffunction name="hasCacheManager" hint="Whether it exists in the scope or not" access="public" returntype="boolean" output="false">
-		<cfreturn scopePlaceKeyExists("CacheManager")>
-</cffunction>
-
-<!--- SoftReferenceRegister --->
-
-<cffunction name="getSoftReferenceRegister" access="public" returntype="transfer.com.cache.SoftReferenceRegister" output="false">
-	<cfif NOT hasSoftReferenceRegister()>
-		<cflock name="transfer.facade.getSoftReferenceRegister.#getScopeIdentityHashCode()#" timeout="60" throwontimeout="true">
-			<cfif NOT hasSoftReferenceRegister()>
-				<cfset setSoftReferenceRegister(createObject("component", "transfer.com.cache.SoftReferenceRegister").init(this, getEventManager(), getCacheMonitor()))>
-			</cfif>
-		</cflock>
-	</cfif>
-	<cfreturn getScopePlace().SoftReferenceRegister />
-</cffunction>
-
-<cffunction name="hasSoftReferenceRegister" hint="Whether it exists in the scope or not" access="public" returntype="boolean" output="false">
-	<cfreturn scopePlaceKeyExists("SoftReferenceRegister")>
-</cffunction>
-
 
 <!--- AfterCreateObserverCollection --->
 
@@ -303,7 +252,7 @@ Mark Mandel		16/05/2006		Created
 </cffunction>
 
 <cffunction name="getScope" hint="Overwrite to return the scope this facade refers to" access="private" returntype="struct" output="false">
-	<cfset throw("VirtualMethodException", "This method must be overwritten to be used", "This method is virtual and should be overwritten")>
+	<cfset createObject("component", "transfer.com.exception.VirtualMethodException").init("getScope", this) />
 </cffunction>
 
 <cffunction name="getScopeIdentityHashCode" hint="gets the identity hash code of the scope" access="private" returntype="string" output="false">
@@ -379,36 +328,9 @@ Mark Mandel		16/05/2006		Created
 	<cfset instance.JavaLoader = arguments.JavaLoader />
 </cffunction>
 
-<cffunction name="getKey" access="private" returntype="string" output="false">
-	<cfreturn instance.Key />
-</cffunction>
-
-<cffunction name="setKey" access="private" returntype="void" output="false">
-	<cfargument name="Key" type="string" required="true">
-	<cfset instance.Key = arguments.Key />
-</cffunction>
-
-<cffunction name="getCacheConfig" access="private" returntype="any" output="false">
-	<cfreturn instance.cacheConfig />
-</cffunction>
-
-<cffunction name="setCacheConfig" access="private" returntype="void" output="false">
-	<cfargument name="cacheConfig" type="any" required="true">
-	<cfset instance.cacheConfig = arguments.cacheConfig />
-</cffunction>
-
 <cffunction name="setFacadeMap" access="private" returntype="void" output="false">
 	<cfargument name="facadeMap" type="struct" required="true">
 	<cfset instance.facadeMap = arguments.facadeMap />
-</cffunction>
-
-<cffunction name="getThreadPool" access="private" returntype="any" output="false">
-	<cfreturn instance.threadPool />
-</cffunction>
-
-<cffunction name="setThreadPool" access="private" returntype="void" output="false">
-	<cfargument name="threadPool" type="any" required="true">
-	<cfset instance.threadPool = arguments.threadPool />
 </cffunction>
 
 <cffunction name="getObserverFunctionMap" access="private" returntype="struct" output="false">

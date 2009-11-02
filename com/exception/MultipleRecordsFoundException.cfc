@@ -7,7 +7,7 @@ Email:      mark@compoundtheory.com
 
 Website:    http://www.compoundtheory.com
 
-Purpose:    Exception for when multiple records are found in a read statement
+Purpose:    Exception for when multiple columns are found in a read statement
 
 Usage:      
 
@@ -18,7 +18,7 @@ Name			Date			Description
 Mark Mandel		04/06/2009		Created
 
 ------------------------------------------------------------------------------->
-<cfcomponent hint="Exception for when multiple records are found in a read statement" extends="Exception" output="false">
+<cfcomponent hint="Exception for when multiple columns are found in a read statement" extends="Exception" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
@@ -26,9 +26,8 @@ Mark Mandel		04/06/2009		Created
 	<cfargument name="className" hint="the class name of the object" type="string" required="Yes">
 	<cfargument name="query" hint="the query in question" type="query" required="Yes">
 	<cfscript>
-		super.init("The parameters provided resulted in more than one record",
-					"The query for '#arguments.className#' resulted in #arguments.query.recordCount# records in the Query"
-					);
+		super.init("Read operations for non composite id objects can only have one column in the results",
+					"The query for '#arguments.className#' resulted in the following columns being present: #arguments.query.columnList#");
 	</cfscript>
 </cffunction>
 

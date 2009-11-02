@@ -40,9 +40,7 @@ Mark Mandel		27/06/2005		Created
 		}
 		else
 		{
-			throw("transfer.InvalidDAOInitException",
-					"DataSourceDAO requires either a xmlFileReader or a configuration object",
-					"Without either a XMlFileReader, or a Configuration object, the Datasourc DAO can't determine the data source");
+			createObject("component", "transfer.com.sql.exception.InvalidDatasourceConfigurationException").init();
 		}
 
 		setDatasourceFactory(arguments.datasourceFactory);
@@ -61,11 +59,6 @@ Mark Mandel		27/06/2005		Created
 		{
 			return getDatasoucefromConfiguration();
 		}
-
-		throw("transfer.InvalidDatasourceConfigurationException",
-				"Neither a XML Configuration or a Configuration object configuration provided.",
-				"Either a datsouce XML file needs to be provided, or the Configuration bean must have the DataSourceName set on it.");
-
 	</cfscript>
 </cffunction>
 

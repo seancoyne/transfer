@@ -98,15 +98,11 @@ Mark Mandel		29/07/2005		Created
 		//validate the composite key relationships
 		if(getLinkTo().getToObject().getPrimaryKey().getIsComposite())
 		{
-			throw("transfer.InvalidRelationshipExeception",
-				"A Many To Many Relationship must link to an object with an 'id' element",
-				"The Many to Many Relationship '#getName()#' in class '#getObject().getClassName()#' cannot link to class #getLinkTo().getToObject().getClassName()# as it utilises a composite key");
+			createObject("component", "transfer.com.object.exception.InvalidRelationshipExeception").init("Many To Many", getName(), getObject(), getLinkTo().getToObject());
 		}
 		else if(getLinkFrom().getToObject().getPrimaryKey().getIsComposite())
 		{
-			throw("transfer.InvalidRelationshipExeception",
-				"A Many To Many Relationship must link to an object with an 'id' element",
-				"The Many to Many Relationship '#getName()#' in class '#getObject().getClassName()#' cannot link to class #getLinkFrom().getToObject().getClassName()# as it utilises a composite key");
+			createObject("component", "transfer.com.object.exception.InvalidRelationshipExeception").init("Many To Many", getName(), getObject(), getLinkFrom().getToObject());
 		}
 	</cfscript>
 </cffunction>

@@ -22,14 +22,13 @@ Mark Mandel		03/06/2009		Created
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cffunction name="init" hint="Constructor" access="public" returntype="ObjectAlreadyCreatedException" output="false">
+<cffunction name="init" hint="Constructor" access="public" returntype="void" output="false">
 	<cfargument name="transfer" hint="the transfer object in question" type="transfer.com.TransferObject" required="Yes">
 	<cfscript>
 		super.init("Transfer Object has already been created",
 					"The Transfer Object of type '"& arguments.transfer.getClassName() &"' has already been created in the database."			
 					);
 	
-		return this;			
 	</cfscript>
 </cffunction>
 

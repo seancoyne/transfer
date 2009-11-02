@@ -359,12 +359,6 @@ Mark Mandel		10/08/2005		Created
 					toLink = arguments.manytomany.getLinkFrom();
 					fromLink = arguments.manytomany.getLinkTo();
 				}
-				else
-				{
-					throw("transfer.ManyToManyMisconfiguredException",
-							  "There is a error in the ManyToMany configuration.",
-							  "In TransferObject '"& object.getClassName() &"' manytomany '"& arguments.manytomany.getName() &"' does not link back to the containing object defintion.");
-				}
 
 				query.start();
 
@@ -493,12 +487,6 @@ Mark Mandel		10/08/2005		Created
 			{
 				queryExec.setParam("to-key:" & arguments.transfer.getClassName(), invokeGetPrimaryKey(arguments.transfer));
 				queryExec.setParam("from-key:" & compositeObject.getClassName(), invokeGetPrimaryKey(compositeObject));
-			}
-			else
-			{
-				throw("transfer.ManyToManyMisconfiguredException",
-						  "There is a error in the ManyToMany configuration.",
-						  "In TransferObject '"& object.getClassName() &"' arguments.manytomany '"& arguments.manytomany.getName() &"' does not link back to the containing object defintion.");
 			}
 
 			queryExec.execute();

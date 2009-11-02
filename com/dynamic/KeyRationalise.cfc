@@ -49,7 +49,7 @@ Mark Mandel		17/08/2007		Created
 			}
 			else
 			{
-				throw("transfer.IllegalKeyTypeException", "The key for this class should be a struct", "The key for class '#arguments.class#' should be a struct");
+				createObject("component", "transfer.com.dynamic.exception.IllegalKeyTypeException").init("struct", arguments.class);
 			}
 		}
 		else
@@ -60,7 +60,7 @@ Mark Mandel		17/08/2007		Created
 			}
 			else
 			{
-				throw("transfer.IllegalKeyTypeException", "The key for this class should be a simple value", "The key for class '#arguments.class#' should be of simple value");
+				createObject("component", "transfer.com.dynamic.exception.IllegalKeyTypeException").init("simple", arguments.class);
 			}
 		}
 	</cfscript>

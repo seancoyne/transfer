@@ -93,20 +93,6 @@ Mark Mandel		21/04/2006		Created
 		lesserArray.addAll(pivotArray);
 		lesserArray.addAll(greaterArray);
 
-		/*
-		examine = 1;
-		while(examine LTE arrayLen(pivotArray)){
-			arrayAppend(lesserArray, pivotArray[examine]);
-			examine = examine + 1;
-		};
-
-		examine = 1;
-		while(examine LTE arrayLen(greaterArray)){
-			arrayAppend(lesserArray, greaterArray[examine]);
-			examine = examine + 1;
-		};
-		*/
-
 		return lesserArray;
 	</cfscript>
 </cffunction>

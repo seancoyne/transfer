@@ -71,7 +71,7 @@ Mark Mandel		29/06/2005		Created
 		}
 		catch(Any exc)
 		{
-			throw("MethodInjectException", "Error inserting method #toString(arguments.UDF)#", exc.message);
+			createObject("component", "transfer.com.dynamic.exception.MethodInjectionException").init(arguments.udf, exc.message);
 		}
 
 		return arguments.CFC;

@@ -22,7 +22,6 @@ Mark Mandel		19/07/2005		Created
 
 <cfscript>
 	instance = StructNew();
-	//instance.sys = createObject("java", "java.lang.System");
 </cfscript>
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
@@ -30,32 +29,21 @@ Mark Mandel		19/07/2005		Created
 <cffunction name="init" hint="Constructor" access="public" returntype="CacheManager" output="false">
 	<cfargument name="cacheFactory" hint="the cache factory" type="transfer.com.cache.CacheFactory" required="Yes" _factoryMethod="getCacheFactory">
 	<cfargument name="objectManager" hint="Need to object manager for making queries" type="transfer.com.object.ObjectManager" required="Yes" _autocreate="false">
-	<cfargument name="cacheConfigManager" hint="The cache config manager" type="transfer.com.cache.CacheConfigManager" required="Yes" _autocreate="false">
 	<cfargument name="facadeFactory" hint="The facade factory to access caches" type="transfer.com.facade.FacadeFactory" required="Yes" _autocreate="false">
-	<cfargument name="javaLoader" hint="The JavaLoader for loading the caching objects" type="transfer.com.util.JavaLoader" required="Yes" _autocreate="false">
 	<cfscript>
 		setObjectManager(arguments.objectManager);
 		setMethodInvoker(arguments.cacheFactory.getMethodInvoker());
-		setCacheConfigManager(arguments.cacheConfigManager);
 		setFacadeFactory(arguments.facadeFactory);
-		setJavaLoader(arguments.javaLoader);
 
 		//append this circular dependency
 		arguments.cacheFactory.setSingleton(this);
 
-		setSoftReferenceHandler(arguments.cacheFactory.getSoftReferenceHandler());
 		setValidateCacheState(arguments.cacheFactory.getValidateCacheState());
 		setCacheSynchronise(arguments.cacheFactory.getCacheSynchronise());
-		setTransactionQueue(arguments.cacheFactory.getTransactionQueue());
 		setCacheMonitor(arguments.cacheFactory.getCacheMonitor());
 
 		return this;
 	</cfscript>
-</cffunction>
-
-<cffunction name="register" hint="Registers the TransferObject for caching with a soft reference, returns java.lang.ref.SoftReference" access="public" returntype="any" output="false">
-	<cfargument name="transfer" hint="The transfer object to be registered" type="transfer.com.TransferObject" required="Yes">
-	<cfreturn getSoftReferenceHandler().register(arguments.transfer) />
 </cffunction>
 
 <cffunction name="add" hint="Adds a Transfer Object to the Pool" access="public" returntype="void" output="false">
@@ -140,15 +128,6 @@ Mark Mandel		19/07/2005		Created
 	</cfscript>
 </cffunction>
 
-<cffunction name="isTransactionScoped" hint="Is this transaction scoped or not" access="public" returntype="boolean" output="false">
-	<cfargument name="transfer" hint="The transfer object to be stored" type="transfer.com.TransferObject" required="Yes">
-	<cfscript>
-		var scope = getCacheConfigManager().getCacheConfig().getConfig(arguments.transfer.getClassName()).getScope();
-
-		return (scope eq "transaction");
-	</cfscript>
-</cffunction>
-
 <cffunction name="synchronise" hint="syncronises the data, and returns the cached TransferObject if there is one, otherwise returns the original TransferObject" access="public" returntype="transfer.com.TransferObject" output="false">
 	<cfargument name="transfer" hint="The transfer object to syncronise" type="transfer.com.TransferObject" required="Yes">
 	<cfreturn getCacheSynchronise().synchronise(arguments.transfer) />
@@ -159,74 +138,13 @@ Mark Mandel		19/07/2005		Created
 	<cfreturn getValidateCacheState().validateIsCached(arguments.transfer) />
 </cffunction>
 
-<cffunction name="appendTransactionQueue" hint="append a Transfer Objects to the transaction queue" access="public" returntype="void" output="false">
-	<cfargument name="transfer" hint="the transfer object to append" type="transfer.com.TransferObject" required="Yes">
-	<cfscript>
-		getTransactionQueue().append(arguments.transfer);
-	</cfscript>
-</cffunction>
-
-<cffunction name="removeTransactionQueue" hint="append a Transfer Objects to the transaction queue" access="public" returntype="void" output="false">
-	<cfargument name="transfer" hint="the transfer object to append" type="transfer.com.TransferObject" required="Yes">
-	<cfscript>
-		getTransactionQueue().remove(arguments.transfer);
-	</cfscript>
-</cffunction>
-
 <cffunction name="getCacheMonitor" access="public" returntype="CacheMonitor" output="false">
 	<cfreturn instance.CacheMonitor />
-</cffunction>
-
-<cffunction name="hit" hint="add an extra count to this cache's value being found successfully" access="public" returntype="void" output="false">
-	<cfargument name="className" hint="the className being hit" type="string" required="Yes">
-	<cfscript>
-		getCacheMonitor().hit(argumentCollection=arguments);
-	</cfscript>
-</cffunction>
-
-<cffunction name="miss" hint="add an extra count to this cache's value not being found" access="public" returntype="void" output="false">
-	<cfargument name="className" hint="the className being missed" type="string" required="Yes">
-	<cfscript>
-		getCacheMonitor().miss(argumentCollection=arguments);
-	</cfscript>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
-
-<cffunction name="retrieveCache" hint="Returns a com.compoundtheory.objectcache.CacheManager" access="private" returntype="any" output="false">
-	<cfargument name="class" hint="The name of the class" type="string" required="Yes">
-	<cfscript>
-		var scope = getCacheConfigManager().getCacheConfig().getConfig(arguments.class).getScope();
-
-		var facade = getFacadeFactory().getFacadeByScope(scope);
-
-		return facade.getCacheManager();
-	</cfscript>
-</cffunction>
-
-<cffunction name="getSoftReferenceHandler" access="private" returntype="transfer.com.cache.SoftReferenceHandler" output="false">
-	<cfreturn instance.SoftReferenceHandler />
-</cffunction>
-
-<cffunction name="setSoftReferenceHandler" access="private" returntype="void" output="false">
-	<cfargument name="SoftReferenceHandler" type="transfer.com.cache.SoftReferenceHandler" required="true">
-	<cfset instance.SoftReferenceHandler = arguments.SoftReferenceHandler />
-</cffunction>
-
-<cffunction name="getCacheConfigManager" access="private" returntype="transfer.com.cache.CacheConfigManager" output="false">
-	<cfreturn instance.CacheConfigManager />
-</cffunction>
-
-<cffunction name="setCacheConfigManager" access="private" returntype="void" output="false">
-	<cfargument name="CacheConfigManager" type="transfer.com.cache.CacheConfigManager" required="true">
-	<cfset instance.CacheConfigManager = arguments.CacheConfigManager />
-</cffunction>
-
-<cffunction name="getFacadeFactory" access="private" returntype="transfer.com.facade.FacadeFactory" output="false">
-	<cfreturn instance.FacadeFactory />
-</cffunction>
 
 <cffunction name="setFacadeFactory" access="private" returntype="void" output="false">
 	<cfargument name="FacadeFactory" type="transfer.com.facade.FacadeFactory" required="true">
@@ -251,15 +169,6 @@ Mark Mandel		19/07/2005		Created
 	<cfset instance.MethodInvoker = arguments.MethodInvoker />
 </cffunction>
 
-<cffunction name="getJavaLoader" access="private" returntype="transfer.com.util.JavaLoader" output="false">
-	<cfreturn instance.JavaLoader />
-</cffunction>
-
-<cffunction name="setJavaLoader" access="private" returntype="void" output="false">
-	<cfargument name="JavaLoader" type="transfer.com.util.JavaLoader" required="true">
-	<cfset instance.JavaLoader = arguments.JavaLoader />
-</cffunction>
-
 <cffunction name="getCacheSynchronise" access="private" returntype="transfer.com.cache.CacheSynchronise" output="false">
 	<cfreturn instance.CacheSynchronise />
 </cffunction>
@@ -276,15 +185,6 @@ Mark Mandel		19/07/2005		Created
 <cffunction name="setValidateCacheState" access="private" returntype="void" output="false">
 	<cfargument name="ValidateCacheState" type="transfer.com.cache.ValidateCacheState" required="true">
 	<cfset instance.ValidateCacheState = arguments.ValidateCacheState />
-</cffunction>
-
-<cffunction name="getTransactionQueue" access="private" returntype="TransactionQueue" output="false">
-	<cfreturn instance.transactionQueue />
-</cffunction>
-
-<cffunction name="setTransactionQueue" access="private" returntype="void" output="false">
-	<cfargument name="transactionQueue" type="TransactionQueue" required="true">
-	<cfset instance.transactionQueue = arguments.transactionQueue />
 </cffunction>
 
 <cffunction name="setCacheMonitor" access="private" returntype="void" output="false">

@@ -1,29 +1,32 @@
 <!--- Document Information -----------------------------------------------------
 
-Title:      CacheFactory.cfc
+Title:      UnsupportedDatabaseException.cfc
 
 Author:     Mark Mandel
 Email:      mark@compoundtheory.com
 
 Website:    http://www.compoundtheory.com
 
-Purpose:    cf8 cache factory
+Purpose:    Exception for unsupported dbs
 
-Usage:
+Usage:      
 
 Modification Log:
 
 Name			Date			Description
 ================================================================================
-Mark Mandel		12/09/2007		Created
+Mark Mandel		05/06/2009		Created
 
 ------------------------------------------------------------------------------->
-<cfcomponent extends="transfer.com.cache.CacheFactory" output="false">
+<cfcomponent hint="Exception for unsupported dbs" extends="transfer.com.exception.Exception" output="false">
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cffunction name="getSoftReferenceHandler" hint="returns the soft reference hanndler" access="public" returntype="transfer.com.cache.SoftReferenceHandler" output="false">
-	<cfreturn getSingleton("transfer.com.cache.cf8.SoftReferenceHandler") />
+<cffunction name="init" hint="Constructor" access="public" returntype="void" output="false">
+	<cfargument name="dbType" hint="the type of the db" type="string" required="Yes">
+	<cfscript>
+		super.init("An unsupported database has been attempted to be used", "The database of type '#arguments.dbType#' is currently not supported by Transfer");					
+	</cfscript>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->

@@ -36,35 +36,6 @@
 	
 	<xsd:complexType name="objectCache" >
 		<xsd:sequence maxOccurs="1" minOccurs="1">
-			<xsd:element name="scopes" maxOccurs="1" minOccurs="0">
-			<xsd:annotation><xsd:documentation>
-			Defines the keys that Transfer stores it's caching when using caching in shared scopes. If this is not set, the default values are used.
-			</xsd:documentation></xsd:annotation>
-				<xsd:complexType>
-					<xsd:sequence minOccurs="1" maxOccurs="unbounded">
-						<xsd:element type="scope" name="application" maxOccurs="1" minOccurs="0">
-							<xsd:annotation><xsd:documentation>
-							The scope key for 'application' cached objects, if not set, all caching is done under the 'application.transfer' scope. 
-							</xsd:documentation></xsd:annotation>
-						</xsd:element>
-						<xsd:element type="scope" name="session" maxOccurs="1" minOccurs="0">
-							<xsd:annotation><xsd:documentation>
-							The scope key for 'session', and cached objects, if not set, all caching is done under the 'session.transfer' scope. This also applies to 'transaction' scoped objects, as these caches share these scopes. 						
-							</xsd:documentation></xsd:annotation>
-						</xsd:element>
-						<xsd:element type="scope" name="request" maxOccurs="1" minOccurs="0">
-							<xsd:annotation><xsd:documentation>
-							he scope key for 'request' cached objects, if not set, all caching is done under the 'request.transfer' scope. 
-							</xsd:documentation></xsd:annotation>
-						</xsd:element>
-						<xsd:element type="scope" name="server" maxOccurs="1" minOccurs="0">
-							<xsd:annotation><xsd:documentation>
-							The scope key for 'server' cached objects, if not set, all caching is done under the 'server.transfer' scope. 
-							</xsd:documentation></xsd:annotation>
-						</xsd:element>
-					</xsd:sequence>
-				</xsd:complexType>
-			</xsd:element>
 			<xsd:element type="defaultcache" name="defaultcache" maxOccurs="1" minOccurs="0">
 				<xsd:annotation><xsd:documentation>
 				This sets the default values for caching of objects within Transfer. If this is not set, the default values are used.
@@ -83,7 +54,7 @@
 			<xsd:extension base="defaultcache">
 				<xsd:attribute name="class" use="required">
 					<xsd:annotation><xsd:documentation>
-						The class to set the caching settings for
+						The class to use this cache provider for
 					</xsd:documentation></xsd:annotation>
 					<xsd:simpleType>
 						<xsd:restriction base="xsd:string">
@@ -97,81 +68,27 @@
 	
 	<xsd:complexType name="defaultcache">
 		<xsd:sequence maxOccurs="1" minOccurs="1">
-			<xsd:element name="maxobjects" maxOccurs="1" minOccurs="0">
-				<xsd:annotation><xsd:documentation>
-					The maximum number of objects to store for any one Object class. 
-				</xsd:documentation></xsd:annotation>
+			<xsd:element name="setting" minOccurs="0" maxOccurs="unbounded">
 				<xsd:complexType>
-					<xsd:attribute name="value" type="xsd:integer" use="required">
-						<xsd:annotation><xsd:documentation>
-							The number of TransferObjects to cache, defaults to unlimited (0).
-						</xsd:documentation></xsd:annotation>
-					</xsd:attribute>
-				</xsd:complexType>
-			</xsd:element>
-			<xsd:element name="maxminutespersisted" maxOccurs="1" minOccurs="0">
-				<xsd:annotation><xsd:documentation>
-					The maximum number of minutes to store any TransferObject of a given class. 
-				</xsd:documentation></xsd:annotation>
-				<xsd:complexType>
-					<xsd:attribute name="value" type="xsd:integer" use="required">
-						<xsd:annotation><xsd:documentation>
-						The number of minutes to cache, defaults to unlimited (0).
-						</xsd:documentation></xsd:annotation>
-					</xsd:attribute>
-				</xsd:complexType>
-			</xsd:element>
-			<xsd:element name="accessedminutestimeout" maxOccurs="1" minOccurs="0">
-				<xsd:annotation><xsd:documentation>
-					The number of minutes in which a TransferObject will timeout in, if it has not been accessed. 
-				</xsd:documentation></xsd:annotation>
-				<xsd:complexType>
-					<xsd:attribute name="value" type="xsd:integer" use="required">
-						<xsd:annotation><xsd:documentation>
-							Number of minutes until cache timeout, defaults to having no effect (0)
-						</xsd:documentation></xsd:annotation>
-					</xsd:attribute>
-				</xsd:complexType>
-			</xsd:element>			
-			<xsd:element name="scope" maxOccurs="1" minOccurs="0">
-				<xsd:annotation><xsd:documentation>
-				The scope to store all TransferObjects under. Details on the types of caching available can found at Using Caching. 
-				</xsd:documentation></xsd:annotation>
-				<xsd:complexType>
-					<xsd:attribute name="type" use="required">
-						<xsd:annotation><xsd:documentation>
-						'instance', 'application', 'session', 'request', 'transaction', 'server', 'none'. Defaults to 'instance'.
-						</xsd:documentation></xsd:annotation>
-						<xsd:simpleType>
-							<xsd:restriction base="xsd:string">
-								<xsd:enumeration value="instance"/>
-								<xsd:enumeration value="application"/>
-								<xsd:enumeration value="session"/>
-								<xsd:enumeration value="request"/>
-								<xsd:enumeration value="transaction"/>
-								<xsd:enumeration value="server"/>
-								<xsd:enumeration value="none"/>
-							</xsd:restriction>
-						</xsd:simpleType>
-					</xsd:attribute>
+					<xsd:attribute name="name" use="required" type="xsd:string" />
+					<xsd:attribute name="value" use="required" type="xsd:string" />
 				</xsd:complexType>
 			</xsd:element>
 		</xsd:sequence>
-	</xsd:complexType>
-	
-	<xsd:complexType name="scope">
-		<xsd:attribute name="key" use="required">
-			<xsd:annotation><xsd:documentation>
-			The key to set the cache under, e.g. 'transfer'
-			</xsd:documentation></xsd:annotation>
+		<xsd:attribute name="provider">
+			<xsd:annotation>
+				<xsd:documentation>
+					The class that is the Cache Provider
+				</xsd:documentation>
+			</xsd:annotation>
 			<xsd:simpleType>
 				<xsd:restriction base="xsd:string">
-					<xsd:pattern value="[a-zA-Z0-9_]+"></xsd:pattern>
+					<xsd:pattern value="[\.a-zA-Z0-9_]+"></xsd:pattern>
 				</xsd:restriction>
-			</xsd:simpleType>
+			</xsd:simpleType>		
 		</xsd:attribute>
 	</xsd:complexType>
-	
+
 	<!-- ** Null Values ** -->
 	
 	<xsd:complexType name="nullValues">
