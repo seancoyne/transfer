@@ -46,6 +46,10 @@ Mark Mandel		03/11/2009		Created
     </cfscript>
 </cffunction>
 
+<cffunction name="listClasses" hint="list all the classes that you have providers for" access="public" returntype="array" output="false">
+	<cfreturn structKeyList(getProviders()) />
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
@@ -112,8 +116,6 @@ Mark Mandel		03/11/2009		Created
 		var class = arguments.element.xmlAttributes.provider;
 		var args = {};
 		var setting = 0;
-
-		_trace(arguments.element);
     </cfscript>
 
 	<cfloop array="#arguments.element.xmlChildren#" index="setting">

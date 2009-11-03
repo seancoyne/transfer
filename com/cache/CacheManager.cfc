@@ -48,27 +48,13 @@ Mark Mandel		19/07/2005		Created
 </cffunction>
 
 <cffunction name="add" hint="Adds a Transfer Object to the Pool" access="public" returntype="void" output="false">
-	<cfargument name="softRef" hint="java.lang.ref.SoftReference: The soft ref to the transfer object to be stored" type="any" required="Yes">
+	<cfargument name="object" hint="the transfer object to be stored" type="transfer.com.TransferObject" required="Yes">
 	<cfscript>
-		var local = StructNew();
-		var object = 0;
-		var key = 0;
-		var cache = 0;
-		var className = 0;
-		local.transfer = arguments.softRef.get();
+		var class = arguments.object.getClassName();
+		var provider = getProviderManager().getProvider(class);
+		var key = JavaCast("string", getMethodInvoker().invokeMethod(arguments.object, "get" & object.getPrimaryKey().getName()));
 
-		getSoftReferenceHandler().reap();
-
-		if(StructKeyExists(local, "transfer"))
-		{
-			className = local.transfer.getClassName();
-
-			object = getObjectManager().getObject(className);
-			cache = retrieveCache(className);
-			key = JavaCast("string", getMethodInvoker().invokeMethod(local.transfer, "get" & object.getPrimaryKey().getName()));
-
-			cache.add(className, key, softRef);
-		}
+		provider.add(class, key, arguments.object);
 	</cfscript>
 </cffunction>
 
@@ -76,10 +62,9 @@ Mark Mandel		19/07/2005		Created
 	<cfargument name="class" hint="The name of the class" type="string" required="Yes">
 	<cfargument name="key" hint="The key for the id of the data" type="string" required="Yes">
 	<cfscript>
-		var cache = retrieveCache(arguments.class);
-		arguments.key = JavaCast("string", arguments.key);
+		var provider = getProviderManager().getProvider(arguments.class);
 
-		return cache.has(arguments.class, arguments.key);
+		return provider.have(arguments.class, arguments.key);
 	</cfscript>
 </cffunction>
 
@@ -87,46 +72,33 @@ Mark Mandel		19/07/2005		Created
 	<cfargument name="class" hint="The name of the class" type="string" required="Yes">
 	<cfargument name="key" hint="The key for the id of the data" type="string" required="Yes">
 	<cfscript>
-		var cache = retrieveCache(arguments.class);
-		var transfer = 0;
+		var provider = getProviderManager().getProvider(arguments.class);
 
-		getSoftReferenceHandler().reap();
-
-		arguments.key = JavaCast("string", arguments.key);
-
-		return cache.get(arguments.class, arguments.key);
+		return provider.get(arguments.class, arguments.key);
 	</cfscript>
 </cffunction>
 
 <cffunction name="discard" hint="removes a transfer from the cache" access="public" returntype="void" output="false">
-	<cfargument name="transfer" hint="The transfer object to be stored" type="transfer.com.TransferObject" required="Yes">
+	<cfargument name="object" hint="The transfer object to be stored" type="transfer.com.TransferObject" required="Yes">
 	<cfscript>
-		var class = arguments.transfer.getClassName();
-		var object = getObjectManager().getObject(class);
-		var key = JavaCast("string", getMethodInvoker().invokeMethod(arguments.transfer, "get" & object.getPrimaryKey().getName()));
-		var cache = retrieveCache(class);
-	</cfscript>
+		var class = arguments.object.getClassName();
+		var provider = getProviderManager().getProvider(class);
+		var key = JavaCast("string", getMethodInvoker().invokeMethod(arguments.object, "get" & object.getPrimaryKey().getName()));
 
-	<cfif cache.has(class, key)>
-		<cflock name="transfer.discard.#class#.#key#" throwontimeout="true" timeout="60">
-		<cfscript>
-			if(cache.has(class, key))
-			{
-				cache.discard(class, key);
-			}
-		</cfscript>
-		</cflock>
-	</cfif>
-	<cfscript>
-		getSoftReferenceHandler().reap();
+		provider.discard(class, key);
 	</cfscript>
 </cffunction>
 
 <cffunction name="discardAll" hint="discards everything from the cache" access="public" returntype="void" output="false">
 	<cfscript>
-		getSoftReferenceHandler().clearAllReferences();
-		getSoftReferenceHandler().reap();
+		var classes = getProviderManager().listClasses();
+		var class = 0;
 	</cfscript>
+	<cfloop array="#classes#" index="class">
+		<cfscript>
+			getProviderManager().getProvider(class).discardAll();
+        </cfscript>
+	</cfloop>
 </cffunction>
 
 <cffunction name="synchronise" hint="syncronises the data, and returns the cached TransferObject if there is one, otherwise returns the original TransferObject" access="public" returntype="transfer.com.TransferObject" output="false">
