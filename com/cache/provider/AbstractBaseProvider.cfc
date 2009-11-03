@@ -57,7 +57,7 @@ Mark Mandel		02/11/2009		Created
 <cffunction name="discard" hint="virtual method: Remove the given class and key from the cache, if it exists. Implementations of this method must invoke fireDiscardEvent(obj) when an item is discarded from the cache." access="public" returntype="void" output="false">
 	<cfargument name="class" hint="the class of the object" type="string" required="Yes">
 	<cfargument name="key" hint="the primary key of the object" type="string" required="Yes">
-	<cfset createObject("component", "transfer.com.exception.VirtualMethodException").init("have", this)>
+	<cfset createObject("component", "transfer.com.exception.VirtualMethodException").init("discard", this)>
 </cffunction>
 
 <cffunction name="discardAll" hint="virtual method: Remove all items from the cache" access="public" returntype="void" output="false">
@@ -78,20 +78,9 @@ Mark Mandel		02/11/2009		Created
 	<cfreturn "transfer" />
 </cffunction>
 
-<cffunction name="addDiscardObserver" hint="Adds an observer to discard events" access="public" returntype="void" output="false">
-	<cfargument name="observer" hint="The observer to be added" type="any" required="Yes">
-	<cfscript>
-		StructInsert(getCollection(), getSystem().identityHashCode(arguments.observer), arguments.observer, true);
-	</cfscript>
-</cffunction>
-
-<cffunction name="removeDiscardObserver" hint="Removes a discard observer from the collection" access="public" returntype="void" output="false">
-	<cfargument name="observer" hint="The observer to be removed" type="any" required="Yes">
-	<cfscript>
-		var hash = getSystem().identityHashCode(arguments.observer);
-
-		StructDelete(getCollection(), hash);
-	</cfscript>
+<cffunction name="setEventManager" access="public" returntype="void" output="false">
+	<cfargument name="eventManager" type="transfer.com.events.EventManager" required="true">
+	<cfset instance.eventManager = arguments.eventManager />
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
@@ -101,32 +90,12 @@ Mark Mandel		02/11/2009		Created
 <cffunction name="fireDiscardEvent" hint="Fires off the discard to all the Observers" access="private" returntype="void" output="false">
 	<cfargument name="object" hint="the object being discarded" type="any" required="Yes">
 	<cfscript>
-		var counter = 1;
-		var list = createObject("java", "java.util.ArrayList").init(getCollection().values());
-		var len = ArrayLen(list);
-		var eventObj = createObjectve("DiscardEvent").init(arguments.object);
-		var item = 0;
+		getEventManager().fireAfterDiscardEvent(arguments.object);
+    </cfscript>
+</cffunction>
 
-		/*
-		This has been tweaked to get as much speed out of it as possible.
-		*/
-		for(; counter lte len; counter = counter + 1)
-		{
-			try
-			{
-				item = list[counter];
-			}
-			catch(Expression exc)
-			{
-				/*
-				do nothing, it is not likely that this will occur, but it *is* possible under high load
-				as null values can creep in due to lack of synchronisation on the init() of the ArrayList.
-				*/
-			}
-
-			item.actionDiscardEvent(eventObj);
-		}
-	</cfscript>
+<cffunction name="getEventManager" access="private" returntype="transfer.com.events.EventManager" output="false">
+	<cfreturn instance.eventManager />
 </cffunction>
 
 <cffunction name="getCollection" access="private" returntype="any" output="false">

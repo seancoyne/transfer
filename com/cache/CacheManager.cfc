@@ -41,6 +41,7 @@ Mark Mandel		19/07/2005		Created
 		setValidateCacheState(arguments.cacheFactory.getValidateCacheState());
 		setCacheSynchronise(arguments.cacheFactory.getCacheSynchronise());
 		setCacheMonitor(arguments.cacheFactory.getCacheMonitor());
+		setProviderManager(arguments.cacheFactory.getProviderManager());
 
 		return this;
 	</cfscript>
@@ -190,6 +191,15 @@ Mark Mandel		19/07/2005		Created
 <cffunction name="setCacheMonitor" access="private" returntype="void" output="false">
 	<cfargument name="CacheMonitor" type="CacheMonitor" required="true">
 	<cfset instance.CacheMonitor = arguments.CacheMonitor />
+</cffunction>
+
+<cffunction name="getProviderManager" access="private" returntype="transfer.com.cache.provider.ProviderManager" output="false">
+	<cfreturn instance.providerManager />
+</cffunction>
+
+<cffunction name="setProviderManager" access="private" returntype="void" output="false">
+	<cfargument name="providerManager" type="transfer.com.cache.provider.ProviderManager" required="true">
+	<cfset instance.providerManager = arguments.providerManager />
 </cffunction>
 
 </cfcomponent>

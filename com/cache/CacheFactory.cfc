@@ -30,6 +30,7 @@ Mark Mandel		12/09/2007		Created
 	<cfargument name="transfer" hint="Need transfer to call discard" type="transfer.com.Transfer" required="Yes" _autocreate="false">
 	<cfargument name="transaction" hint="The Transaction service" type="transfer.com.sql.transaction.Transaction" required="Yes"
 				_factory="transfer.com.sql.transaction.TransactionManager" _factoryMethod="getTransaction" _autocreate="false">
+	<cfargument name="configReader" hint="The XML Reader for the config file" type="transfer.com.io.XMLFileReader" required="Yes" _autocreate="false">
 	<cfscript>
 		super.init();
 
@@ -38,9 +39,14 @@ Mark Mandel		12/09/2007		Created
 		setSingleton(arguments.facadeFactory);
 		setSingleton(arguments.transfer);
 		setSingleton(arguments.transaction);
+		setSingleton(arguments.configReader);
 
 		return this;
 	</cfscript>
+</cffunction>
+
+<cffunction name="getProviderManager" hint="returns the cache provider service" access="public" returntype="transfer.com.cache.provider.ProviderManager" output="false">
+	<cfreturn getSingleton("transfer.com.cache.provider.ProviderManager") />
 </cffunction>
 
 <cffunction name="getValidateCacheState" hint="returns a validate cache state object" access="public" returntype="transfer.com.cache.ValidateCacheState" output="false">
