@@ -34,14 +34,7 @@ Mark Mandel		22/02/2008		Created
 	<cfscript>
 		var hash = getSystem().identityHashCode(arguments.observer);
 
-		removeObserverByKey(hash);
-	</cfscript>
-</cffunction>
-
-<cffunction name="removeObserverByKey" hint="If you have the identity key, you can remove it" access="public" returntype="void" output="false">
-	<cfargument name="key" hint="The key to remove by" type="any" required="Yes">
-	<cfscript>
-		StructDelete(getCollection(), arguments.key);
+		StructDelete(getCollection(), hash);
 	</cfscript>
 </cffunction>
 

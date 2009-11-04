@@ -86,6 +86,19 @@ Mark Mandel		16/05/2006		Created
 	</cfscript>
 </cffunction>
 
+<cffunction name="clearAll" hint="clears all the facades" access="public" returntype="void" output="false">
+	<cfargument name="class" hint="the class that is being cleared" type="string" required="Yes">
+	<cfscript>
+		var map = getFacadeMap();
+		var facade = 0;
+
+		for(facade in map)
+		{
+			map[facade].clear(arguments.class);
+		}
+    </cfscript>
+</cffunction>
+
 <cffunction name="getThreadPool" access="public" returntype="any" output="false">
 	<cfreturn instance.threadPool />
 </cffunction>

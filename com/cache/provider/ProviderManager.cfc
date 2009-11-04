@@ -46,8 +46,12 @@ Mark Mandel		03/11/2009		Created
     </cfscript>
 </cffunction>
 
+<cffunction name="getDefaultProvider" access="public" returntype="transfer.com.cache.provider.AbstractBaseProvider" output="false">
+	<cfreturn instance.defaultProvider />
+</cffunction>
+
 <cffunction name="listClasses" hint="list all the classes that you have providers for" access="public" returntype="array" output="false">
-	<cfreturn structKeyList(getProviders()) />
+	<cfreturn structKeyArray(getProviders()) />
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
@@ -125,10 +129,6 @@ Mark Mandel		03/11/2009		Created
 	</cfloop>
 
 	<cfreturn createObject("component", class).init(argumentCollection=args) />
-</cffunction>
-
-<cffunction name="getDefaultProvider" access="private" returntype="transfer.com.cache.provider.AbstractBaseProvider" output="false">
-	<cfreturn instance.defaultProvider />
 </cffunction>
 
 <cffunction name="setDefaultProvider" access="private" returntype="void" output="false">

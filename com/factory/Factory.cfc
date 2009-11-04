@@ -72,7 +72,13 @@ Mark Mandel		12/09/2007		Created
 </cffunction>
 
 <cffunction name="getEventManager" hint="returns the event manager" access="public" returntype="transfer.com.events.EventManager" output="false">
-	<cfreturn getSingleton("transfer.com.events.EventManager") />
+	<cfscript>
+		var eventManager = getSingleton("transfer.com.events.EventManager");
+
+		eventManager.configure(getCacheManager());
+
+		return eventManager;
+    </cfscript>
 </cffunction>
 
 <cffunction name="getTransactionManager" hint="returns the Transaction manager" access="public" returntype="transfer.com.sql.transaction.TransactionManager" output="false">

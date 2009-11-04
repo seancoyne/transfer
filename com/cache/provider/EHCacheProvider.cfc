@@ -86,7 +86,7 @@ Mark Mandel		02/11/2009		Created
 		var element = getJavaLoader().create("net.sf.ehcache.Element").init(arguments.key, arguments.object);
     </cfscript>
 	<cfif NOT getEHCacheManager().cacheExists(arguments.class)>
-    	<cflock name="transfer.com.cache.provider.EHCacheProvider.#getSystem().identityHashCode(this)#" throwontimeout="true" timeout="60">
+    	<cflock name="transfer.com.cache.provider.EHCacheProvider.#arguments.class#.#getSystem().identityHashCode(this)#" throwontimeout="true" timeout="60">
     	<cfscript>
     		if(NOT getEHCacheManager().cacheExists(arguments.class))
     		{
@@ -183,7 +183,7 @@ Mark Mandel		02/11/2009		Created
     </cfscript>
 </cffunction>
 
-<cffunction name="discardAll" hint="virtual method: Remove all items from the cache" access="public" returntype="void" output="false">
+<cffunction name="discardAll" hint="Remove all items from the cache" access="public" returntype="void" output="false">
 	<cfset getEHCacheManager().clearAll()>
 </cffunction>
 
@@ -231,15 +231,10 @@ Mark Mandel		02/11/2009		Created
 <cffunction name="notifyElementUpdated" hint="Called immediately after an element has been put into the cache and the element already existed in the cache." access="public" returntype="void" output="false">
 	<cfargument name="cache" hint="the cache in question" type="any" required="Yes">
 	<cfargument name="element" hint="the element in question" type="any" required="Yes">
-	<cfscript>
-
-    </cfscript>
 </cffunction>
 
 <cffunction name="notifyRemoveAll" hint=" Called during Ehcache.removeAll() to indicate that the all elements have been removed from the cache in a bulk operation." access="public" returntype="void" output="false">
 	<cfargument name="cache" hint="the cache in question" type="any" required="Yes">
-	<cfscript>
-    </cfscript>
 </cffunction>
 
 <cffunction name="getCacheProvider" hint="Returns the EHCache CacheManager" access="public" returntype="any" output="false">

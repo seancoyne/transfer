@@ -57,6 +57,10 @@ Mark Mandel		12/09/2007		Created
 	<cfreturn getSingleton("transfer.com.cache.CacheSynchronise") />
 </cffunction>
 
+<cffunction name="getTransactionQueue" hint="returns the Transaction Queue service" access="public" returntype="transfer.com.cache.TransactionQueue" output="false">
+	<cfreturn getSingleton("transfer.com.cache.TransactionQueue") />
+</cffunction>
+
 <cffunction name="getCacheMonitor" hint="returns Cache Monitoring service" access="public" returntype="transfer.com.cache.CacheMonitor" output="false">
 	<cfreturn getSingleton("transfer.com.cache.CacheMonitor") />
 </cffunction>

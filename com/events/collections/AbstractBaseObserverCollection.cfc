@@ -22,13 +22,6 @@ Mark Mandel		06/10/2005		Created
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cffunction name="addObserver" hint="Adds an observer" access="public" returntype="void" output="false">
-	<cfargument name="observer" hint="The observer to be added" type="transfer.com.events.adapter.AbstractBaseEventActionAdapter" required="Yes">
-	<cfscript>
-		super.addObserver(arguments.observer, arguments.observer.getKey());
-	</cfscript>
-</cffunction>
-
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->

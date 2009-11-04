@@ -24,13 +24,6 @@ Mark Mandel		02/11/2009		Created
 
 <cffunction name="init" hint="Constructor" access="public" returntype="AbstractBaseProvider" output="false">
 	<cfscript>
-		var linkedHashMap = createObject("java", "java.util.LinkedHashMap").init();
-		var Collections = createObject("java", "java.util.Collections");
-
-		setSystem(createObject("java", "java.lang.System"));
-
-		setCollection(Collections.synchronizedMap(linkedHashMap));
-
 		return this;
 	</cfscript>
 </cffunction>
@@ -54,7 +47,8 @@ Mark Mandel		02/11/2009		Created
 	<cfset createObject("component", "transfer.com.exception.VirtualMethodException").init("get", this)>
 </cffunction>
 
-<cffunction name="discard" hint="virtual method: Remove the given class and key from the cache, if it exists. Implementations of this method must invoke fireDiscardEvent(obj) when an item is discarded from the cache." access="public" returntype="void" output="false">
+<cffunction name="discard" hint="virtual method: Remove the given class and key from the cache, if it exists. Implementations of this method must invoke fireDiscardEvent(obj) when an item is discarded from the cache, but only if it existed in the first place."
+			access="public" returntype="void" output="false">
 	<cfargument name="class" hint="the class of the object" type="string" required="Yes">
 	<cfargument name="key" hint="the primary key of the object" type="string" required="Yes">
 	<cfset createObject("component", "transfer.com.exception.VirtualMethodException").init("discard", this)>
@@ -96,24 +90,6 @@ Mark Mandel		02/11/2009		Created
 
 <cffunction name="getEventManager" access="private" returntype="transfer.com.events.EventManager" output="false">
 	<cfreturn instance.eventManager />
-</cffunction>
-
-<cffunction name="getCollection" access="private" returntype="any" output="false">
-	<cfreturn instance.Collection />
-</cffunction>
-
-<cffunction name="setCollection" access="private" returntype="void" output="false">
-	<cfargument name="Collection" type="any" required="true">
-	<cfset instance.Collection = arguments.Collection />
-</cffunction>
-
-<cffunction name="getSystem" access="private" returntype="any" output="false">
-	<cfreturn instance.System />
-</cffunction>
-
-<cffunction name="setSystem" access="private" returntype="void" output="false">
-	<cfargument name="System" type="any" required="true">
-	<cfset instance.System = arguments.System />
 </cffunction>
 
 </cfcomponent>

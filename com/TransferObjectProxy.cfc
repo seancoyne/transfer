@@ -145,6 +145,14 @@ Mark Mandel		27/06/2008		Created
 	</cfscript>
 </cffunction>
 
+<cffunction name="sameTransfer" hint="Checks to see if 2 transfer objects are the same" access="public" returntype="boolean" output="false">
+	<cfargument name="transfer" hint="The transfer object to check if we are equal" type="transfer.com.TransferObject" required="Yes">
+	<cfscript>
+		var system = getSystem();
+		return (system.identityHashCode(this) eq system.identityHashCode(arguments.transfer));
+	</cfscript>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <cffunction name="setIsClone" access="package" returntype="void" output="false">

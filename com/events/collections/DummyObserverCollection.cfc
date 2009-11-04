@@ -39,11 +39,6 @@ Mark Mandel		17/05/2006		Created
 	<!--- does nothing --->
 </cffunction>
 
-<cffunction name="removeObserverByKey" hint="If you have the identity key, you can remove it" access="public" returntype="void" output="false">
-	<cfargument name="key" hint="The key to remove" type="any" required="Yes">
-	<!--- never going to do a thing --->
-</cffunction>
-
 <cffunction name="removeObserver" hint="Removes an observer from the collection" access="public" returntype="void" output="false">
 	<cfargument name="observer" hint="The observer to be removed" type="any" required="Yes">
 	<!--- Never had them in the first place, so who cares --->

@@ -38,14 +38,10 @@ Mark Mandel		06/10/2005		Created
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
 <cffunction name="fireActionMethod" hint="virtual: fires the action method" access="private" returntype="void" output="false">
-	<cfargument name="adapter" hint="the adapter to fire against" type="transfer.com.events.adapter.AbstractBaseEventActionAdapter" required="Yes">
+	<cfargument name="object" hint="the object to fire against" type="any" required="Yes">
 	<cfargument name="event" hint="The event object to fire" type="transfer.com.events.TransferEvent" required="Yes">
 	<cfscript>
-		if(NOT arguments.adapter.actionBeforeUpdateTransferEvent(arguments.event))
-		{
-			//if we come across an adapter that is empty, dump it.
-			removeObserverByKey(arguments.adapter.getKey());
-		}
+		arguments.object.actionBeforeUpdateTransferEvent(arguments.event);
 	</cfscript>
 </cffunction>
 

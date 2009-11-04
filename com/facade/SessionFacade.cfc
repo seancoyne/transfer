@@ -21,25 +21,20 @@ Mark Mandel		16/05/2006		Created
 
 <cfcomponent name="SessionFacade" hint="Facade to the Session Scope" extends="AbstractBaseFacade">
 
-<cffunction name="configure" hint="Constructor" access="public" returntype="AbstractBaseFacade" output="false">
-	<cfargument name="key" hint="The key to store values under" type="string" required="Yes">
+<cffunction name="configure" hint="Constructor" access="public" returntype="void" output="false">
 	<cfscript>
-		super.configure(arguments.key);
-
 		setIsSessionEnabled(false);
 
 		//the best way of checking if sessions are enabled
 		try
 		{
-			session[arguments.key] = StructNew();
+			session[createUUID()] = StructNew();
 			setIsSessionEnabled(true);
 		}
 		catch(Any exc)
 		{
 			//don't do anything really, we're just using this as a 1 time check
 		}
-
-		return this;
 	</cfscript>
 </cffunction>
 

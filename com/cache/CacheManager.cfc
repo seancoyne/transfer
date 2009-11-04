@@ -40,6 +40,7 @@ Mark Mandel		19/07/2005		Created
 
 		setValidateCacheState(arguments.cacheFactory.getValidateCacheState());
 		setCacheSynchronise(arguments.cacheFactory.getCacheSynchronise());
+		setTransactionQueue(arguments.cacheFactory.getTransactionQueue());
 		setCacheMonitor(arguments.cacheFactory.getCacheMonitor());
 		setProviderManager(arguments.cacheFactory.getProviderManager());
 
@@ -48,23 +49,36 @@ Mark Mandel		19/07/2005		Created
 </cffunction>
 
 <cffunction name="add" hint="Adds a Transfer Object to the Pool" access="public" returntype="void" output="false">
-	<cfargument name="object" hint="the transfer object to be stored" type="transfer.com.TransferObject" required="Yes">
+	<cfargument name="transferObject" hint="the transfer object to be stored" type="transfer.com.TransferObject" required="Yes">
 	<cfscript>
-		var class = arguments.object.getClassName();
+		var class = arguments.transferObject.getClassName();
+		var object = getObjectManager().getObject(class);
 		var provider = getProviderManager().getProvider(class);
-		var key = JavaCast("string", getMethodInvoker().invokeMethod(arguments.object, "get" & object.getPrimaryKey().getName()));
+		var key = JavaCast("string", getMethodInvoker().invokeMethod(arguments.transferObject, "get" & object.getPrimaryKey().getName()));
 
-		provider.add(class, key, arguments.object);
+		provider.add(class, key, arguments.transferObject);
 	</cfscript>
 </cffunction>
 
-<cffunction name="have" hint="Checks if the Transfer is persistent in this" access="public" returntype="boolean" output="false">
+<cffunction name="have" hint="Checks if the Transfer Object is persistent in the cache" access="public" returntype="boolean" output="false">
 	<cfargument name="class" hint="The name of the class" type="string" required="Yes">
 	<cfargument name="key" hint="The key for the id of the data" type="string" required="Yes">
 	<cfscript>
 		var provider = getProviderManager().getProvider(arguments.class);
 
-		return provider.have(arguments.class, arguments.key);
+		return provider.have(arguments.class, JavaCast("string", arguments.key));
+	</cfscript>
+</cffunction>
+
+<cffunction name="haveObject" hint="Checks to see if the current object is in the cache" access="public" returntype="boolean" output="false">
+	<cfargument name="transferObject" hint="The transfer object to be stored" type="transfer.com.TransferObject" required="Yes">
+	<cfscript>
+		var class = arguments.transferObject.getClassName();
+		var provider = getProviderManager().getProvider(class);
+		var object = getObjectManager().getObject(class);
+		var key = JavaCast("string", getMethodInvoker().invokeMethod(arguments.transferObject, "get" & object.getPrimaryKey().getName()));
+
+		return provider.have(class, key);
 	</cfscript>
 </cffunction>
 
@@ -74,18 +88,29 @@ Mark Mandel		19/07/2005		Created
 	<cfscript>
 		var provider = getProviderManager().getProvider(arguments.class);
 
-		return provider.get(arguments.class, arguments.key);
+		return provider.get(arguments.class, JavaCast("string", arguments.key));
 	</cfscript>
 </cffunction>
 
 <cffunction name="discard" hint="removes a transfer from the cache" access="public" returntype="void" output="false">
-	<cfargument name="object" hint="The transfer object to be stored" type="transfer.com.TransferObject" required="Yes">
+	<cfargument name="transferObject" hint="The transfer object to be stored" type="transfer.com.TransferObject" required="Yes">
 	<cfscript>
-		var class = arguments.object.getClassName();
+		var class = arguments.transferObject.getClassName();
 		var provider = getProviderManager().getProvider(class);
-		var key = JavaCast("string", getMethodInvoker().invokeMethod(arguments.object, "get" & object.getPrimaryKey().getName()));
+		var object = getObjectManager().getObject(class);
+		var key = JavaCast("string", getMethodInvoker().invokeMethod(arguments.transferObject, "get" & object.getPrimaryKey().getName()));
 
 		provider.discard(class, key);
+	</cfscript>
+</cffunction>
+
+<cffunction name="discardByClassAndKey" hint="Discards an Object by its class and its key, if it exists" access="public" returntype="void" output="false">
+	<cfargument name="className" hint="The class name of the object to discard" type="string" required="Yes">
+	<cfargument name="key" hint="The primary key value for the object" type="any" required="Yes">
+	<cfscript>
+		var provider = getProviderManager().getProvider(arguments.className);
+
+		provider.discard(arguments.className, JavaCast("string", arguments.key));
 	</cfscript>
 </cffunction>
 
@@ -93,12 +118,32 @@ Mark Mandel		19/07/2005		Created
 	<cfscript>
 		var classes = getProviderManager().listClasses();
 		var class = 0;
+
+		getProviderManager().getDefaultProvider().discardAll();
+
+		getFacadeFactory().clearAll("__instance");
 	</cfscript>
 	<cfloop array="#classes#" index="class">
 		<cfscript>
 			getProviderManager().getProvider(class).discardAll();
+
+			getFacadeFactory().clearAll(class);
         </cfscript>
 	</cfloop>
+</cffunction>
+
+<cffunction name="getScope" hint="gets the scope for a given class" access="public" returntype="string" output="false">
+	<cfargument name="class" hint="The name of the class" type="string" required="Yes">
+	<cfscript>
+		return getProviderManager().getProvider(arguments.class).getScope();
+    </cfscript>
+</cffunction>
+
+<cffunction name="getScopeKey" hint="gets the scope key for a given class" access="public" returntype="string" output="false">
+	<cfargument name="class" hint="The name of the class" type="string" required="Yes">
+	<cfscript>
+		return getProviderManager().getProvider(arguments.class).getScopeKey();
+    </cfscript>
 </cffunction>
 
 <cffunction name="synchronise" hint="syncronises the data, and returns the cached TransferObject if there is one, otherwise returns the original TransferObject" access="public" returntype="transfer.com.TransferObject" output="false">
@@ -111,6 +156,20 @@ Mark Mandel		19/07/2005		Created
 	<cfreturn getValidateCacheState().validateIsCached(arguments.transfer) />
 </cffunction>
 
+<cffunction name="appendTransactionQueue" hint="append a Transfer Objects to the transaction queue" access="public" returntype="void" output="false">
+	<cfargument name="transfer" hint="the transfer object to append" type="transfer.com.TransferObject" required="Yes">
+	<cfscript>
+		getTransactionQueue().append(arguments.transfer);
+	</cfscript>
+</cffunction>
+
+<cffunction name="removeTransactionQueue" hint="append a Transfer Objects to the transaction queue" access="public" returntype="void" output="false">
+	<cfargument name="transfer" hint="the transfer object to append" type="transfer.com.TransferObject" required="Yes">
+	<cfscript>
+		getTransactionQueue().remove(arguments.transfer);
+	</cfscript>
+</cffunction>
+
 <cffunction name="getCacheMonitor" access="public" returntype="CacheMonitor" output="false">
 	<cfreturn instance.CacheMonitor />
 </cffunction>
@@ -119,9 +178,13 @@ Mark Mandel		19/07/2005		Created
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
+<cffunction name="getFacadeFactory" access="private" returntype="transfer.com.facade.FacadeFactory" output="false">
+	<cfreturn instance.facadeFactory />
+</cffunction>
+
 <cffunction name="setFacadeFactory" access="private" returntype="void" output="false">
-	<cfargument name="FacadeFactory" type="transfer.com.facade.FacadeFactory" required="true">
-	<cfset instance.FacadeFactory = arguments.FacadeFactory />
+	<cfargument name="facadeFactory" type="transfer.com.facade.FacadeFactory" required="true">
+	<cfset instance.facadeFactory = arguments.facadeFactory />
 </cffunction>
 
 <cffunction name="getObjectManager" access="private" returntype="transfer.com.object.ObjectManager" output="false">
@@ -158,6 +221,15 @@ Mark Mandel		19/07/2005		Created
 <cffunction name="setValidateCacheState" access="private" returntype="void" output="false">
 	<cfargument name="ValidateCacheState" type="transfer.com.cache.ValidateCacheState" required="true">
 	<cfset instance.ValidateCacheState = arguments.ValidateCacheState />
+</cffunction>
+
+<cffunction name="getTransactionQueue" access="private" returntype="TransactionQueue" output="false">
+	<cfreturn instance.transactionQueue />
+</cffunction>
+
+<cffunction name="setTransactionQueue" access="private" returntype="void" output="false">
+	<cfargument name="transactionQueue" type="TransactionQueue" required="true">
+	<cfset instance.transactionQueue = arguments.transactionQueue />
 </cffunction>
 
 <cffunction name="setCacheMonitor" access="private" returntype="void" output="false">

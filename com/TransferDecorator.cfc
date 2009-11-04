@@ -38,6 +38,7 @@ Mark Mandel		30/07/2006		Created
 		setTransferObject(arguments.transferObject);
 		setDatasource(arguments.datasource);
 		setTransaction(arguments.transaction);
+		setSystem(createObject("java", "java.lang.System"));
 
 		//then initialise
 		arguments.transferObject.init(getTransfer(), arguments.utility, arguments.nullable, this);
@@ -76,15 +77,14 @@ Mark Mandel		30/07/2006		Created
 	<cfreturn getTransferObject().clone()>
 </cffunction>
 
-<!---<cffunction name="sameTransfer" hint="Checks to see if 2 transfer objects are the same" access="public" returntype="boolean" output="false">
+<cffunction name="sameTransfer" hint="Checks to see if 2 transfer objects are the same" access="public" returntype="boolean" output="false">
 	<cfargument name="transfer" hint="The transfer object to check if we are equal" type="transfer.com.TransferObject" required="Yes">
 	<cfscript>
-		//i'm not sure why I can't use getThisObject() from here, or why I can't use 'this', but it works.
-		//aaah.. because this isn't overwritten in the TransferDecorator... now I understand. No problem.
-		return getTransferObject().sameTransfer(arguments.transfer);
+		var system = getSystem();
+		return (system.identityHashCode(this) eq system.identityHashCode(arguments.transfer));
 	</cfscript>
 </cffunction>
---->
+
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
