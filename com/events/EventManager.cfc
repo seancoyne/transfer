@@ -23,6 +23,7 @@ Mark Mandel		26/08/2005		Created
 
 <cfscript>
 	instance = StructNew();
+	instance.static.INSTANCE_CLASS = "__instance";
 </cfscript>
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
@@ -250,13 +251,10 @@ Mark Mandel		26/08/2005		Created
 		var scope = getCacheManager().getScope(arguments.transfer.getClassName());
 
 		//run the instance scope one
-		getFacadeFactory().getInstanceFacade().getObserverCollectionByType(arguments.type, arguments.transfer.getClassName()).fireEvent(event);
+		getFacadeFactory().getInstanceFacade().getObserverCollectionByType(arguments.type, instance.static.INSTANCE_CLASS).fireEvent(event);
 
-		//if we've got a transfer outside of instance scope
-		if(scope neq "instance")
-		{
-			getObserverCollection(arguments.transfer, arguments.type).fireEvent(event);
-		}
+		//run the transfer object one
+		getObserverCollection(arguments.transfer, arguments.type).fireEvent(event);
 
 		//put it back
 		getTransferEventPool().recycle(event);
@@ -286,7 +284,7 @@ Mark Mandel		26/08/2005		Created
 		var facade = 0;
 		var cacheConfig = 0;
 		var scope = "instance";
-		var class = "__instance";
+		var class = instance.static.INSTANCE_CLASS;
 
 		if(isTransferObject(arguments.object))
 		{

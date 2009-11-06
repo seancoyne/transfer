@@ -248,6 +248,7 @@ Mark Mandel		16/05/2006		Created
 			return false;
 		}
 
+
 		return StructKeyExists(getScopePlace(argumentCollection=arguments), key);
 	</cfscript>
 </cffunction>
