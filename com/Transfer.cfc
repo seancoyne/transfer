@@ -95,7 +95,6 @@ Mark Mandel		11/07/2005		Created
 
 	<cfscript>
 		var local = StructNew();
-
 		var rationalKey = rationaliseKey(arguments.class, arguments.key);
 	</cfscript>
 
@@ -111,23 +110,23 @@ Mark Mandel		11/07/2005		Created
 				if(NOT isCached(arguments.class, rationalKey))
 				{
 					//if not put it in
-					transfer = new(arguments.class);
+					local.transfer = new(arguments.class);
 
 					//run the query
-					getDynamicManager().populate(transfer, arguments.key);
+					getDynamicManager().populate(local.transfer, arguments.key);
 
 					//set to non dirty, and persisted
-					transfer.getOriginalTransferObject(true).setIsDirty(false);
-					transfer.getOriginalTransferObject(true).setIsPersisted(true);
+					local.transfer.getOriginalTransferObject(true).setIsDirty(false);
+					local.transfer.getOriginalTransferObject(true).setIsPersisted(true);
 
 					//put it in persistance
-					cache(transfer);
+					cache(local.transfer);
 
 					/*
 					shoot it back out, in case it's a 'none' cached item,
 					we don't want it looking for itself further down
 					*/
-					return transfer;
+					return local.transfer;
 				}
 			</cfscript>
 			</cflock>
