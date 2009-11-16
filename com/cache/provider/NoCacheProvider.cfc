@@ -57,6 +57,33 @@ Mark Mandel		02/11/2009		Created
 <cffunction name="discardAll" hint="Discard the nothing that I have" access="public" returntype="void" output="false">
 </cffunction>
 
+<cffunction name="getCachedClasses" hint="return a list of all the cached classes" access="public" returntype="array" output="false">
+	<cfreturn ArrayNew(1) />
+</cffunction>
+
+<cffunction name="getSize" hint="The number of items in the cache, for  given class" access="public" returntype="numeric" output="false">
+	<cfargument name="className" hint="the name of the class" type="string" required="Yes">
+	<cfreturn 0 />
+</cffunction>
+
+<cffunction name="getHits" hint="returns the number of hits for that class" access="public" returntype="numeric" output="false">
+	<cfargument name="className" hint="the class to retrive hits for" type="string" required="Yes">
+	<cfreturn 0 />
+</cffunction>
+
+<cffunction name="getMisses" hint="returns the number of misses for that class" access="public" returntype="numeric" output="false">
+	<cfargument name="className" hint="the class to retrive hits for" type="string" required="Yes">
+	<cfreturn 0 />
+</cffunction>
+
+<cffunction name="getEvictions" hint="get the total number of cache evictions for this class" access="public" returntype="numeric" output="false">
+	<cfargument name="className" hint="the class to retrive hits for" type="string" required="Yes">
+	<cfreturn 0 />
+</cffunction>
+
+<cffunction name="resetStatistics" hint="resets the statistics" access="public" returntype="void" output="false">
+</cffunction>
+
 <cffunction name="getCacheProvider" hint="Returns this" access="public" returntype="any" output="false">
 	<cfreturn this />
 </cffunction>

@@ -187,6 +187,70 @@ Mark Mandel		02/11/2009		Created
 	<cfset getEHCacheManager().clearAll()>
 </cffunction>
 
+<cffunction name="getCachedClasses" hint="return a list of all the cached classes" access="public" returntype="array" output="false">
+	<cfreturn getEHCacheManager().getCacheNames() />
+</cffunction>
+
+<cffunction name="getSize" hint="The number of items in the cache, for  given class" access="public" returntype="numeric" output="false">
+	<cfargument name="className" hint="the name of the class" type="string" required="Yes">
+	<cfscript>
+		if(getEHCacheManager().cacheExists(arguments.className))
+		{
+			return getEHCacheManager().getCache(arguments.className).getLiveCacheStatistics().getSize();
+		}
+
+		return 0;
+    </cfscript>
+</cffunction>
+
+<cffunction name="getHits" hint="returns the number of hits for that class" access="public" returntype="numeric" output="false">
+	<cfargument name="className" hint="the class to retrive hits for" type="string" required="Yes">
+	<cfscript>
+		if(getEHCacheManager().cacheExists(arguments.className))
+		{
+			return getEHCacheManager().getCache(arguments.className).getStatistics().getCacheHits();
+		}
+
+		return 0;
+    </cfscript>
+</cffunction>
+
+<cffunction name="getMisses" hint="returns the number of misses for that class" access="public" returntype="numeric" output="false">
+	<cfargument name="className" hint="the class to retrive hits for" type="string" required="Yes">
+	<cfscript>
+		if(getEHCacheManager().cacheExists(arguments.className))
+		{
+			return getEHCacheManager().getCache(arguments.className).getStatistics().getCacheMisses();
+		}
+
+		return 0;
+    </cfscript>
+</cffunction>
+
+<cffunction name="getEvictions" hint="get the total number of cache evictions for this class" access="public" returntype="numeric" output="false">
+	<cfargument name="className" hint="the class to retrive hits for" type="string" required="Yes">
+	<cfscript>
+		if(getEHCacheManager().cacheExists(arguments.className))
+		{
+			return getEHCacheManager().getCache(arguments.className).getStatistics().getEvictionCount();
+		}
+
+		return 0;
+    </cfscript>
+</cffunction>
+
+<cffunction name="resetStatistics" hint="resets the statistics" access="public" returntype="void" output="false">
+	<cfscript>
+		var classes = getCachedClasses();
+		var class = 0;
+    </cfscript>
+	<cfloop array="#classes#" index="class">
+		<cfscript>
+			getEHCacheManager().getCache(class).clearStatistics();
+        </cfscript>
+	</cfloop>
+</cffunction>
+
 <cffunction name="clone" hint="throws CloneNotSupportedException" access="public" returntype="any" output="false">
 	<cfscript>
 		var exc = createObject("java", "java.lang.CloneNotSupportedException").init();
