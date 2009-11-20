@@ -24,7 +24,10 @@ Mark Mandel		14/07/2008		Created
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="init" hint="Constructor" access="public" returntype="CacheMonitor" output="false">
+	<cfargument name="providerManager" hint="The provider manager" type="transfer.com.cache.provider.ProviderManager" required="true" _autocreate="false">
 	<cfscript>
+		setProviderManager(arguments.providerManager);
+
 		return this;
 	</cfscript>
 </cffunction>
@@ -34,64 +37,28 @@ Mark Mandel		14/07/2008		Created
 		var args = StructNew();
 		args.classArray = createObject("java", "java.util.ArrayList").init();
 
-		eachCacheManager(executeGetCachedClasses, args);
+		eachCacheProvider(executeGetCachedClasses, args);
 
 		return args.classArray;
 	</cfscript>
 </cffunction>
 
-<cffunction name="getEstimatedSize" hint="A fast lookup of how many items in the cache, simply by checking its size, which may not be exactly accurate" access="public" returntype="numeric" output="false">
+<cffunction name="getSize" hint="A look at how many items are in cache, where a copy of the cache is taken, and inspected item by item. Speed and accurancy is determined by the Cache Provider"
+			access="public" returntype="numeric" output="false">
 	<cfargument name="className" hint="the name of the class" type="string" required="Yes">
 	<cfscript>
-		var config = getCacheConfigManager().getCacheConfig().getConfig(arguments.className);
-		var facade = getFacadeFactory().getFacadeByScope(config.getScope());
-
-		if(facade.hasCacheManager())
-		{
-			return facade.getCacheManager().getEstimatedSize(arguments.className);
-		}
-
-		return 0;
+		return getProviderManager().getProvider(arguments.className).getSize(arguments.className);
 	</cfscript>
 </cffunction>
 
-<cffunction name="getCalculatedSize" hint="A slow look at how many items are in cache, where a copy of the cache is taken, and inspected item by item." access="public" returntype="numeric" output="false">
-	<cfargument name="className" hint="the name of the class" type="string" required="Yes">
-	<cfscript>
-		var config = getCacheConfigManager().getCacheConfig().getConfig(arguments.className);
-		var facade = getFacadeFactory().getFacadeByScope(config.getScope());
-
-		if(facade.hasCacheManager())
-		{
-			return facade.getCacheManager().getCalculatedSize(arguments.className);
-		}
-
-		return 0;
-	</cfscript>
-</cffunction>
-
-<cffunction name="getTotalEstimatedSize" hint="get the estimated size for all classes" access="public" returntype="numeric" output="false">
+<cffunction name="getTotalSize" hint="get the total cache size for all classes" access="public" returntype="numeric" output="false">
 	<cfscript>
 		var iterator = getCachedClasses().iterator();
 		var sum = 0;
 
 		while(iterator.hasNext())
 		{
-			sum = sum + getEstimatedSize(iterator.next());
-		}
-
-		return sum;
-	</cfscript>
-</cffunction>
-
-<cffunction name="getTotalCalculatedSize" hint="get the calculated size for all classes" access="public" returntype="numeric" output="false">
-	<cfscript>
-		var iterator = getCachedClasses().iterator();
-		var sum = 0;
-
-		while(iterator.hasNext())
-		{
-			sum = sum + getCalculatedSize(iterator.next());
+			sum = sum + getSize(iterator.next());
 		}
 
 		return sum;
@@ -101,21 +68,20 @@ Mark Mandel		14/07/2008		Created
 <cffunction name="getHits" hint="returns the number of hits for that class" access="public" returntype="numeric" output="false">
 	<cfargument name="className" hint="the class to retrive hits for" type="string" required="Yes">
 	<cfscript>
-		return getMapValue(getHitMap(), arguments.className);
+		return getProviderManager().getProvider(arguments.className).getHits(arguments.className);
 	</cfscript>
 </cffunction>
 
 <cffunction name="getMisses" hint="returns the number of misses for that class" access="public" returntype="numeric" output="false">
 	<cfargument name="className" hint="the class to retrive hits for" type="string" required="Yes">
 	<cfscript>
-		return getMapValue(getMissMap(), arguments.className);
+		return getProviderManager().getProvider(arguments.className).getMisses(arguments.className);
 	</cfscript>
 </cffunction>
 
-<cffunction name="resetHitsAndMisses" hint="resets the Hit and MIss counters back to 0" access="public" returntype="void" output="false">
+<cffunction name="resetStatistics" hint="reset all statistics" access="public" returntype="void" output="false">
 	<cfscript>
-		setHitMap(StructNew());
-		setMissMap(StructNew());
+		eachCacheProvider(executeResetStatistics);
 	</cfscript>
 </cffunction>
 
@@ -155,7 +121,7 @@ Mark Mandel		14/07/2008		Created
 		//avoid /0 errors
 		if(misses eq 0)
 		{
-			return 0;
+			return 1;
 		}
 
 		return getHits(arguments.className) / misses;
@@ -169,23 +135,17 @@ Mark Mandel		14/07/2008		Created
 		//avoid /0 errors
 		if(misses eq 0)
 		{
-			return 0;
+			return 1;
 		}
 
 		return getTotalHits() / misses;
 	</cfscript>
 </cffunction>
 
-<cffunction name="resetEvictions" hint="resets eviction counters back to 0" access="public" returntype="void" output="false">
-	<cfscript>
-		setEvictMap(StructNew());
-	</cfscript>
-</cffunction>
-
 <cffunction name="getEvictions" hint="get the total number of cache evictions for this class" access="public" returntype="numeric" output="false">
 	<cfargument name="className" hint="the class to retrive hits for" type="string" required="Yes">
 	<cfscript>
-		return getMapValue(getEvictMap(), arguments.className);
+		return getProviderManager().getProvider(arguments.className).getEvictions(arguments.className);
 	</cfscript>
 </cffunction>
 
@@ -203,9 +163,59 @@ Mark Mandel		14/07/2008		Created
 	</cfscript>
 </cffunction>
 
+<!--- TODO: expose cache providers --->
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
+
+<cffunction name="eachCacheProvider" hint="HOF for running a function against each provider" access="private" returntype="void" output="false">
+	<cfargument name="func" hint="the function to be run against the provider" type="any" required="Yes">
+	<cfargument name="args" hint="the argument collections" type="struct" required="No" default="#StructNew()#">
+	<cfscript>
+		var call = arguments.func;
+		var classes = getProviderManager().listClasses();
+		var class = 0;
+
+		args.provider = getProviderManager().getDefaultProvider();
+
+		call(argumentCollection=args);
+    </cfscript>
+	<cfloop array="#classes#" index="class">
+		<cfscript>
+			args.provider = getProviderManager().getProvider(class);
+			call(argumentCollection=args);
+        </cfscript>
+	</cfloop>
+</cffunction>
+
+<!--- HOF commands --->
+
+<cffunction name="executeGetCachedClasses" hint="Command function for getting all the caches" access="private" returntype="void" output="false">
+	<cfargument name="provider" hint="a cache provider" type="transfer.com.cache.provider.AbstractBaseProvider" required="Yes">
+	<cfargument name="classArray" hint="the array of classes" type="array" required="Yes">
+	<cfscript>
+		var classes = arguments.provider.getCachedClasses();
+
+		arguments.classArray.addAll(classes);
+    </cfscript>
+</cffunction>
+
+<cffunction name="executeResetStatistics" hint="Command function for resetting the statistics on all cache providers" access="private" returntype="void" output="false">
+	<cfargument name="provider" hint="a cache provider" type="transfer.com.cache.provider.AbstractBaseProvider" required="Yes">
+	<cfscript>
+		arguments.provider.resetStatistics();
+    </cfscript>
+</cffunction>
+
+
+<cffunction name="getProviderManager" access="private" returntype="transfer.com.cache.provider.ProviderManager" output="false">
+	<cfreturn instance.providerManager />
+</cffunction>
+
+<cffunction name="setProviderManager" access="private" returntype="void" output="false">
+	<cfargument name="providerManager" type="transfer.com.cache.provider.ProviderManager" required="true">
+	<cfset instance.providerManager = arguments.providerManager />
+</cffunction>
 
 </cfcomponent>

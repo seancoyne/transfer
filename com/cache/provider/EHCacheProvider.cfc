@@ -35,6 +35,7 @@ Mark Mandel		02/11/2009		Created
 		var ConfigurationFactory = 0;
 		var configHelper = 0;
 		var interfaces = ["net.sf.ehcache.event.CacheEventListener"];
+		setArrays(createObject("java", "java.util.Arrays"));
 
 		super.init();
 
@@ -188,7 +189,7 @@ Mark Mandel		02/11/2009		Created
 </cffunction>
 
 <cffunction name="getCachedClasses" hint="return a list of all the cached classes" access="public" returntype="array" output="false">
-	<cfreturn getEHCacheManager().getCacheNames() />
+	<cfreturn getArrays().asList(getEHCacheManager().getCacheNames()) />
 </cffunction>
 
 <cffunction name="getSize" hint="The number of items in the cache, for  given class" access="public" returntype="numeric" output="false">
@@ -389,6 +390,15 @@ Mark Mandel		02/11/2009		Created
 <cffunction name="setProxy" access="private" returntype="void" output="false">
 	<cfargument name="proxy" type="any" required="true">
 	<cfset instance.proxy = arguments.proxy />
+</cffunction>
+
+<cffunction name="getArrays" access="private" returntype="any" output="false">
+	<cfreturn instance.arrays />
+</cffunction>
+
+<cffunction name="setArrays" access="private" returntype="void" output="false">
+	<cfargument name="arrays" type="any" required="true">
+	<cfset instance.arrays = arguments.arrays />
 </cffunction>
 
 </cfcomponent>

@@ -41,8 +41,8 @@ Mark Mandel		19/07/2005		Created
 		setValidateCacheState(arguments.cacheFactory.getValidateCacheState());
 		setCacheSynchronise(arguments.cacheFactory.getCacheSynchronise());
 		setTransactionQueue(arguments.cacheFactory.getTransactionQueue());
-		setCacheMonitor(arguments.cacheFactory.getCacheMonitor());
 		setProviderManager(arguments.cacheFactory.getProviderManager());
+		setCacheMonitor(arguments.cacheFactory.getCacheMonitor());
 
 		return this;
 	</cfscript>
