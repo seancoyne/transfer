@@ -86,7 +86,7 @@ Mark Mandel		25/07/2008		Created
 		<div class="transfer-report">
 			<div class="transfer-report-statistics">
 				<p>
-					<strong>Total Estimated Size</strong><br /> #attributes.monitor.getTotalEstimatedSize()#
+					<strong>Total Estimated Size</strong><br /> #attributes.monitor.getTotalSize()#
 				</p>
 			</div>
 
@@ -94,7 +94,7 @@ Mark Mandel		25/07/2008		Created
 				<cfchartseries type="pie">
 					<cfloop from="1" to="#len#" index="counter">
 						<cfset class = classes[counter] />
-						<cfchartdata item="#class#" value="#attributes.monitor.getEstimatedSize(class)#">
+						<cfchartdata item="#class#" value="#attributes.monitor.getSize(class)#">
 					</cfloop>
 				</cfchartseries>
 			</cfchart>
@@ -124,14 +124,14 @@ Mark Mandel		25/07/2008		Created
 			</p>
 			<cfloop from="1" to="#len#" index="counter">
 				<cfset class = classes[counter]/>
-				<cfset settings = attributes.monitor.getCacheSettings(class) />
+				<!---<cfset settings = attributes.monitor.getCacheSettings(class) />--->
 				<div class="transfer-report">
 
 					<div class="transfer-report-statistics">
 						<p>
 							<strong>Hit/Miss Ratio</strong><br /> #attributes.monitor.getHitMissRatio(class)# <br/>
 						</p>
-						<p>
+						<!---<p>
 							<strong>Cache Scope</strong><br /> #settings.scope#
 						</p>
 						<p>
@@ -142,12 +142,12 @@ Mark Mandel		25/07/2008		Created
 						</p>
 						<p>
 							<strong>Maximum Cached Objects</strong><br /> #settings.maxobjects#
-						</p>
+						</p>--->
 					</div>
 
 					<cfchart format="png" title="#class#" show3D="true" chartheight="#attributes.chartSize#" chartwidth="#attributes.chartSize#" showborder="true">
 						<cfchartseries type="bar" colorlist="fea620,427bfb,93943d,c5c716">
-							<cfchartdata item="Extimated Size" value="#attributes.monitor.getEstimatedSize(class)#">
+							<cfchartdata item="Size" value="#attributes.monitor.getSize(class)#">
 							<cfchartdata item="Hits" value="#attributes.monitor.getHits(class)#">
 							<cfchartdata item="Misses" value="#attributes.monitor.getMisses(class)#">
 							<cfchartdata item="Evictions" value="#attributes.monitor.getEvictions(class)#">
