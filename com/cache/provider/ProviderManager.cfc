@@ -54,6 +54,21 @@ Mark Mandel		03/11/2009		Created
 	<cfreturn structKeyArray(getProviders()) />
 </cffunction>
 
+<cffunction name="shutdown" hint="Some cache implementations may need to be shutdown for cleanup. Call this method onApplicationEnd to call shutDown() on all cache providers"
+			access="public" returntype="void" output="false">
+	<cfscript>
+		var key = 0;
+		var providers = getProviders();
+
+		getDefaultProvider().shutdown();
+
+		for(key in providers)
+		{
+			providers[key].shutdown();
+		}
+    </cfscript>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->

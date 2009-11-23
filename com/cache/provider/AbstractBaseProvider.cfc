@@ -105,6 +105,10 @@ Mark Mandel		02/11/2009		Created
 	<cfset instance.eventManager = arguments.eventManager />
 </cffunction>
 
+<cffunction name="shutdown" hint="Some cache implementations may need to be shutdown for cleanup. Overwrite this method when needing this functionality."
+			access="public" returntype="void" output="false">
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->

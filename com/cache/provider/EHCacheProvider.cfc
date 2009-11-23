@@ -306,6 +306,13 @@ Mark Mandel		02/11/2009		Created
 	<cfreturn getEHCacheManager() />
 </cffunction>
 
+<cffunction name="shutdown" hint="Some cache implementations may need to be shutdown for cleanup. Overwrite this method when needing this functionality."
+			access="public" returntype="void" output="false">
+	<cfscript>
+		getEHCacheManager().shutdown();
+    </cfscript>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->

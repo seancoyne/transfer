@@ -163,7 +163,14 @@ Mark Mandel		14/07/2008		Created
 	</cfscript>
 </cffunction>
 
-<!--- TODO: expose cache providers --->
+<cffunction name="getDefaultCache" hint="gets the default native implementation of the cache" access="public" returntype="any" output="false">
+	<cfreturn getProviderManager().getDefaultProvider().getCacheProvider() />
+</cffunction>
+
+<cffunction name="getCache" hint="gets the native implementation of the cache for a given class" access="public" returntype="any" output="false">
+	<cfargument name="className" hint="the name of the class we are looking for a cache for" type="string" required="Yes">
+	<cfreturn getProviderManager().getProvider(arguments.className).getCacheProvider() />
+</cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
 

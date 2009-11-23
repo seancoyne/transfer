@@ -174,6 +174,11 @@ Mark Mandel		19/07/2005		Created
 	<cfreturn instance.CacheMonitor />
 </cffunction>
 
+<cffunction name="shutdown" hint="Some cache implementations may need to be shutdown for cleanup. Call this method onApplicationEnd to call shutDown() on all cache providers"
+			access="public" returntype="void" output="false">
+	<cfset getProviderManager().shutdown()>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
