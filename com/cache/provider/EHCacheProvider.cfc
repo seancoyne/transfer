@@ -19,7 +19,7 @@ Mark Mandel		02/11/2009		Created
 
 ------------------------------------------------------------------------------->
 
-<cfcomponent hint="EHCache Provider" extends="AbstractBaseProvider" output="false">
+<cfcomponent hint="EHCache Provider" extends="AbstractBaseAsyncDiscardProvider" output="false">
 
 <cfscript>
 	instance.static.SERVER_KEY = "ehCache.Provider.7D934950-C778-11DE-8A39-0800200C9A66";
@@ -35,6 +35,9 @@ Mark Mandel		02/11/2009		Created
 		var ConfigurationFactory = 0;
 		var configHelper = 0;
 		var interfaces = ["net.sf.ehcache.event.CacheEventListener"];
+		var _Thread = createObject("java", "java.lang.Thread"); //using 'Thread' breaks CFB
+		var currentClassloader = _Thread.currentThread().getContextClassLoader();
+
 		setArrays(createObject("java", "java.util.Arrays"));
 
 		super.init();
@@ -58,23 +61,44 @@ Mark Mandel		02/11/2009		Created
 		</cflock>
 	</cfif>
 
-	<cfscript>
-		ConfigurationFactory = getJavaLoader().create("net.sf.ehcache.config.ConfigurationFactory");
+	<cftry>
+		<cfscript>
+			//move around the the context class loader so log4j doesn't do a wobbly.
+			_Thread.currentThread().setContextClassLoader(getJavaLoader().getURLClassLoader());
 
-		configuration = ConfigurationFactory.parseConfiguration(getJavaLoader().create("java.io.File").init(expandPath(arguments.config)));
+			//Ignore the Thread Context ClassLoader when loading classes.
+			getSystem().setProperty("log4j.ignoreTCL", true);
 
-		setEHCacheManager(getJavaLoader().create("net.sf.ehcache.CacheManager").init(configuration));
+			//init log4j
+			PropertyConfigurator = getJavaLoader().create("org.apache.log4j.PropertyConfigurator");
+			PropertyConfigurator.configure(getDirectoryFromPath(getMetadata(this).path) & "/ehcache-lib/log4j.properties");
 
-		configHelper = getJavaLoader().create("net.sf.ehcache.config.ConfigurationHelper").init(getEHCacheManager(), configuration);
+			ConfigurationFactory = getJavaLoader().create("net.sf.ehcache.config.ConfigurationFactory");
 
-		setDefaultCache(configHelper.createDefaultCache());
+			configuration = ConfigurationFactory.parseConfiguration(getJavaLoader().create("java.io.File").init(expandPath(arguments.config)));
 
-		proxy = getJavaLoader().create("com.compoundtheory.coldfusion.cfc.CFCDynamicProxy").createInstance(this, interfaces);
+			setEHCacheManager(getJavaLoader().create("net.sf.ehcache.CacheManager").init(configuration));
 
-		setProxy(proxy);
+			configHelper = getJavaLoader().create("net.sf.ehcache.config.ConfigurationHelper").init(getEHCacheManager(), configuration);
 
-		return this;
-	</cfscript>
+			_Thread.currentThread().setContextClassLoader(currentClassloader);
+
+			setDefaultCache(configHelper.createDefaultCache());
+
+			proxy = getJavaLoader().create("com.compoundtheory.coldfusion.cfc.CFCDynamicProxy").createInstance(this, interfaces);
+
+			setProxy(proxy);
+
+			return this;
+		</cfscript>
+		<cfcatch>
+			<cfscript>
+				//make sure no matter what happens, the TCL goes back the way it was.
+				_Thread.currentThread().setContextClassLoader(currentClassloader);
+            </cfscript>
+			<cfrethrow>
+		</cfcatch>
+	</cftry>
 </cffunction>
 
 <cffunction name="add" hint="Adds an object to the cache. If there is no cache for this class, one is created based on the default cache configuration"

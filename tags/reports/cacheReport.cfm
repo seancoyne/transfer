@@ -86,11 +86,11 @@ Mark Mandel		25/07/2008		Created
 		<div class="transfer-report">
 			<div class="transfer-report-statistics">
 				<p>
-					<strong>Total Estimated Size</strong><br /> #attributes.monitor.getTotalSize()#
+					<strong>Total Size</strong><br /> #attributes.monitor.getTotalSize()#
 				</p>
 			</div>
 
-			<cfchart format="png" title="Estimated Cache Sizes" show3D="true" chartheight="#attributes.chartSize#" chartwidth="#attributes.chartSize#" showborder="true">
+			<cfchart format="png" title="Cache Sizes" show3D="true" chartheight="#attributes.chartSize#" chartwidth="#attributes.chartSize#" showborder="true">
 				<cfchartseries type="pie">
 					<cfloop from="1" to="#len#" index="counter">
 						<cfset class = classes[counter] />

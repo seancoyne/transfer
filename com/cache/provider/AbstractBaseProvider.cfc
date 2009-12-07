@@ -62,31 +62,31 @@ Mark Mandel		02/11/2009		Created
 	<cfset createObject("component", "transfer.com.exception.VirtualMethodException").init("getCacheProvider", this)>
 </cffunction>
 
-<cffunction name="getCachedClasses" hint="return a list of all the cached classes" access="public" returntype="array" output="false">
+<cffunction name="getCachedClasses" hint="virtual method: return a list of all the cached classes" access="public" returntype="array" output="false">
 	<cfset createObject("component", "transfer.com.exception.VirtualMethodException").init("getCachedClasses", this)>
 </cffunction>
 
-<cffunction name="getSize" hint="The number of items in the cache, for  given class" access="public" returntype="numeric" output="false">
+<cffunction name="getSize" hint="virtual method: The number of items in the cache, for  given class" access="public" returntype="numeric" output="false">
 	<cfargument name="className" hint="the name of the class" type="string" required="Yes">
 	<cfset createObject("component", "transfer.com.exception.VirtualMethodException").init("getSize", this)>
 </cffunction>
 
-<cffunction name="getHits" hint="returns the number of hits for that class" access="public" returntype="numeric" output="false">
+<cffunction name="getHits" hint="virtual method: returns the number of hits for that class" access="public" returntype="numeric" output="false">
 	<cfargument name="className" hint="the class to retrive hits for" type="string" required="Yes">
 	<cfset createObject("component", "transfer.com.exception.VirtualMethodException").init("getHits", this)>
 </cffunction>
 
-<cffunction name="getMisses" hint="returns the number of misses for that class" access="public" returntype="numeric" output="false">
+<cffunction name="getMisses" hint="virtual method: returns the number of misses for that class" access="public" returntype="numeric" output="false">
 	<cfargument name="className" hint="the class to retrive hits for" type="string" required="Yes">
 	<cfset createObject("component", "transfer.com.exception.VirtualMethodException").init("getMisses", this)>
 </cffunction>
 
-<cffunction name="getEvictions" hint="get the total number of cache evictions for this class" access="public" returntype="numeric" output="false">
+<cffunction name="getEvictions" hint="virtual method: get the total number of cache evictions for this class" access="public" returntype="numeric" output="false">
 	<cfargument name="className" hint="the class to retrive hits for" type="string" required="Yes">
 	<cfset createObject("component", "transfer.com.exception.VirtualMethodException").init("getEvictions", this)>
 </cffunction>
 
-<cffunction name="resetStatistics" hint="resets the statistics" access="public" returntype="void" output="false">
+<cffunction name="resetStatistics" hint="virtual method: resets the statistics" access="public" returntype="void" output="false">
 	<cfset createObject("component", "transfer.com.exception.VirtualMethodException").init("resetStatistics", this)>
 </cffunction>
 
