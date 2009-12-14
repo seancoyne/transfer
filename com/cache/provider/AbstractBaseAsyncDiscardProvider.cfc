@@ -47,10 +47,14 @@ Mark Mandel		04/12/2009		Created
 	<cfscript>
 		getQueue().add(arguments.object);
 
-		//if we are already in a thread, and there is no thread already going, process it.
-		if(dateCompare(getThreadDate(), Now()) eq -1 AND getThread().currentThread().getThreadGroup().getName() eq "cfthread")
+		//if we are in a cfthread, and there is no current thread processing for discard, just do it now
+		if(getThread().currentThread().getThreadGroup().getName() eq "cfthread")
 		{
-			processQueue();
+			if(dateCompare(getThreadDate(), Now()) eq -1)
+			{
+				processQueue();
+			}
+			return;
 		}
     </cfscript>
 
