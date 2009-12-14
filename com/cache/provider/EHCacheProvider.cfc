@@ -149,12 +149,6 @@ Mark Mandel		02/11/2009		Created
 
 		cache = getEHCacheManager().getCache(arguments.class);
 
-		//isKeyInCache is not synchronized, so keep an eye out for any problems.
-		if(NOT cache.isKeyInCache(arguments.key))
-		{
-			return false;
-		}
-
 		local.element = cache.get(arguments.key);
 
 		if(structKeyExists(local, "element"))
@@ -196,6 +190,8 @@ Mark Mandel		02/11/2009		Created
 	<cfargument name="key" hint="the primary key of the object" type="string" required="Yes">
 	<cfscript>
 		var cache = 0;
+
+		println("discard: #arguments.class# : #arguments.key#");
 
 		if(NOT getEHCacheManager().cacheExists(arguments.class))
 		{
@@ -335,6 +331,13 @@ Mark Mandel		02/11/2009		Created
 	<cfscript>
 		getEHCacheManager().shutdown();
     </cfscript>
+</cffunction>
+
+<cffunction name="println" hint="" access="private" returntype="void" output="false">
+	<cfargument name="str" hint="" type="string" required="Yes">
+	<cfscript>
+		createObject("Java", "java.lang.System").out.println(arguments.str);
+	</cfscript>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->

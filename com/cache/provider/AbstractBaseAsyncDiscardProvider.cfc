@@ -33,6 +33,14 @@ Mark Mandel		04/12/2009		Created
 		setQueue(createObject("java", "java.util.concurrent.ConcurrentLinkedQueue").init());
 		setThreadLocalNameCounter(createObject("java", "java.lang.ThreadLocal").init());
 
+		/*
+			For some stupid &^%@'d up reason, the super.fireDiscardEvent doesn't resolve to the actual parent
+			on a random basis, and resolves to the local version instead when inside the cfthread.
+
+			We will take the super.fireDiscardEvent and move it to a variable scoped method, so there is no confusion.
+		*/
+		variables.parentFireDiscardEvent = super.fireDiscardEvent;
+
 		return this;
 	</cfscript>
 </cffunction>
@@ -83,18 +91,16 @@ Mark Mandel		04/12/2009		Created
 	</cfscript>
 	<cftry>
 		<cfscript>
+			local.object = getQueue().poll();
+
 			//run through the queue
-			while(NOT getQueue().isEmpty())
+			while(structKeyExists(local, "object"))
 			{
+				parentFireDiscardEvent(local.object);
+
+				getThread().yield();
+
 				local.object = getQueue().poll();
-
-				//another thread may clear out the queue
-				if(structKeyExists(local, "object"))
-				{
-					super.fireDiscardEvent(local.object);
-
-					getThread().yield();
-				}
 			}
 		</cfscript>
 
