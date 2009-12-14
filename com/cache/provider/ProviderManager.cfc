@@ -25,10 +25,11 @@ Mark Mandel		03/11/2009		Created
 <cffunction name="init" hint="Constructor" access="public" returntype="ProviderManager" output="false">
 	<cfargument name="configReader" hint="The XML Reader for the config file" type="transfer.com.io.XMLFileReader" required="Yes" _autocreate="false">
 	<cfargument name="eventManager" hint="The event manager" type="transfer.com.events.EventManager" required="true" _autocreate="false">
+	<cfargument name="objectManager" hint="Need to object manager for making queries" type="transfer.com.object.ObjectManager" required="Yes" _autocreate="false">
 	<cfscript>
 		setProviders(StructNew());
 
-		initProviders(arguments.configReader, arguments.eventManager);
+		initProviders(arguments.configReader, arguments.eventManager, arguments.objectManager);
 
 		return this;
 	</cfscript>
@@ -76,6 +77,7 @@ Mark Mandel		03/11/2009		Created
 <cffunction name="initProviders" hint="initialises all the providers" access="private" returntype="void" output="false">
 	<cfargument name="configReader" hint="The XML Reader for the config file" type="transfer.com.io.XMLFileReader" required="Yes">
 	<cfargument name="eventManager" hint="The event manager" type="transfer.com.events.EventManager" required="true">
+	<cfargument name="objectManager" hint="the object manager" type="transfer.com.object.ObjectManager" required="true">
 	<cfscript>
 		var xObjectCache = arguments.configReader.search("/transfer/objectCache");
 		var provider = 0;
@@ -90,6 +92,7 @@ Mark Mandel		03/11/2009		Created
 		{
 			provider = createObject("component", "transfer.com.cache.provider.EHCacheProvider").init("/transfer/com/cache/provider/ehcache-lib/ehcache.xml");
 			provider.setEventManager(arguments.eventManager);
+			provider.setObjectManager(arguments.objectManager);
 
 			setDefaultProvider(provider);
 		}
@@ -101,6 +104,7 @@ Mark Mandel		03/11/2009		Created
 			{
 				provider = createObject("component", "transfer.com.cache.provider.EHCacheProvider").init("/transfer/com/cache/provider/ehcache-lib/ehcache.xml");
 				provider.setEventManager(arguments.eventManager);
+				provider.setObjectManager(arguments.objectManager);
 
 				setDefaultProvider(provider);
 			}
@@ -108,6 +112,7 @@ Mark Mandel		03/11/2009		Created
 			{
 				provider = parseProvider(xObjectCache.defaultCache);
 				provider.setEventManager(arguments.eventManager);
+				provider.setObjectManager(arguments.objectManager);
 				setDefaultProvider(provider);
 
 				len = arraylen(xObjectCache.xmlChildren);

@@ -105,6 +105,11 @@ Mark Mandel		02/11/2009		Created
 	<cfset instance.eventManager = arguments.eventManager />
 </cffunction>
 
+<cffunction name="setObjectManager" access="public" returntype="void" output="false">
+	<cfargument name="objectManager" type="transfer.com.object.ObjectManager" required="true">
+	<cfset instance.objectManager = arguments.objectManager />
+</cffunction>
+
 <cffunction name="shutdown" hint="Some cache implementations may need to be shutdown for cleanup. Overwrite this method when needing this functionality."
 			access="public" returntype="void" output="false">
 </cffunction>
@@ -122,6 +127,10 @@ Mark Mandel		02/11/2009		Created
 
 <cffunction name="getEventManager" access="private" returntype="transfer.com.events.EventManager" output="false">
 	<cfreturn instance.eventManager />
+</cffunction>
+
+<cffunction name="getObjectManager" access="private" returntype="transfer.com.object.ObjectManager" output="false">
+	<cfreturn instance.objectManager />
 </cffunction>
 
 </cfcomponent>
