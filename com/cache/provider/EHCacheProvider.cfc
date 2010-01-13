@@ -286,7 +286,7 @@ Mark Mandel		02/11/2009		Created
 	<cfargument name="cache" hint="the cache in question" type="any" required="Yes">
 	<cfargument name="element" hint="the element in question" type="any" required="Yes">
 	<cfscript>
-		fireDiscardEvent(arguments.element);
+		discardElement(arguments.element);
     </cfscript>
 </cffunction>
 
@@ -294,7 +294,7 @@ Mark Mandel		02/11/2009		Created
 	<cfargument name="cache" hint="the cache in question" type="any" required="Yes">
 	<cfargument name="element" hint="the element in question" type="any" required="Yes">
 	<cfscript>
-		fireDiscardEvent(arguments.element);
+		discardElement(arguments.element);
     </cfscript>
 </cffunction>
 
@@ -309,7 +309,7 @@ Mark Mandel		02/11/2009		Created
 	<cfargument name="cache" hint="the cache in question" type="any" required="Yes">
 	<cfargument name="element" hint="the element in question" type="any" required="Yes">
 	<cfscript>
-		fireDiscardEvent(arguments.element);
+		discardElement(arguments.element);
     </cfscript>
 </cffunction>
 
@@ -344,7 +344,7 @@ Mark Mandel		02/11/2009		Created
 
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
-<cffunction name="fireDiscardEvent" hint="Fires off the discard to all the Observers" access="private" returntype="void" output="false">
+<cffunction name="discardElement" hint="Fires off the discard to all the Observers" access="private" returntype="void" output="false">
 	<cfargument name="element" hint="the element being discarded" type="any" required="Yes">
 	<cfscript>
 		var local = {};
@@ -353,7 +353,7 @@ Mark Mandel		02/11/2009		Created
 
 		if(structKeyExists(local, "object"))
 		{
-			super.fireDiscardEvent(local.object);
+			fireDiscardEvent(local.object);
 		}
     </cfscript>
 </cffunction>

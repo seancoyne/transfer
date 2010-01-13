@@ -232,7 +232,7 @@ Mark Mandel		03/07/2006		Created
 		}
 
 		arguments.buffer.writeDoubleCheckLockOpen(check,
-				"transfer.load." & arguments.object.getClassName() & "." & arguments.name & ".##getSystem().identityHashCode(this)##");
+				'transfer.composition.#arguments.object.getClassName()#.#arguments.name#.##getSystem().identityHashCode(this)##'); //same name as composition lock
 	</cfscript>
 </cffunction>
 
