@@ -103,8 +103,8 @@ Mark Mandel		04/11/2005		Created
 			{
 				detail = detail & validate.errors[counter] & chr(10) & chr(13);
 			}
-			
-			createObject("component", "transfer.com.exception.InValidXMLException").init(arguments.xmlPath, detail);
+
+			createObject("component", "transfer.com.io.exception.InValidXMLException").init(arguments.xmlPath, detail);
 		}
 	</cfscript>
 </cffunction>
