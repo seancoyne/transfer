@@ -1,6 +1,6 @@
-16-October-2008
+15-May-2008
 
-Thank you for using Transfer version 1.1
+Thank you for using Transfer version 1.1.1
 
 For up to date information on Transfer, you can go to:
 http://www.transfer-orm.com
@@ -19,4 +19,4 @@ I hope you enjoy using Transfer!
 
 
 
-Copyright 2008, Mark Mandel
+Copyright 2010, Mark Mandel
