@@ -116,6 +116,11 @@ Mark Mandel		05/04/2006		Created
 			metadata.hint = arguments.defaultHint;
 		}
 
+		if (NOT StructKeyExists(metadata, "access"))
+		{
+			metadata.access = "public";
+		}
+
 		writeCFFunctionOpen(metadata.name, metadata.access, metadata.returntype, metadata.hint);
 
 		if(hasParams)
@@ -153,8 +158,16 @@ Mark Mandel		05/04/2006		Created
 
 <cffunction name="writeNamedLockOpen" hint="writes a named lock" access="public" returntype="void" output="false">
 	<cfargument name="lockName" hint="The name of the lock" type="string" required="Yes">
+	<cfargument name="readOnly" hint="whether or not this is a read only lock?" type="boolean" required="No" default="false">
 	<cfscript>
-		writeline("<cflock name=" & q() & arguments.lockname & q() &" timeout=""60"">");
+		append('<cf' & 'lock name="#arguments.lockname#" timeout="60"');
+
+		if(arguments.readOnly)
+		{
+			append(' type="readOnly"');
+		}
+
+		writeLine('>');
 	</cfscript>
 </cffunction>
 
@@ -162,6 +175,16 @@ Mark Mandel		05/04/2006		Created
 	<cfscript>
 		writeline("</cflock>");
 	</cfscript>
+</cffunction>
+
+<cffunction name="writeCollectionLockOpen" hint="write the name for a collection lock for this object" access="public" returntype="void" output="false">
+	<cfargument name="className" hint="the classname of the object" type="string" required="Yes">
+	<cfargument name="name" hint="the name of the composition in question" type="string" required="Yes">
+
+	<cfscript>
+		writeNamedLockOpen('transfer.composition.#arguments.className#.#arguments.name#.##getSystem().identityHashCode(this)##');
+    </cfscript>
+
 </cffunction>
 
 <cffunction name="writeCFScriptBlock" hint="Writes a block of cfscript" access="public" returntype="void" output="false">

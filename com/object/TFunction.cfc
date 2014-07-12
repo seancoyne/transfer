@@ -1,5 +1,7 @@
 <!--- Document Information -----------------------------------------------------
 
+CF10 doesn't accept types of "Function", so renaming to "TFunction".
+
 Title:      Function.cfc
 
 Author:     Mark Mandel
@@ -18,14 +20,14 @@ Name			Date			Description
 Mark Mandel		25/11/2005		Created
 
 ------------------------------------------------------------------------------->
-<cfcomponent name="Function" hint="A custom function BO">
+<cfcomponent name="TFunction" hint="A custom function BO">
 
 <cfscript>
 	instance = StructNew();
 </cfscript>
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
-<cffunction name="init" hint="Constructor" access="public" returntype="Function" output="false">
+<cffunction name="init" hint="Constructor" access="public" returntype="TFunction" output="false">
 	<cfscript>
 		setName("");
 		setAccess("");

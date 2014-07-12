@@ -30,10 +30,12 @@ Mark Mandel		27/06/2005		Created
 	<cfargument name="datasourcePath" hint="The path to datasource xml file. Should be a relative path, i.e. /myapp/configs/datasource.xml" type="string" required="No">
 	<cfargument name="configPath" hint="The path to the config xml file, Should be a relative path, i.e. /myapp/configs/transfer.xml" type="string" required="No">
 	<cfargument name="definitionPath" hint="directory to write the defition files. Should be from root, i.e. /myapp/definitions/, as it is used for cfinclude" default="/transfer/resources/definitions/" type="string" required="No">
-	<cfargument name="enableRemotingSupport" hint="enables remoting support by storing this object in the application scope" type="boolean" required="No" default="false">
-	<cfargument name="remotingName" hint="the name for this remoting TransferFactory, only required if you are using 2 Factories in an application" type="string" required="No">
 	<cfargument name="configuration" hint="A configuration bean.  If you supply one, you don't need to provide any other arguments" type="transfer.com.config.Configuration" required="No">
 
+<!---
+	<cfargument name="enableRemotingSupport" hint="enables remoting support by storing this object in the application scope" type="boolean" required="No" default="false">
+	<cfargument name="remotingName" hint="the name for this remoting TransferFactory, only required if you are using 2 Factories in an application" type="string" required="No">
+ --->
 	<cfscript>
 		var datasourceDAO = 0;
 		var datasource = 0;
@@ -104,7 +106,7 @@ Mark Mandel		27/06/2005		Created
 		setFactory(factory);
 
 		//do enabling of remoting if need be
-		enableRemoting(argumentCollection=arguments);
+		//enableRemoting(argumentCollection=arguments);
 
 		return this;
 	</cfscript>
@@ -128,7 +130,12 @@ Mark Mandel		27/06/2005		Created
 </cffunction>
 
 <cffunction name="getVersion" access="public" hint="Returns the version number" returntype="string" output="false">
-	<cfreturn "1.1.1"/>
+	<cfreturn "1.3"/>
+</cffunction>
+
+<cffunction name="shutdown" hint="Some cache implementations may need to be shutdown for cleanup. Call this method onApplicationEnd to call shutDown() on all cache providers"
+			access="public" returntype="void" output="false">
+	<cfset getFactory().getCacheManager().shutdown()>
 </cffunction>
 
 <!------------------------------------------- PACKAGE ------------------------------------------->
@@ -155,7 +162,7 @@ Mark Mandel		27/06/2005		Created
 	</cfscript>
 </cffunction>
 
-<cffunction name="enableRemoting" hint="Whether or not to enable remoting" access="private" returntype="any" output="false">
+<!---<cffunction name="enableRemoting" hint="Whether or not to enable remoting" access="private" returntype="any" output="false">
 	<cfargument name="enableRemotingSupport" hint="enables remoting support by storing this object in the application scope" type="boolean" required="Yes">
 	<cfargument name="remotingName" hint="the name for this remoting TransferFactory, only required if you are using 2 Factories in an application" type="string" required="No">
 	<cfscript>
@@ -163,7 +170,7 @@ Mark Mandel		27/06/2005		Created
 
 		remoteFactory.storeTransferFactory(this);
 	</cfscript>
-</cffunction>
+</cffunction>--->
 
 <cffunction name="getTransactionManager" access="private" returntype="transfer.com.sql.transaction.TransactionManager" output="false">
 	<cfreturn instance.TransactionManager />

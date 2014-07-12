@@ -23,87 +23,83 @@ Mark Mandel		26/08/2005		Created
 
 <cfscript>
 	instance = StructNew();
+	instance.static.INSTANCE_CLASS = "__instance";
 </cfscript>
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
 <cffunction name="init" hint="Constructor" access="public" returntype="EventManager" output="false">
-	<cfargument name="cacheConfigManager" hint="The cache manager" type="transfer.com.cache.CacheConfigManager" required="Yes" _autocreate="false">
 	<cfargument name="facadeFactory" hint="The facade factory to access caches" type="transfer.com.facade.FacadeFactory" required="Yes" _autocreate="false">
 	<cfargument name="javaLoader" hint="The java loader for the apache commons" type="transfer.com.util.JavaLoader" required="Yes" _autocreate="false">
 	<cfscript>
 		setTransferEventPool(createObject("component", "transfer.com.events.collections.TransferEventPool").init(arguments.javaLoader));
-		setCacheConfigManager(arguments.CacheConfigManager);
 		setFacadeFactory(arguments.facadeFactory);
 
 		return this;
 	</cfscript>
 </cffunction>
 
+<cffunction name="configure" hint="use configure for circular dep's" access="public" returntype="void" output="false">
+	<cfargument name="cacheManager" hint="The cache manager" type="transfer.com.cache.CacheManager" required="Yes">
+	<cfscript>
+		setCacheManager(arguments.cacheManager);
+    </cfscript>
+</cffunction>
+
 <!--- get adapters --->
-
-<cffunction name="getObjectAdapter" hint="returns an Object adapter for an object" access="public" returntype="transfer.com.events.adapter.ObjectAdapter" output="false">
-	<cfargument name="object" hint="The object to be adapted" type="any" required="Yes">
-	<cfreturn createObject("component", "transfer.com.events.adapter.ObjectAdapter").init(arguments.object) />
-</cffunction>
-
-<cffunction name="getSoftReferenceAdapter" hint="Get the adapter for soft references" access="public" returntype="transfer.com.events.adapter.SoftReferenceAdapter" output="false">
-	<cfargument name="softRef" hint="java.lang.SoftRef: The softref to be adapted" type="any" required="Yes">
-	<cfreturn createObject("component", "transfer.com.events.adapter.SoftReferenceAdapter").init(arguments.softRef) />
-</cffunction>
 
 <!--- add observer functions --->
 <cffunction name="addBeforeCreateObserver" hint="Adds a before create observer to the collection" access="public" returntype="void" output="false">
-	<cfargument name="observer" hint="The observer to add" type="transfer.com.events.adapter.AbstractBaseEventActionAdapter" required="Yes">
+	<cfargument name="observer" hint="The observer to add" type="any" required="Yes">
 	<cfscript>
 		addObserver(arguments.observer, "beforecreate");
 	</cfscript>
 </cffunction>
 
 <cffunction name="addAfterCreateObserver" hint="Adds a after create observer to the collection" access="public" returntype="void" output="false">
-	<cfargument name="observer" hint="The observer to add" type="transfer.com.events.adapter.AbstractBaseEventActionAdapter" required="Yes">
+	<cfargument name="observer" hint="The observer to add" type="any" required="Yes">
 	<cfscript>
 		addObserver(arguments.observer, "aftercreate");
 	</cfscript>
 </cffunction>
 
 <cffunction name="addBeforeUpdateObserver" hint="Adds a before Update observer to the collection" access="public" returntype="void" output="false">
-	<cfargument name="observer" hint="The observer to add" type="transfer.com.events.adapter.AbstractBaseEventActionAdapter" required="Yes">
+	<cfargument name="observer" hint="The observer to add" type="any" required="Yes">
 	<cfscript>
 		addObserver(arguments.observer, "beforeupdate");
 	</cfscript>
 </cffunction>
 
 <cffunction name="addAfterUpdateObserver" hint="Adds a after Update observer to the collection" access="public" returntype="void" output="false">
-	<cfargument name="observer" hint="The observer to add" type="transfer.com.events.adapter.AbstractBaseEventActionAdapter" required="Yes">
+	<cfargument name="observer" hint="The observer to add" type="any" required="Yes">
 	<cfscript>
 		addObserver(arguments.observer, "afterupdate");
 	</cfscript>
 </cffunction>
 
 <cffunction name="addBeforeDeleteObserver" hint="Adds a before Delete observer to the collection" access="public" returntype="void" output="false">
-	<cfargument name="observer" hint="The observer to add" type="transfer.com.events.adapter.AbstractBaseEventActionAdapter" required="Yes">
+	<cfargument name="observer" hint="The observer to add" type="any" required="Yes">
 	<cfscript>
 		addObserver(arguments.observer, "beforedelete");
 	</cfscript>
 </cffunction>
 
 <cffunction name="addAfterDeleteObserver" hint="Adds a after Delete observer to the collection" access="public" returntype="void" output="false">
-	<cfargument name="observer" hint="The observer to add" type="transfer.com.events.adapter.AbstractBaseEventActionAdapter" required="Yes">
+	<cfargument name="observer" hint="The observer to add" type="any" required="Yes">
 	<cfscript>
 		addObserver(arguments.observer, "afterdelete");
 	</cfscript>
 </cffunction>
 
 <cffunction name="addAfterDiscardObserver" hint="Adds a before discard observer to the collection" access="public" returntype="void" output="false">
-	<cfargument name="observer" hint="The observer to add" type="transfer.com.events.adapter.AbstractBaseEventActionAdapter" required="Yes">
+	<cfargument name="observer" hint="The observer to add" type="any" required="Yes">
 	<cfscript>
 		addObserver(arguments.observer, "AfterDiscard");
 	</cfscript>
 </cffunction>
 
 <cffunction name="addAfterNewObserver" hint="Adds a after new observer to the collection" access="public" returntype="void" output="false">
-	<cfargument name="observer" hint="The observer to add" type="transfer.com.events.adapter.AbstractBaseEventActionAdapter" required="Yes">
+	<cfargument name="observer" hint="The observer to add" type="any" required="Yes">
 	<cfscript>
 		addObserver(arguments.observer, "afternew");
 	</cfscript>
@@ -207,6 +203,31 @@ Mark Mandel		26/08/2005		Created
 <cffunction name="fireAfterDiscardEvent" hint="Fires a After Delete event" access="public" returntype="string" output="false">
 	<cfargument name="transfer" hint="a transfer object the event is about" type="transfer.com.TransferObject" required="Yes">
 	<cfscript>
+		var class = arguments.transfer.getClassName();
+		var scope = getCacheManager().getScope(class);
+		var facade = getFacadeFactory().getFacadeByScope(scope);
+
+		/* before firing the discard event, make sure it is removed as an observer */
+		if(facade.hasAfterCreateObserverCollection(class))
+		{
+			facade.getAfterCreateObserverCollection(class).removeObserver(arguments.transfer);
+		}
+
+		if(facade.hasAfterUpdateObserverCollection(class))
+		{
+			facade.getAfterUpdateObserverCollection(class).removeObserver(arguments.transfer);
+		}
+
+		if(facade.hasAfterDeleteObserverCollection(class))
+		{
+			facade.getAfterDeleteObserverCollection(class).removeObserver(arguments.transfer);
+		}
+
+		if(facade.hasAfterDiscardObserverCollection(class))
+		{
+			facade.getAfterDiscardObserverCollection(class).removeObserver(arguments.transfer);
+		}
+
 		fireEvent(arguments.transfer, "AfterDiscard");
 	</cfscript>
 </cffunction>
@@ -227,15 +248,19 @@ Mark Mandel		26/08/2005		Created
 	<cfargument name="type" hint="key for what type of collection to get" type="string" required="Yes">
 	<cfscript>
 		var event = getTransferEventPool().getTransferEvent(arguments.transfer);
-		var scope = getCacheConfigManager().getCacheConfig().getConfig(arguments.transfer.getClassName()).getScope();
+		var scope = getCacheManager().getScope(arguments.transfer.getClassName());
 
 		//run the instance scope one
-		getFacadeFactory().getInstanceFacade().getObserverCollectionByType(arguments.type).fireEvent(event);
+		getFacadeFactory().getInstanceFacade().getObserverCollectionByType(arguments.type, instance.static.INSTANCE_CLASS).fireEvent(event);
 
-		//if we've got a transfer outside of instance scope
-		if(scope neq "instance")
-		{
+		//run the transfer object one
+		try {
+			// when we frequently run discardAll(), the page then tries to fire afternew events generating:
+			// Expression: Element AFTERNEWOBSERVERCOLLECTION is undefined in a CFML structure referenced as part of an expression.
+			// should be safe to ignore it as if it doesn't run; I don't think we have any afternew advice anyways
 			getObserverCollection(arguments.transfer, arguments.type).fireEvent(event);
+		} catch (any e) {
+			// silently ignore
 		}
 
 		//put it back
@@ -244,20 +269,14 @@ Mark Mandel		26/08/2005		Created
 </cffunction>
 
 <cffunction name="addObserver" hint="add an observer, if a TransferObject, make it a soft ref" access="private" returntype="void" output="false">
-	<cfargument name="observer" hint="The observer to add" type="transfer.com.events.adapter.AbstractBaseEventActionAdapter" required="Yes">
+	<cfargument name="observer" hint="The observer to add" type="any" required="Yes">
 	<cfargument name="type" hint="key for what type of collection to get" type="string" required="Yes">
 	<cfscript>
-		var local = StructNew();
-		local.adapted = arguments.observer.getAdapted();
-
-		if(StructKeyExists(local, "adapted"))
-		{
-			getObserverCollection(local.adapted, arguments.type).addObserver(arguments.observer);
-		}
+		getObserverCollection(arguments.observer, arguments.type).addObserver(arguments.observer);
 	</cfscript>
 </cffunction>
 
-<cffunction name="removeObserver" hint="removes an observer, if a TransferObject, make it a soft ref" access="private" returntype="void" output="false">
+<cffunction name="removeObserver" hint="removes an observer" access="private" returntype="void" output="false">
 	<cfargument name="observer" hint="The observer to remove" type="any" required="Yes">
 	<cfargument name="type" hint="key for what type of collection to get" type="string" required="Yes">
 	<cfscript>
@@ -272,15 +291,17 @@ Mark Mandel		26/08/2005		Created
 		var facade = 0;
 		var cacheConfig = 0;
 		var scope = "instance";
+		var class = instance.static.INSTANCE_CLASS;
 
 		if(isTransferObject(arguments.object))
 		{
-			cacheConfig = getCacheConfigManager().getCacheConfig();
-			scope = cacheConfig.getConfig(arguments.object.getClassName()).getScope();
+			class = arguments.object.getClassName();
+			scope = getCacheManager().getScope(class);
 		}
 
 		facade = getFacadeFactory().getFacadeByScope(scope);
-		return facade.getObserverCollectionByType(arguments.type);
+
+		return facade.getObserverCollectionByType(arguments.type, class);
 	</cfscript>
 </cffunction>
 
@@ -312,15 +333,6 @@ Mark Mandel		26/08/2005		Created
 	<cfset variables.TransferEventPool = arguments.TransferEventPool />
 </cffunction>
 
-<cffunction name="getCacheConfigManager" access="private" returntype="transfer.com.cache.CacheConfigManager" output="false">
-	<cfreturn instance.CacheConfigManager />
-</cffunction>
-
-<cffunction name="setCacheConfigManager" access="private" returntype="void" output="false">
-	<cfargument name="cacheConfigManager" type="transfer.com.cache.CacheConfigManager" required="true">
-	<cfset instance.CacheConfigManager = arguments.CacheConfigManager />
-</cffunction>
-
 <cffunction name="getFacadeFactory" access="private" returntype="transfer.com.facade.FacadeFactory" output="false">
 	<cfreturn instance.FacadeFactory />
 </cffunction>
@@ -328,6 +340,15 @@ Mark Mandel		26/08/2005		Created
 <cffunction name="setFacadeFactory" access="private" returntype="void" output="false">
 	<cfargument name="FacadeFactory" type="transfer.com.facade.FacadeFactory" required="true">
 	<cfset instance.FacadeFactory = arguments.FacadeFactory />
+</cffunction>
+
+<cffunction name="getCacheManager" access="private" returntype="transfer.com.cache.CacheManager" output="false">
+	<cfreturn instance.cacheManager />
+</cffunction>
+
+<cffunction name="setCacheManager" access="private" returntype="void" output="false">
+	<cfargument name="cacheManager" type="transfer.com.cache.CacheManager" required="true">
+	<cfset instance.cacheManager = arguments.cacheManager />
 </cffunction>
 
 </cfcomponent>

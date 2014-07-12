@@ -46,36 +46,26 @@ Mark Mandel		06/09/2006		Created
 		var object = getObjectManager().getObject(arguments.transfer.getClassName());
 		var key = getMethodInvoker().invokeMethod(arguments.transfer, "get" & object.getPrimaryKey().getName());
 		var System = createObject("java", "java.lang.System");
-		var cachedObject = 0;
+		var local = StructNew();
 	</cfscript>
 	<cfif getCacheManager().have(object.getClassName(), key)>
-		<cftry>
 
-			<cfset cachedObject = getCacheManager().get(object.getClassName(), key)>
+		<cfset local.cachedObject = getCacheManager().get(object.getClassName(), key)>
 
-			<!--- This needs to be locked, so we don't get overwritten syncronisations --->
-			<cfif NOT cachedObject.sameTransfer(arguments.transfer)>
-				<cflock name="transfer.synchronise.#cachedObject.getClassName()#.#System.identityHashCode(cachedObject)#" timeout="60">
-					<cfscript>
-						arguments.transfer.copyValuesTo(cachedObject);
+		<cfif NOT structKeyExists(local, "cachedObject")>
+			<cfreturn arguments.transfer />
+		</cfif>
 
-						return cachedObject;
-					</cfscript>
-				</cflock>
-			</cfif>
+		<!--- This needs to be locked, so we don't get overwritten syncronisations --->
+		<cfif NOT local.cachedObject.sameTransfer(arguments.transfer)>
+			<cflock name="transfer.synchronise.#local.cachedObject.getClassName()#.#System.identityHashCode(local.cachedObject)#" timeout="60">
+				<cfscript>
+					arguments.transfer.copyValuesTo(local.cachedObject);
 
-			<cfcatch type="java.lang.Exception">
-				<cfswitch expression="#cfcatch.Type#">
-					<!--- catch it if it gets removed along the way --->
-					<cfcase value="com.compoundtheory.objectcache.ObjectNotFoundException">
-						<cfreturn arguments.transfer>
-					</cfcase>
-					<cfdefaultcase>
-						<cfrethrow>
-					</cfdefaultcase>
-				</cfswitch>
-			</cfcatch>
-		</cftry>
+					return local.cachedObject;
+				</cfscript>
+			</cflock>
+		</cfif>
 	</cfif>
 
 	<cfreturn arguments.transfer>

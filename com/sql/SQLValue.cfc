@@ -35,6 +35,13 @@ Mark Mandel		04/04/2008		Created
 
 		setLS(createObject("java", "java.lang.System").getProperty("line.separator"));
 
+		// handle both ACF/BlueDragon and Railo 3/4 functionality
+		// https://issues.jboss.org/browse/RAILO-1450
+		if (server.ColdFusion.ProductName CONTAINS "Railo")
+			instance.railo = true;
+		else
+			instance.railo = false;
+
 		return this;
 	</cfscript>
 </cffunction>
@@ -76,9 +83,14 @@ Mark Mandel		04/04/2008		Created
 			value =	arguments.query.getString(arguments.property.getColumn());
 		}
 
-		if(arguments.query.wasNull())
+		// railo 3/4 support per: https://groups.google.com/d/msg/transfer-dev/xkAux83LIg0/XxL57mriI34J
+		if (NOT instance.railo AND arguments.query.wasNull())
 		{
 			return getNullable().getNullValue(arguments.object.getClassName(), arguments.property.getName());
+		}
+		else if (instance.railo AND NOT isDefined("value"))
+		{
+			value = false;
 		}
 
 		return value;

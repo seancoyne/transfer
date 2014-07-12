@@ -145,6 +145,46 @@ Mark Mandel		27/06/2008		Created
 	</cfscript>
 </cffunction>
 
+<cffunction name="sameTransfer" hint="Checks to see if 2 transfer objects are the same" access="public" returntype="boolean" output="false">
+	<cfargument name="transfer" hint="The transfer object to check if we are equal" type="transfer.com.TransferObject" required="Yes">
+	<cfscript>
+		var system = getSystem();
+		return (system.identityHashCode(this) eq system.identityHashCode(arguments.transfer));
+	</cfscript>
+</cffunction>
+
+<!--- event methods --->
+
+<cffunction name="actionAfterCreateTransferEvent" hint="Actions a event After a create happens" access="public" returntype="void" output="false">
+	<cfargument name="event" hint="The event object" type="transfer.com.events.TransferEvent" required="Yes">
+	<cfscript>
+		if(getIsLoaded())
+		{
+			proxy("actionAfterCreateTransferEvent", arguments);
+		}
+	</cfscript>
+</cffunction>
+
+<cffunction name="actionAfterDeleteTransferEvent" hint="Actions a event After a create happens" access="public" returntype="void" output="false">
+	<cfargument name="event" hint="The event object" type="transfer.com.events.TransferEvent" required="Yes">
+	<cfscript>
+		if(getIsLoaded())
+		{
+			proxy("actionAfterDeleteTransferEvent", arguments);
+		}
+	</cfscript>
+</cffunction>
+
+<cffunction name="actionAfterDiscardTransferEvent" hint="Actions a event After a create happens" access="public" returntype="void" output="false">
+	<cfargument name="event" hint="The event object" type="transfer.com.events.TransferEvent" required="Yes">
+	<cfscript>
+		if(getIsLoaded())
+		{
+			proxy("actionAfterDiscardTransferEvent", arguments);
+		}
+	</cfscript>
+</cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <cffunction name="setIsClone" access="package" returntype="void" output="false">

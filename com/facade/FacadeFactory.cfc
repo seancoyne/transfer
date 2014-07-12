@@ -23,45 +23,11 @@ Mark Mandel		16/05/2006		Created
 <!------------------------------------------- PUBLIC ------------------------------------------->
 <cffunction name="init" hint="Constructor" access="public" returntype="FacadeFactory" output="false">
 	<cfargument name="objectManager" hint="Need to object manager for making queries" type="transfer.com.object.ObjectManager" required="Yes" _autocreate="false">
-	<cfargument name="cacheConfigManager" hint="The Cache config Manager" type="transfer.com.cache.CacheConfigManager" required="Yes" _autocreate="false">
 	<cfargument name="javaLoader" hint="The java loader for the apache commons" type="transfer.com.util.JavaLoader" required="Yes" _autocreate="false">
 	<cfscript>
-		var count = 0;
-		var concPackage = "edu.emory.mathcs.backport.java.util.concurrent.";
-
-		//for static properties
-		var TimeUnit = arguments.javaLoader.create("#concPackage#TimeUnit");
-		var threadPool = 0;
-
 		super.init();
 
 		setSingleton(arguments.javaloader);
-		setSingleton(arguments.cacheConfigManager);
-
-		//setup a thread pool
-		count = arguments.objectManager.getCachedClassCount();
-
-		//if it's 0, we don't need it, and it throws an error
-		if(count)
-		{
-
-			threadPool = arguments.javaLoader.create("#concPackage#ThreadPoolExecutor").init(JavaCast("int", 0),
-																					JavaCast("int", count),
-																					JavaCast("long", 60), //60 seconds timeout
-																					TimeUnit.SECONDS,
-																					arguments.javaloader.create("#concPackage#SynchronousQueue").init(),
-																					//silently discard if we hit our limits.
-																					//use the $ sign for the inner class name
-																					arguments.javaloader.create("#concPackage#ThreadPoolExecutor$DiscardPolicy").init()
-																					);
-
-			setThreadPool(threadPool);
-		}
-		else
-		{
-			//put something in there for autowiring
-			setThreadPool(0);
-		}
 
 		return this;
 	</cfscript>
@@ -72,8 +38,6 @@ Mark Mandel		16/05/2006		Created
 	<cfargument name="cacheManager" hint="the cache manager" type="transfer.com.cache.CacheManager" required="Yes">
 	<cfscript>
 		var map = StructNew();
-		var cacheConfigManager = getCacheConfigManager();
-
 
 		setSingleton(arguments.eventManager);
 		setSingleton(arguments.cacheManager);
@@ -88,14 +52,6 @@ Mark Mandel		16/05/2006		Created
 		map.server = getServerFacade();
 
 		setFacadeMap(map);
-
-		//setup keys
-		getInstanceFacade().configure(cacheConfigManager.getScope("instance").getKey());
-		getApplicationFacade().configure(cacheConfigManager.getScope("application").getKey());
-		getRequestFacade().configure(cacheConfigManager.getScope("request").getKey());
-		getServerFacade().configure(cacheConfigManager.getScope("server").getKey());
-		getSessionFacade().configure(cacheConfigManager.getScope("session").getKey());
-		getNoneFacade().configure(cacheConfigManager.getScope("none").getKey());
 	</cfscript>
 </cffunction>
 
@@ -130,6 +86,19 @@ Mark Mandel		16/05/2006		Created
 	</cfscript>
 </cffunction>
 
+<cffunction name="clearAll" hint="clears all the facades" access="public" returntype="void" output="false">
+	<cfargument name="class" hint="the class that is being cleared" type="string" required="Yes">
+	<cfscript>
+		var map = getFacadeMap();
+		var facade = 0;
+
+		for(facade in map)
+		{
+			map[facade].clear(arguments.class);
+		}
+    </cfscript>
+</cffunction>
+
 <cffunction name="getThreadPool" access="public" returntype="any" output="false">
 	<cfreturn instance.threadPool />
 </cffunction>
@@ -150,10 +119,6 @@ Mark Mandel		16/05/2006		Created
 <cffunction name="setThreadPool" access="private" returntype="void" output="false">
 	<cfargument name="threadPool" type="any" required="true">
 	<cfset instance.threadPool = arguments.threadPool />
-</cffunction>
-
-<cffunction name="getCacheConfigManager" access="private" returntype="transfer.com.cache.CacheConfigManager" output="false">
-	<cfreturn getSingleton("transfer.com.cache.CacheConfigManager") />
 </cffunction>
 
 </cfcomponent>

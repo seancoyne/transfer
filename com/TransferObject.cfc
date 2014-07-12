@@ -37,7 +37,7 @@ No init, as it is dynamically created and injected
 	<cfargument name="transfer" hint="The transfer object to check if we are equal" type="transfer.com.TransferObject" required="Yes">
 	<cfscript>
 		var system = getSystem();
-		return (system.identityHashCode(this) eq system.identityHashCode(arguments.transfer.getOriginalTransferObject()));
+		return (system.identityHashCode(getThisObject()) eq system.identityHashCode(arguments.transfer));
 	</cfscript>
 </cffunction>
 
@@ -166,8 +166,6 @@ No init, as it is dynamically created and injected
 					transfer = createTransferObject(arguments.className, key, arguments.memento);
 
 					getTransfer().cache(transfer);
-
-					getTransfer().cacheMiss(arguments.className);
 
 					//push out in case persisted in 'none' scope
 					return transfer;

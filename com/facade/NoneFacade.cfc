@@ -22,32 +22,6 @@ Mark Mandel		16/05/2006		Created
 
 <!------------------------------------------- PUBLIC ------------------------------------------->
 
-<cffunction name="getCacheManager" access="public" returntype="any" hint="return com.compoundtheory.objectcache.CacheManager" output="false">
-	<!--- double lock, so that only one object --->
-	<cfif NOT hasCacheManager()>
-		<cflock name="transfer.facade.getCacheManager.#getScopeIdentityHashCode()#" timeout="60" throwontimeout="true">
-			<cfscript>
-				if(NOT hasCacheManager())
-				{
-					setCacheManager(getJavaLoader().create("com.compoundtheory.objectcache.DummyCacheManager").init(getCacheConfig()));
-				}
-			</cfscript>
-		</cflock>
-	</cfif>
-	<cfreturn getScopePlace().CacheManager />
-</cffunction>
-
-<cffunction name="getSoftReferenceRegister" access="public" returntype="transfer.com.cache.SoftReferenceRegister" output="false">
-	<cfif NOT hasSoftReferenceRegister()>
-		<cflock name="transfer.facade.getSoftReferenceRegister.#getScopeIdentityHashCode()#" timeout="60" throwontimeout="true">
-			<cfif NOT hasSoftReferenceRegister()>
-				<cfset setSoftReferenceRegister(createObject("component", "transfer.com.cache.DummySoftReferenceRegister").init())>
-			</cfif>
-		</cflock>
-	</cfif>
-	<cfreturn getScopePlace().SoftReferenceRegister />
-</cffunction>
-
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->

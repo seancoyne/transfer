@@ -41,30 +41,18 @@ Mark Mandel		16/03/2007		Created
 	<cfscript>
 		var object = getObjectManager().getObject(arguments.transfer.getClassName());
 		var key = getMethodInvoker().invokeMethod(arguments.transfer, "get" & object.getPrimaryKey().getName());
-		var cachedObject = 0;
+		var local = structNew();
 	</cfscript>
 
 	<cfif getCacheManager().have(object.getClassName(), key)>
-		<cftry>
-			<cfset cachedObject = getCacheManager().get(object.getClassName(), key)>
-			<cfif cachedObject.sameTransfer(arguments.transfer)>
-				<cfreturn true />
-			</cfif>
-			<cfcatch type="java.lang.Exception">
-				<cfswitch expression="#cfcatch.Type#">
-					<!--- catch it if it gets removed along the way --->
-					<cfcase value="com.compoundtheory.objectcache.ObjectNotFoundException">
-						<cfreturn false>
-					</cfcase>
-					<cfdefaultcase>
-						<cfrethrow>
-					</cfdefaultcase>
-				</cfswitch>
-			</cfcatch>
-		</cftry>
+		<cfset local.object = getCacheManager().get(object.getClassName(), key)>
+		<cfif structKeyExists(local, "object") AND local.object.sameTransfer(arguments.transfer)>
+			<cfreturn true />
+		</cfif>
 	</cfif>
 	<cfreturn false>
 </cffunction>
+
 <!------------------------------------------- PACKAGE ------------------------------------------->
 
 <!------------------------------------------- PRIVATE ------------------------------------------->

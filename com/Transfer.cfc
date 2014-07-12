@@ -28,9 +28,6 @@ Mark Mandel		11/07/2005		Created
 <cffunction name="init" hint="Constructor" access="public" returntype="Transfer" output="false">
 	<cfargument name="factory" hint="the global factory" type="transfer.com.factory.Factory" required="Yes">
 	<cfscript>
-		//init it
-		arguments.factory.getCacheConfigManager();
-
 		//resolve some ciruclar dependencies
 		arguments.factory.setSingleton(this);
 
@@ -97,8 +94,7 @@ Mark Mandel		11/07/2005		Created
 	<cfargument name="key" hint="Primary key for the object in the DB, string if non composite, struct if composite" type="any" required="Yes">
 
 	<cfscript>
-		var transfer = 0;
-
+		var local = StructNew();
 		var rationalKey = rationaliseKey(arguments.class, arguments.key);
 	</cfscript>
 
@@ -114,53 +110,45 @@ Mark Mandel		11/07/2005		Created
 				if(NOT isCached(arguments.class, rationalKey))
 				{
 					//if not put it in
-					transfer = new(arguments.class);
+					local.transfer = new(arguments.class);
 
 					//run the query
-					getDynamicManager().populate(transfer, arguments.key);
+					getDynamicManager().populate(local.transfer, arguments.key);
 
 					//set to non dirty, and persisted
-					transfer.getOriginalTransferObject(true).setIsDirty(false);
-					transfer.getOriginalTransferObject(true).setIsPersisted(true);
+					local.transfer.getOriginalTransferObject(true).setIsDirty(false);
+					local.transfer.getOriginalTransferObject(true).setIsPersisted(true);
 
 					//put it in persistance
-					cache(transfer);
-
-					cacheMiss(arguments.class);
+					cache(local.transfer);
 
 					/*
 					shoot it back out, in case it's a 'none' cached item,
 					we don't want it looking for itself further down
 					*/
-					return transfer;
+					return local.transfer;
 				}
 			</cfscript>
 			</cflock>
 		</cfif>
 		<cfscript>
 			//get out of persistance and return
-			transfer = getCacheManager().get(arguments.class, rationalKey);
+			local.transfer = getCacheManager().get(arguments.class, rationalKey);
 
-			getCacheManager().hit(arguments.class);
-
-			return transfer;
+			if(structKeyExists(local, "transfer"))
+			{
+				return local.transfer;
+			}
+			else
+			{
+				//catch it if it gets removed along the way
+				return get(arguments.class, arguments.key);
+			}
 		</cfscript>
 
 		<!--- if the cache actually got expired between, try again --->
-		<cfcatch type="java.lang.Exception">
-			<cfif cfcatch.Type eq "com.compoundtheory.objectcache.ObjectNotFoundException">
-				<!--- missed! --->
-				<cfset cacheMiss(arguments.class) />
-				<!--- catch it if it gets removed along the way --->
-				<cfreturn get(arguments.class, arguments.key) />
-			<cfelse>
-				<cfrethrow>
-			</cfif>
-		</cfcatch>
 		<cfcatch type="transfer.com.dynamic.exception.EmptyQueryException">
 			<cfscript>
-				//missed!
-				cacheMiss(arguments.class);
 				//if not found, return a empty object
 				return new(arguments.class);
 			</cfscript>
@@ -190,7 +178,7 @@ Mark Mandel		11/07/2005		Created
 	<cfscript>
 		//check to make sure it's not been created before
 		if(arguments.transfer.getIsPersisted())
-		{			
+		{
 			createObject("component", "transfer.com.exception.ObjectAlreadyCreatedException").init(arguments.transfer);
 		}
 
@@ -219,12 +207,6 @@ Mark Mandel		11/07/2005		Created
 		arguments.transfer.getOriginalTransferObject().setIsPersisted(true);
 
 		getEventManager().fireAfterCreateEvent(arguments.transfer);
-
-		//handle transaction based caching
-		if(getCacheManager().isTransactionScoped(arguments.transfer))
-		{
-			discard(arguments.transfer);
-		}
 	</cfscript>
 </cffunction>
 
@@ -237,7 +219,7 @@ Mark Mandel		11/07/2005		Created
 		//check to make sure it's not been created before
 		if(NOT arguments.transfer.getIsPersisted())
 		{
-			createObject("component", "transfer.com.exception.ObjectNotCreatedException").init(arguments.transfer);			
+			createObject("component", "transfer.com.exception.ObjectNotCreatedException").init(arguments.transfer);
 		}
 
 		if(arguments.transfer.getIsDirty())
@@ -267,12 +249,6 @@ Mark Mandel		11/07/2005		Created
 			}
 
 			getEventManager().fireAfterUpdateEvent(cachedObject);
-
-			//handle transaction based caching
-			if(getCacheManager().isTransactionScoped(cachedObject))
-			{
-				discard(cachedObject);
-			}
 		}
 	</cfscript>
 </cffunction>
@@ -408,11 +384,13 @@ Mark Mandel		11/07/2005		Created
 <cffunction name="discard" hint="Discard the object from the cache" access="public" returntype="void" output="false">
 	<cfargument name="transfer" hint="The transferObject to delete" type="TransferObject" required="Yes">
 	<cfscript>
-		//_log("transfer - discard: #arguments.transfer.getClassName()# :: #instance.sys.identityHashCode(arguments.transfer)#");
+		//make sure the discard event fires
+		if(NOT getCacheManager().haveObject(arguments.transfer))
+		{
+			getEventManager().fireAfterDiscardEvent(arguments.transfer);
+		}
 
 		getCacheManager().discard(arguments.transfer);
-
-		getEventManager().fireAfterDiscardEvent(arguments.transfer);
 	</cfscript>
 </cffunction>
 
@@ -420,29 +398,10 @@ Mark Mandel		11/07/2005		Created
 	<cfargument name="className" hint="The class name of the object to discard" type="string" required="Yes">
 	<cfargument name="key" hint="The primary key value for the object" type="any" required="Yes">
 	<cfscript>
-		var transfer = 0;
 		arguments.key = rationaliseKey(arguments.className, arguments.key);
-	</cfscript>
 
-	<cfif getCacheManager().have(arguments.className, arguments.key)>
-		<cftry>
-			<cfscript>
-				transfer = getCacheManager().get(arguments.className, arguments.key);
-				discard(transfer);
-			</cfscript>
-			<cfcatch type="java.lang.Exception">
-				<cfswitch expression="#cfcatch.Type#">
-					<!--- catch it if it gets removed along the way --->
-					<cfcase value="com.compoundtheory.objectcache.ObjectNotFoundException">
-						<!--- do nothing --->
-					</cfcase>
-					<cfdefaultcase>
-						<cfrethrow>
-					</cfdefaultcase>
-				</cfswitch>
-			</cfcatch>
-		</cftry>
-	</cfif>
+		getCacheManager().discardByClassAndKey(argumentCollection=arguments);
+	</cfscript>
 </cffunction>
 
 <cffunction name="discardByClassAndKeyArray" hint="Discards an Object by its class and each key in an array, if it exists" access="public" returntype="void" output="false">
@@ -612,49 +571,49 @@ Mark Mandel		11/07/2005		Created
 <cffunction name="addBeforeCreateObserver" hint="Adds an object as a observer of before create events" access="public" returntype="void" output="false">
 	<cfargument name="observer" hint="The observer" type="any" required="Yes">
 	<cfscript>
-		getEventManager().addBeforeCreateObserver(getEventManager().getObjectAdapter(arguments.observer));
+		getEventManager().addBeforeCreateObserver(arguments.observer);
 	</cfscript>
 </cffunction>
 
 <cffunction name="addAfterCreateObserver" hint="Adds an object as a observer of after create events" access="public" returntype="void" output="false">
 	<cfargument name="observer" hint="The observer" type="any" required="Yes">
 	<cfscript>
-		getEventManager().addAfterCreateObserver(getEventManager().getObjectAdapter(arguments.observer));
+		getEventManager().addAfterCreateObserver(arguments.observer);
 	</cfscript>
 </cffunction>
 
 <cffunction name="addBeforeUpdateObserver" hint="Adds an object as a observer of before update events" access="public" returntype="void" output="false">
 	<cfargument name="observer" hint="The observer" type="any" required="Yes">
 	<cfscript>
-		getEventManager().addBeforeUpdateObserver(getEventManager().getObjectAdapter(arguments.observer));
+		getEventManager().addBeforeUpdateObserver(arguments.observer);
 	</cfscript>
 </cffunction>
 
 <cffunction name="addAfterUpdateObserver" hint="Adds an object as a observer of after update events" access="public" returntype="void" output="false">
 	<cfargument name="observer" hint="The observer" type="any" required="Yes">
 	<cfscript>
-		getEventManager().addAfterUpdateObserver(getEventManager().getObjectAdapter(arguments.observer));
+		getEventManager().addAfterUpdateObserver(arguments.observer);
 	</cfscript>
 </cffunction>
 
 <cffunction name="addBeforeDeleteObserver" hint="Adds an object as a observer of before delete events" access="public" returntype="void" output="false">
 	<cfargument name="observer" hint="The observer" type="any" required="Yes">
 	<cfscript>
-		getEventManager().addBeforeDeleteObserver(getEventManager().getObjectAdapter(arguments.observer));
+		getEventManager().addBeforeDeleteObserver(arguments.observer);
 	</cfscript>
 </cffunction>
 
 <cffunction name="addAfterDeleteObserver" hint="Adds an object as a observer of after delete events" access="public" returntype="void" output="false">
 	<cfargument name="observer" hint="The observer" type="any" required="Yes">
 	<cfscript>
-		getEventManager().addAfterDeleteObserver(getEventManager().getObjectAdapter(arguments.observer));
+		getEventManager().addAfterDeleteObserver(arguments.observer);
 	</cfscript>
 </cffunction>
 
 <cffunction name="addAfterNewObserver" hint="Adds an object as a observer of after new events" access="public" returntype="void" output="false">
 	<cfargument name="observer" hint="The observer" type="any" required="Yes">
 	<cfscript>
-		getEventManager().addAfterNewObserver(getEventManager().getObjectAdapter(arguments.observer));
+		getEventManager().addAfterNewObserver(arguments.observer);
 	</cfscript>
 </cffunction>
 
@@ -722,13 +681,9 @@ Mark Mandel		11/07/2005		Created
 <cffunction name="cache" hint="Adds the object to the cache manager" access="package" returntype="void" output="false">
 	<cfargument name="transfer" hint="The transfer object to cache" type="TransferObject" required="Yes">
 	<cfscript>
-		var softRef = 0;
+		setTransferObjectEventListeners(arguments.transfer);
 
-		softRef = getCacheManager().register(arguments.transfer);
-
-		setTransferObjectEventListeners(softRef, arguments.transfer.getClassName());
-
-		getCacheManager().add(softRef);
+		getCacheManager().add(arguments.transfer);
 	</cfscript>
 </cffunction>
 
@@ -827,14 +782,6 @@ Mark Mandel		11/07/2005		Created
 	</cfscript>
 </cffunction>
 
-<cffunction name="cacheMiss" hint="add an extra count to this cache's value not being found" access="package" returntype="void" output="false">
-	<cfargument name="className" hint="the className being missed" type="string" required="Yes">
-	<cfscript>
-		getCacheManager().miss(arguments.className);
-	</cfscript>
-</cffunction>
-
-
 <!------------------------------------------- PRIVATE ------------------------------------------->
 
 <cffunction name="read" hint="Retrieves an object from a simple row query" access="private" returntype="transfer.com.TransferObject" output="false">
@@ -871,10 +818,9 @@ Mark Mandel		11/07/2005		Created
 </cffunction>
 
 <cffunction name="setTransferObjectEventListeners" hint="configure the event listeners to add to a particular transfer object" access="private" returntype="void" output="false">
-	<cfargument name="softRef" hint="the soft reference to the Transfer Object to cache" type="any" required="Yes">
-	<cfargument name="className" hint="the classname of the object" type="string" required="Yes">
+	<cfargument name="transferObject" hint="the transfer object" type="transfer.com.TransferObject" required="Yes">
 	<cfscript>
-		var object = getObjectManager().getObject(arguments.className);
+		var object = getObjectManager().getObject(arguments.transferObject.getClassName());
 
 		var hasManyToMany = object.hasManyToMany();
 		var hasOneToMany = object.hasOneToMany();
@@ -884,26 +830,24 @@ Mark Mandel		11/07/2005		Created
 
 		if(hasManyToMany OR hasOneToMany OR hasParentOneToMany OR hasManyToOne)
 		{
-			adapter = getEventManager().getSoftReferenceAdapter(arguments.softRef);
-
 			if(hasOneToMany)
 			{
-				getEventManager().addAfterCreateObserver(adapter);
+				getEventManager().addAfterCreateObserver(arguments.transferObject);
 			}
 
 			if(hasOneToMany or hasManyToMany or hasParentOneToMany or hasManyToOne)
 			{
-				getEventManager().addAfterDeleteObserver(adapter);
+				getEventManager().addAfterDeleteObserver(arguments.transferObject);
 			}
 
 			if(hasManyToMany OR hasOneToMany)
 			{
-				getEventManager().addAfterUpdateObserver(adapter);
+				getEventManager().addAfterUpdateObserver(arguments.transferObject);
 			}
 
 			if(hasManyToMany OR hasOneToMany OR hasManyToOne OR hasParentOneToMany)
 			{
-				getEventManager().addAfterDiscardObserver(adapter);
+				getEventManager().addAfterDiscardObserver(arguments.transferObject);
 			}
 		}
 	</cfscript>

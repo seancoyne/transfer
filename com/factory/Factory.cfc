@@ -39,10 +39,6 @@ Mark Mandel		12/09/2007		Created
 	<cfreturn getSingleton("transfer.com.util.JavaLoader") />
 </cffunction>
 
-<cffunction name="getCacheConfigManager" hint="returns the cache config manager" access="public" returntype="transfer.com.cache.CacheConfigManager" output="false">
-	<cfreturn getSingleton("transfer.com.cache.CacheConfigManager") />
-</cffunction>
-
 <cffunction name="getUtility" hint="returns the Utility class" access="public" returntype="transfer.com.util.Utility" output="false">
 	<cfreturn getSingleton("transfer.com.util.Utility") />
 </cffunction>
@@ -76,7 +72,13 @@ Mark Mandel		12/09/2007		Created
 </cffunction>
 
 <cffunction name="getEventManager" hint="returns the event manager" access="public" returntype="transfer.com.events.EventManager" output="false">
-	<cfreturn getSingleton("transfer.com.events.EventManager") />
+	<cfscript>
+		var eventManager = getSingleton("transfer.com.events.EventManager");
+
+		eventManager.configure(getCacheManager());
+
+		return eventManager;
+    </cfscript>
 </cffunction>
 
 <cffunction name="getTransactionManager" hint="returns the Transaction manager" access="public" returntype="transfer.com.sql.transaction.TransactionManager" output="false">
@@ -97,9 +99,6 @@ Mark Mandel		12/09/2007		Created
 </cffunction>
 
 <cffunction name="getCacheFactory" hint="returns the cache factory" access="public" returntype="transfer.com.cache.CacheFactory" output="false">
-	<cfif getCFMLVersion().getVersion() eq "cf8">
-		<cfreturn getSingleton("transfer.com.cache.cf8.CacheFactory") />
-	</cfif>
 	<cfreturn getSingleton("transfer.com.cache.CacheFactory") />
 </cffunction>
 

@@ -49,7 +49,10 @@ Mark Mandel		04/11/2005		Created
 
 		for(; counter lte len; counter = counter + 1)
 		{
-			results.addAll(xmlSearch(collection[counter], arguments.xpath));
+			// duplicate() protects against xmlSearch() not being thread-safe under load
+			// http://cfmlblog.adamcameron.me/2014/04/ye-olde-xmlsearche-bugge.html
+			// https://bugbase.adobe.com/index.cfm?event=bug&id=3739102
+			results.addAll(xmlSearch(duplicate(collection[counter]), arguments.xpath));
 		}
 
 		return results;

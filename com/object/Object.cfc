@@ -135,7 +135,7 @@ Mark Mandel		11/07/2005		Created
 		len = ArrayLen(arguments.memento.function);
 		for(counter = 1; counter lte len; counter = counter + 1)
 		{
-			customFunction = createObject("component", "transfer.com.object.Function").init();
+			customFunction = createObject("component", "transfer.com.object.TFunction").init();
 			customFunction.setMemento(arguments.memento.function[counter]);
 			addFunction(customFunction);
 		}
