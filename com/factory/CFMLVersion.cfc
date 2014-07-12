@@ -37,7 +37,7 @@ Mark Mandel		31/08/2007		Created
 		//start with product
 		if(server.coldfusion.productName eq "coldfusion server")
 		{
-			if(server.coldfusion.productversion.startsWith("8") OR server.coldfusion.productversion.startsWith("9") OR server.coldfusion.productversion.startsWith("10"))
+			if(server.coldfusion.productversion.startsWith("8") OR server.coldfusion.productversion.startsWith("9") OR server.coldfusion.productversion.startsWith("10") OR server.coldfusion.productversion.startsWith("11"))
 			{
 				version = "cf8";
 			}
