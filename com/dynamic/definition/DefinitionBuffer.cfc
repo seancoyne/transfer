@@ -116,6 +116,11 @@ Mark Mandel		05/04/2006		Created
 			metadata.hint = arguments.defaultHint;
 		}
 
+		if (NOT StructKeyExists(metadata, "access"))
+		{
+			metadata.access = "public";
+		}
+
 		writeCFFunctionOpen(metadata.name, metadata.access, metadata.returntype, metadata.hint);
 
 		if(hasParams)

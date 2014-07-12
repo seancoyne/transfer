@@ -66,14 +66,19 @@ Mark Mandel		19/07/2005		Created
 	<cfargument name="name" hint="The name of the manytoone to load" type="string" required="Yes">
 	<cfscript>
 		var lazyObject = getObjectManager().getObjectLazyManyToOne(arguments.transfer.getClassName(), arguments.name);
+		var memento = "";
+		var args = structNew();
 
 		//get primary key
 		var key = invokePrimarykey(arguments.transfer, lazyObject.getPrimaryKey());
 
 		//pass the object over to the query maker, and get back the result
 		var qObject = getSQLManager().select(lazyObject, key, arguments.name);
-		var memento = buildMemento(qObject);
-		var args = structNew();
+	
+		// protect against deleted objects that should not be lazy loaded
+		if (qObject.recordCount)
+		{
+			memento = buildMemento(qObject);
 
 		//build memento arguments
 		args.memento = StructNew();
@@ -84,6 +89,7 @@ Mark Mandel		19/07/2005		Created
 		}
 
 		getMethodInvoker().invokeMethod(arguments.transfer, "set" & arguments.name & "Memento", args);
+		}
 	</cfscript>
 </cffunction>
 
@@ -92,6 +98,8 @@ Mark Mandel		19/07/2005		Created
 	<cfargument name="name" hint="The name of the manytoone to load" type="string" required="Yes">
 	<cfscript>
 		var lazyObject = getObjectManager().getObjectLazyOneToMany(arguments.transfer.getClassName(), arguments.name);
+		var memento = "";
+		var args = structNew();
 
 		//get primary key
 		var key = invokePrimarykey(arguments.transfer, lazyObject.getPrimaryKey());
@@ -99,8 +107,9 @@ Mark Mandel		19/07/2005		Created
 		//pass the object over to the query maker, and get back the result
 		var qObject = getSQLManager().select(lazyObject, key, arguments.name);
 
-		var memento = buildMemento(qObject);
-		var args = structNew();
+		if (qObject.recordCount)
+		{
+			memento = buildMemento(qObject);
 
 		//build memento arguments
 		args.memento = ArrayNew(1);
@@ -111,6 +120,7 @@ Mark Mandel		19/07/2005		Created
 		}
 
 		getMethodInvoker().invokeMethod(arguments.transfer, "set" & arguments.name & "Memento", args);
+		}
 	</cfscript>
 </cffunction>
 
@@ -119,6 +129,8 @@ Mark Mandel		19/07/2005		Created
 	<cfargument name="name" hint="The name of the manytoone to load" type="string" required="Yes">
 	<cfscript>
 		var lazyObject = getObjectManager().getObjectLazyManyToMany(arguments.transfer.getClassName(), arguments.name);
+		var memento = "";
+		var args = structNew();
 
 		//get primary key
 		var key = invokePrimarykey(arguments.transfer, lazyObject.getPrimaryKey());
@@ -126,8 +138,9 @@ Mark Mandel		19/07/2005		Created
 		//pass the object over to the query maker, and get back the result
 		var qObject = getSQLManager().select(lazyObject, key, arguments.name);
 
-		var memento = buildMemento(qObject);
-		var args = structNew();
+		if (qObject.recordCount)
+		{
+			memento = buildMemento(qObject);
 
 		//build memento arguments
 		args.memento = ArrayNew(1);
@@ -138,6 +151,7 @@ Mark Mandel		19/07/2005		Created
 		}
 
 		getMethodInvoker().invokeMethod(arguments.transfer, "set" & arguments.name & "Memento", args);
+		}
 	</cfscript>
 </cffunction>
 
@@ -155,10 +169,13 @@ Mark Mandel		19/07/2005		Created
 
 		var args = structNew();
 
+		if (qObject.recordCount)
+		{
 		//build memento arguments
 		args.memento = buildMemento(qObject);
 
 		getMethodInvoker().invokeMethod(arguments.transfer, "set" & arguments.name & "Memento", args);
+		}
 	</cfscript>
 </cffunction>
 
