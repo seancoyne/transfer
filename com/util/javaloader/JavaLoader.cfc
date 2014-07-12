@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!--- Document Information -----------------------------------------------------
 
 Title:      JavaLoader.cfc
@@ -102,6 +103,110 @@ Mark Mandel		22/06/2006		Added verification that the path exists
 	<cfreturn instance.ClassLoader />
 </cffunction>
 
+=======
+<!--- Document Information -----------------------------------------------------
+
+Title:      JavaLoader.cfc
+
+Author:     Mark Mandel
+Email:      mark@compoundtheory.com
+
+Website:    http://www.compoundtheory.com
+
+Purpose:    Utlitity class for loading Java Classes
+
+Usage:
+
+Modification Log:
+
+Name			Date			Description
+================================================================================
+Mark Mandel		08/05/2006		Created
+Mark Mandel		22/06/2006		Added verification that the path exists
+
+------------------------------------------------------------------------------->
+<cfcomponent name="JavaLoader" hint="Loads External Java Classes, while providing access to ColdFusion classes">
+
+<cfscript>
+	instance = StructNew();
+	instance.static.uuid = "A0608BEC-0AEB-B46A-0E1E1EC5F3CE7C9C";
+</cfscript>
+
+<!------------------------------------------- PUBLIC ------------------------------------------->
+
+<cffunction name="init" hint="Constructor" access="public" returntype="JavaLoader" output="false">
+	<cfargument name="loadPaths" hint="An array of directories of classes, or paths to .jar files to load" type="array" default="#ArrayNew(1)#" required="no">
+	<cfargument name="loadColdFusionClassPath" hint="Loads the ColdFusion libraries" type="boolean" required="No" default="false">
+	<cfargument name="parentClassLoader" hint="(Expert use only) The parent java.lang.ClassLoader to set when creating the URLClassLoader" type="any" default="" required="false">
+
+	<cfscript>
+		var iterator = arguments.loadPaths.iterator();
+		var file = 0;
+		var classLoader = 0;
+		var networkClassLoaderClass = 0;
+		var networkClassLoaderProxy = 0;
+
+		initUseJavaProxyCFC();
+
+		if(arguments.loadColdFusionClassPath)
+		{
+			//arguments.parentClassLoader = createObject("java", "java.lang.Thread").currentThread().getContextClassLoader();
+			//can't use above, as doesn't work in some... things
+
+			arguments.parentClassLoader = getPageContext().getClass().getClassLoader();
+
+			//arguments.parentClassLoader = createObject("java", "java.lang.ClassLoader").getSystemClassLoader();
+			//can't use the above, it doesn't have the CF stuff in it.
+		}
+
+		ensureNetworkClassLoaderOnServerScope();
+
+		//classLoader = createObject("java", "com.compoundtheory.classloader0.NetworkClassLoader").init();
+		networkClassLoaderClass = getServerURLClassLoader().loadClass("com.compoundtheory.classloader.NetworkClassLoader");
+
+		networkClassLoaderProxy = createJavaProxy(networkClassLoaderClass);
+
+		if(isObject(arguments.parentClassLoader))
+		{
+			classLoader = networkClassLoaderProxy.init(arguments.parentClassLoader);
+		}
+		else
+		{
+			classLoader = networkClassLoaderProxy.init();
+		}
+
+		while(iterator.hasNext())
+		{
+			file = createObject("java", "java.io.File").init(iterator.next());
+			if(NOT file.exists())
+			{
+				throwException("PathNotFoundException", "The path you have specified could not be found", file.getAbsolutePath() & " does not exist");
+			}
+
+			classLoader.addUrl(file.toURL());
+		}
+
+		//pass in the system loader
+		setURLClassLoader(classLoader);
+
+		return this;
+	</cfscript>
+</cffunction>
+
+<cffunction name="create" hint="Retrieves a reference to the java class. To create a instance, you must run init() on this object" access="public" returntype="any" output="false">
+	<cfargument name="className" hint="The name of the class to create" type="string" required="Yes">
+	<cfscript>
+		var class = getURLClassLoader().loadClass(arguments.className);
+
+		return createJavaProxy(class);
+	</cfscript>
+</cffunction>
+
+<cffunction name="getURLClassLoader" hint="Returns the java.net.URLClassLoader in case you need access to it" access="public" returntype="any" output="false">
+	<cfreturn instance.ClassLoader />
+</cffunction>
+
+>>>>>>> master
 <cffunction name="getVersion" hint="Retrieves the version of the loader you are using" access="public" returntype="string" output="false">
 	<cfreturn "1.0.alpha.1">
 </cffunction>
@@ -359,6 +464,7 @@ Mark Mandel		22/06/2006		Added verification that the path exists
 	<cfset instance.ClassLoader = arguments.ClassLoader />
 </cffunction>
 
+<<<<<<< HEAD
 <cffunction name="hasJavaCompiler" hint="whether this object has a javaCompiler" access="private" returntype="boolean" output="false">
 	<cfreturn StructKeyExists(instance, "javaCompiler") />
 </cffunction>
@@ -403,6 +509,8 @@ Mark Mandel		22/06/2006		Added verification that the path exists
 	<cfset instance.compileDirectory = arguments.compileDirectory />
 </cffunction>
 
+=======
+>>>>>>> master
 <cffunction name="throwException" access="private" hint="Throws an Exception" output="false">
 	<cfargument name="type" hint="The type of exception" type="string" required="Yes">
 	<cfargument name="message" hint="The message to accompany the exception" type="string" required="Yes">
