@@ -130,7 +130,7 @@ Mark Mandel		27/06/2005		Created
 </cffunction>
 
 <cffunction name="getVersion" access="public" hint="Returns the version number" returntype="string" output="false">
-	<cfreturn "1.2.a"/>
+	<cfreturn "1.3"/>
 </cffunction>
 
 <cffunction name="shutdown" hint="Some cache implementations may need to be shutdown for cleanup. Call this method onApplicationEnd to call shutDown() on all cache providers"
