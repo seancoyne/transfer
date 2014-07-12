@@ -254,7 +254,14 @@ Mark Mandel		26/08/2005		Created
 		getFacadeFactory().getInstanceFacade().getObserverCollectionByType(arguments.type, instance.static.INSTANCE_CLASS).fireEvent(event);
 
 		//run the transfer object one
-		getObserverCollection(arguments.transfer, arguments.type).fireEvent(event);
+		try {
+			// when we frequently run discardAll(), the page then tries to fire afternew events generating:
+			// Expression: Element AFTERNEWOBSERVERCOLLECTION is undefined in a CFML structure referenced as part of an expression.
+			// should be safe to ignore it as if it doesn't run; I don't think we have any afternew advice anyways
+			getObserverCollection(arguments.transfer, arguments.type).fireEvent(event);
+		} catch (any e) {
+			// silently ignore
+		}
 
 		//put it back
 		getTransferEventPool().recycle(event);
