@@ -80,7 +80,7 @@ Mark Mandel		15/07/2005		Created
 	<cfargument name="object" hint="BO of the Object" type="transfer.com.object.Object" required="Yes">
 	<cfscript>
 		//used the $ symbol to look like UDF & CFC Java class name.
-		return arguments.object.getClassName() & "$" & arguments.object.getHash() & ".transfer";
+		return arguments.object.getClassName() & "$" & arguments.object.getHash() & ".transfer.cfm";
 	</cfscript>
 </cffunction>
 

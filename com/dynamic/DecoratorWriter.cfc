@@ -70,7 +70,7 @@ Mark Mandel		10/08/2006		Created
 	<cfargument name="object" hint="BO of the Object" type="transfer.com.object.Object" required="Yes">
 	<cfscript>
 		//use the @ symbol to diffentiate between a transferObject and a Decorator.
-		return arguments.object.getClassName() & "@" & arguments.object.getHash() & ".transfer";
+		return arguments.object.getClassName() & "@" & arguments.object.getHash() & ".transfer.cfm";
 	</cfscript>
 </cffunction>
 
