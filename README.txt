@@ -1,8 +1,10 @@
-12-July-2014
-
 This is an updated version of Transfer containing a collection
 of community patches.  It is believed to be the best current 
 version of Transfer through Adobe ColdFusion 11 and Railo 4.  
+Read the migration guide here:
+
+https://github.com/ghidinelli/transfer/wiki/Migrating-to-Transfer-1.3
+
 It is based on the pluggable_cache branch which uses EhCache for 
 storage rather than the 1.1 method of SoftReferences (which tend 
 to cause memory leaks).  Upgrading from any 1.1 or 1.2 version is
