@@ -9,11 +9,7 @@ Website:    http://www.compoundtheory.com
 
 Purpose:    Exception thrown when internal autowiring fails
 
-<<<<<<< HEAD
 Usage:
-=======
-Usage:      
->>>>>>> master
 
 Modification Log:
 
@@ -29,15 +25,9 @@ Mark Mandel		05/06/2009		Created
 
 <cffunction name="init" hint="Constructor" access="public" returntype="void" output="false">
 	<cfargument name="target" hint="the autowiring target" type="any" required="Yes">
-<<<<<<< HEAD
 	<cfargument name="exception" hint="the exception" type="any" required="Yes">
 	<cfscript>
 		super.init("Error while attempting to autowire object of type #getMetaData(arguments.target).name#",
-=======
-	<cfargument name="exception" hint="the exception" type="struct" required="Yes">
-	<cfscript>
-		super.init("Error while attempting to autowire object of type #getMetaData(arguments.target).name#", 
->>>>>>> master
 			"<br/>[Line: #arguments.exception.tagContext[1].line# :: #arguments.exception.tagContext[1].template# :: #arguments.exception.message# :: #arguments.exception.detail#]");
 	</cfscript>
 </cffunction>
