@@ -72,6 +72,9 @@ Mark Mandel		11/08/2006		Created
 		</cfscript>
 		</cflock>
 	</cfif>
+	
+	<!--- make sure that we can't grab the mixin file while we are being written --->
+	<cflock name="transfer.writeDefinition.#arguments.object.getClassName()#" throwontimeout="yes" timeout="60" type="readonly">
 	<cfscript>
 		//build the object
 		injector.start(decorator);
@@ -81,9 +84,10 @@ Mark Mandel		11/08/2006		Created
 		decorator.buildDecorator(injector, getDefinitionPath() & getDecoratorWriter().getDefinitionFileName(object));
 
 		injector.stop(decorator);
-
-		return decorator;
 	</cfscript>
+	</cflock>
+	
+	<cfreturn decorator />
 </cffunction>
 
 <!--- mixin function --->

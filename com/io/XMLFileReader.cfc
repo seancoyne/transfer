@@ -73,7 +73,10 @@ Mark Mandel		04/11/2005		Created
 		validate(xml, filereader.getPath());
 
 		addPath(filereader.getPath());
-
+	</cfscript>
+	
+	<cflock name="transfer.com.io.XMLFileReader.modify_xml_collection" type="exclusive" timeout="5">
+		<cfscript>
 		if(arguments.overWrite)
 		{
 			ArrayPrepend(getXMLCollection(), xml);
@@ -82,9 +85,11 @@ Mark Mandel		04/11/2005		Created
 		{
 			ArrayAppend(getXMLCollection(), xml);
 		}
-
-		executeIncludes(xml);
-	</cfscript>
+		</cfscript>
+	</cflock>
+	
+	<cfset executeIncludes(xml) />
+	
 </cffunction>
 <!------------------------------------------- PACKAGE ------------------------------------------->
 

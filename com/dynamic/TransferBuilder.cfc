@@ -74,6 +74,8 @@ Mark Mandel		15/07/2005		Created
 		</cflock>
 	</cfif>
 
+	<!--- make sure that we can't grab the mixin file while we are being written --->
+	<cflock name="transfer.writeDefinition.#arguments.object.getClassName()#" throwontimeout="yes" timeout="60" type="readonly">
 	<cfscript>
 		//build the object
 		injector.start(transfer);
@@ -83,8 +85,10 @@ Mark Mandel		15/07/2005		Created
 
 		injector.stop(transfer);
 
-		return transfer;
 	</cfscript>
+	</cflock>
+	
+	<cfreturn transfer />
 </cffunction>
 
 
