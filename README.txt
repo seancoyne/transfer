@@ -9,7 +9,8 @@ It is based on the pluggable_cache branch which uses EhCache for
 storage rather than the 1.1 method of SoftReferences (which tend 
 to cause memory leaks).  Upgrading from any 1.1 or 1.2 version is
 encouraged, particularly if you are under any load as we worked 
-around a significant ACF xmlSearch() bug in July 2014.
+around a significant ACF xmlSearch() bug in July 2014.  This version 
+also upgrades to the last release of JavaLoader 1.1 from 2012.
 
 Mark Mandel no longer develops Transfer.  If you are starting a 
 new project, please use CF ORM instead.
